@@ -5,7 +5,7 @@
 #include "Game.h"
 
 
-#define SCREEN_X 32
+#define SCREEN_X 16
 #define SCREEN_Y 16
 
 #define INIT_PLAYER_X_TILES 7
@@ -37,6 +37,7 @@ void Scene::init()
 	player->setTileMap(map);
 	projection = glm::ortho(0.f, float(SCREEN_WIDTH - 1), float(SCREEN_HEIGHT - 1), 0.f);
 	currentTime = 0.0f;
+	int screenX = 0;
 }
 
 void Scene::update(int deltaTime)
@@ -53,10 +54,14 @@ void Scene::render()
 	texProgram.setUniformMatrix4f("projection", projection);
 	texProgram.setUniform4f("color", 1.0f, 1.0f, 1.0f, 1.0f);
 	modelview = glm::mat4(1.0f);
+	int x = player->getPosX();
+	int xoffset = 0;
+	if (x > screenX + SCREEN_WIDTH * 2 / 3) screenX = xoffset = x - SCREEN_WIDTH * 2 / 3;
+	modelview = glm::translate(modelview, glm::vec3(-screenX, 0.f, 0.f));
 	texProgram.setUniformMatrix4f("modelview", modelview);
 	texProgram.setUniform2f("texCoordDispl", 0.f, 0.f);
 	map->render();
-	player->render();
+	player->render(xoffset);
 }
 
 void Scene::initShaders()

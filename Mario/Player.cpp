@@ -138,9 +138,9 @@ void Player::update(int deltaTime)
 	sprite->setPosition(glm::vec2(float(tileMapDispl.x + posPlayer.x), float(tileMapDispl.y + posPlayer.y)));
 }
 
-void Player::render()
+void Player::render(int offset)
 {
-	sprite->render();
+	sprite->render(offset);
 }
 
 void Player::setTileMap(TileMap *tileMap)
@@ -154,6 +154,10 @@ void Player::setPosition(const glm::vec2 &pos)
 	sprite->setPosition(glm::vec2(float(tileMapDispl.x + posPlayer.x), float(tileMapDispl.y + posPlayer.y)));
 }
 
+int Player::getPosX()
+{
+	return posPlayer.x;
+}
 
 
 
