@@ -6,9 +6,11 @@
 #include "Game.h"
 
 
-#define JUMP_ANGLE_STEP 4
-#define JUMP_HEIGHT 96
-#define FALL_STEP 4
+#define JUMP_ANGLE_STEP 6
+#define MIN_JUMP_HEIGHT 50
+#define MAX_JUMP_HEIGHT 150
+#define JUMP_AGREGATE 4
+#define FALL_STEP 6
 #define ACCEL 1
 #define MAX_WALK_SPEED 12  // :4
 #define MAX_RUN_SPEED 24  // :4
@@ -24,6 +26,8 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 {
 	bJumping = false;
 	speedX = 0;
+	jumpAcu = 0;
+	jumpPress = false;
 	spritesheet.loadFromFile("images/bub.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	sprite = Sprite::createSprite(glm::ivec2(32, 32), glm::vec2(0.25, 0.25), &spritesheet, &shaderProgram);
 	sprite->setNumberAnimations(4);
@@ -94,6 +98,7 @@ void Player::update(int deltaTime)
 	}
 	else speedX = 0;
 
+	//JUMP
 	if(bJumping)
 	{
 		jumpAngle += JUMP_ANGLE_STEP;
@@ -104,9 +109,14 @@ void Player::update(int deltaTime)
 		}
 		else
 		{
-			posPlayer.y = int(startY - 96 * sin(3.14159f * jumpAngle / 180.f));
-			if(jumpAngle > 90)
-				bJumping = !map->collisionMoveDown(posPlayer, glm::ivec2(32, 32), &posPlayer.y);
+			posPlayer.y = int(startY - min(MIN_JUMP_HEIGHT + jumpAcu, MAX_JUMP_HEIGHT) * sin(3.14159f * jumpAngle / 180.f));
+			if (jumpAngle > 90)
+				bJumping = false; //!map->collisionMoveDown(posPlayer, glm::ivec2(32, 32), &posPlayer.y);
+			else if (jumpPress){
+				if (Game::instance().getKey(' '))
+					jumpAcu += JUMP_AGREGATE;
+				else jumpPress = false;
+			}
 		}
 	}
 	else
@@ -114,8 +124,10 @@ void Player::update(int deltaTime)
 		posPlayer.y += FALL_STEP;
 		if(map->collisionMoveDown(posPlayer, glm::ivec2(32, 32), &posPlayer.y))
 		{
-			if(Game::instance().getSpecialKey(GLUT_KEY_UP))
+			if(Game::instance().getKey(' '))
 			{
+				jumpPress = true;
+				jumpAcu = 0;
 				bJumping = true;
 				jumpAngle = 0;
 				startY = posPlayer.y;
