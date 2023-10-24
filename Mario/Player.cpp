@@ -9,6 +9,9 @@
 #define JUMP_ANGLE_STEP 4
 #define JUMP_HEIGHT 96
 #define FALL_STEP 4
+#define ACCEL 1
+#define MAX_WALK_SPEED 12  // :4
+#define MAX_RUN_SPEED 24  // :4
 
 
 enum PlayerAnims
@@ -20,6 +23,7 @@ enum PlayerAnims
 void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 {
 	bJumping = false;
+	speedX = 0;
 	spritesheet.loadFromFile("images/bub.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	sprite = Sprite::createSprite(glm::ivec2(32, 32), glm::vec2(0.25, 0.25), &spritesheet, &shaderProgram);
 	sprite->setNumberAnimations(4);
@@ -49,36 +53,47 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 void Player::update(int deltaTime)
 {
 	sprite->update(deltaTime);
-	if(Game::instance().getSpecialKey(GLUT_KEY_LEFT))
-	{
-		if(sprite->animation() != MOVE_LEFT)
+	//TOCAR SPEEDS i ANIMATIONS
+	if(Game::instance().getSpecialKey(GLUT_KEY_LEFT)) { //if the speed is above walk speed the animaton should be running
+		if (sprite->animation() != MOVE_LEFT)
 			sprite->changeAnimation(MOVE_LEFT);
-		posPlayer.x -= 2;
-		if(map->collisionMoveLeft(posPlayer, glm::ivec2(32, 32)))
-		{
-			posPlayer.x += 2;
-			sprite->changeAnimation(STAND_LEFT);
+		if (Game::instance().getKey('x')) { //(glutGetModifiers() == GLUT_ACTIVE_SHIFT) {
+			if (speedX > -MAX_RUN_SPEED) speedX -= ACCEL;
+		}
+		else {
+			if (speedX > -MAX_WALK_SPEED) speedX -= ACCEL;
+			if (speedX < -MAX_WALK_SPEED) speedX += ACCEL;
 		}
 	}
-	else if(Game::instance().getSpecialKey(GLUT_KEY_RIGHT))
-	{
-		if(sprite->animation() != MOVE_RIGHT)
+	else if(Game::instance().getSpecialKey(GLUT_KEY_RIGHT)) {
+		if (sprite->animation() != MOVE_RIGHT)
 			sprite->changeAnimation(MOVE_RIGHT);
-		posPlayer.x += 2;
-		if(map->collisionMoveRight(posPlayer, glm::ivec2(32, 32)))
-		{
-			posPlayer.x -= 2;
-			sprite->changeAnimation(STAND_RIGHT);
+		if (Game::instance().getKey('x')) { //(glutGetModifiers() == GLUT_ACTIVE_SHIFT) {
+			if (speedX < MAX_RUN_SPEED) speedX += ACCEL;
 		}
+		else {
+			if (speedX < MAX_WALK_SPEED) speedX += ACCEL;
+			if (speedX > MAX_WALK_SPEED) speedX -= ACCEL;
+		}	
 	}
-	else
-	{
-		if(sprite->animation() == MOVE_LEFT)
-			sprite->changeAnimation(STAND_LEFT);
-		else if(sprite->animation() == MOVE_RIGHT)
-			sprite->changeAnimation(STAND_RIGHT);
+	else {
+		if (speedX == 0) {
+			if (sprite->animation() == MOVE_LEFT)
+				sprite->changeAnimation(STAND_LEFT);
+			else if (sprite->animation() == MOVE_RIGHT)
+				sprite->changeAnimation(STAND_RIGHT);
+		}
+		else {
+			speedX > 0 ? speedX -= ACCEL : speedX += ACCEL;
+		}
 	}
 	
+	//Actualitzar pos
+	if (!(speedX < 0 and map->collisionMoveLeft(posPlayer, glm::ivec2(32, 32))) and !(speedX > 0 and map->collisionMoveRight(posPlayer, glm::ivec2(32, 32)))) {
+		posPlayer.x += speedX / 4;
+	}
+	else speedX = 0;
+
 	if(bJumping)
 	{
 		jumpAngle += JUMP_ANGLE_STEP;
