@@ -3,6 +3,7 @@
 
 
 #include "Scene.h"
+#include "Menu.h"
 
 
 #define SCREEN_WIDTH 640
@@ -16,6 +17,7 @@ class Game
 {
 
 private:
+	~Game();
 	Game() {}
 	
 public:
@@ -43,10 +45,11 @@ public:
 	bool getSpecialKey(int key) const;
 
 private:
-	bool bPlay;                       // Continue to play game?
+	bool bPlay, start;                       // Continue to play game?
 	Scene scene;                      // Scene to render
 	bool keys[256], specialKeys[256]; // Store key states so that 
 	                                  // we can have access at any time
+	Menu* menu;
 
 };
 
