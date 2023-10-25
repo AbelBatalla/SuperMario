@@ -5,8 +5,8 @@
 #include "Game.h"
 
 
-#define SCREEN_X 16
-#define SCREEN_Y 16
+#define SCREEN_X 0
+#define SCREEN_Y 32
 
 #define INIT_PLAYER_X_TILES 7
 #define INIT_PLAYER_Y_TILES 5
@@ -37,7 +37,7 @@ void Scene::init()
 	player->setTileMap(map);
 	projection = glm::ortho(0.f, float(SCREEN_WIDTH - 1), float(SCREEN_HEIGHT - 1), 0.f);
 	currentTime = 0.0f;
-	int screenX = 0;
+	camx = 0; //Posicio x al mon de l'inici de la pantalla
 }
 
 void Scene::update(int deltaTime)
@@ -54,14 +54,17 @@ void Scene::render()
 	texProgram.setUniformMatrix4f("projection", projection);
 	texProgram.setUniform4f("color", 1.0f, 1.0f, 1.0f, 1.0f);
 	modelview = glm::mat4(1.0f);
-	int x = player->getPosX();
-	int xoffset = 0;
-	if (x > screenX + SCREEN_WIDTH * 2 / 3) screenX = xoffset = x - SCREEN_WIDTH * 2 / 3;
-	modelview = glm::translate(modelview, glm::vec3(-screenX, 0.f, 0.f));
+	int posx = player->getPosX();
+	float scrollStart = (3.0 / 5.0) * SCREEN_WIDTH;
+	if (posx > camx + scrollStart) // && camx < map->getMapSize().x - SCREEN_WIDTH)
+	{
+		camx = posx - scrollStart;
+	}
+	modelview = glm::translate(modelview, glm::vec3(-camx, 0.f, 0.f));
 	texProgram.setUniformMatrix4f("modelview", modelview);
 	texProgram.setUniform2f("texCoordDispl", 0.f, 0.f);
 	map->render();
-	player->render(xoffset);
+	player->render(camx);
 }
 
 void Scene::initShaders()
