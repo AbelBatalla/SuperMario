@@ -38,6 +38,7 @@ void Scene::init()
 	projection = glm::ortho(0.f, float(SCREEN_WIDTH - 1), float(SCREEN_HEIGHT - 1), 0.f);
 	currentTime = 0.0f;
 	camx = 0; //Posicio x al mon de l'inici de la pantalla
+	oldPosx = INIT_PLAYER_X_TILES;
 }
 
 void Scene::update(int deltaTime)
@@ -55,11 +56,17 @@ void Scene::render()
 	texProgram.setUniform4f("color", 1.0f, 1.0f, 1.0f, 1.0f);
 	modelview = glm::mat4(1.0f);
 	int posx = player->getPosX();
-	float scrollStart = (3.0 / 5.0) * SCREEN_WIDTH;
-	if (posx > camx + scrollStart) // && camx < map->getMapSize().x - SCREEN_WIDTH)
+	float scrollMax = (0.93 / 2.0) * SCREEN_WIDTH;
+	float scrollStart = (1.75 / 5.0) * SCREEN_WIDTH;
+	if (posx >= camx + scrollMax) // && camx < map->getMapSize().x - SCREEN_WIDTH)
 	{
-		camx = posx - scrollStart;
+		camx = posx - scrollMax;
 	}
+	else if (posx > camx + scrollStart and oldPosx < posx) // && camx < map->getMapSize().x - SCREEN_WIDTH)
+	{
+		camx = camx + 2; //posx - scrollMax;
+	}
+	oldPosx= posx;
 	modelview = glm::translate(modelview, glm::vec3(-camx, 0.f, 0.f));
 	texProgram.setUniformMatrix4f("modelview", modelview);
 	texProgram.setUniform2f("texCoordDispl", 0.f, 0.f);
