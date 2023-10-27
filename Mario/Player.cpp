@@ -11,10 +11,11 @@
 #define MAX_JUMP_HEIGHT 200 //maximum jump height depends on jump angle step and jump agreggate
 #define JUMP_AGREGATE 5
 #define FALL_STEP 6
-#define ACCEL 1
-#define MAX_WALK_SPEED 12  // :4
-#define MAX_RUN_SPEED 24  // :4
-
+#define ACCEL 4
+#define MAX_WALK_SPEED 48  // :DIVISOR
+#define MAX_RUN_SPEED 96  // :DIVISOR
+#define DIVISOR 16
+#define NO_BUTTON_DIVISOR 4 // Augment d'inercia quan no es clica cap key.
 
 enum PlayerAnims
 {
@@ -35,7 +36,7 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 		sprite->setAnimationSpeed(STAND_RIGHT, 8);
 		sprite->addKeyframe(STAND_RIGHT, glm::vec2(0.f, 0.f));
 		
-		sprite->setAnimationSpeed(MOVE_RIGHT, 8);
+		sprite->setAnimationSpeed(MOVE_RIGHT, 12);
 		sprite->addKeyframe(MOVE_RIGHT, glm::vec2(0.0625f, 0.f));
 		sprite->addKeyframe(MOVE_RIGHT, glm::vec2(0.125f, 0.f));
 		sprite->addKeyframe(MOVE_RIGHT, glm::vec2(0.1875f, 0.f));
@@ -212,14 +213,14 @@ void Player::update(int deltaTime, int camx)
 				}
 			}
 			else if (speedX < 0) {
-				speedX += ACCEL;
+				speedX += ACCEL/NO_BUTTON_DIVISOR;
 				if (sprite->animation() != MOVE_RIGHT) {
 					sprite->changeAnimation(MOVE_RIGHT);
 					sprite->setMirrored(true);
 				}
 			}
 			else {
-				speedX -= ACCEL;
+				speedX -= ACCEL/NO_BUTTON_DIVISOR;
 				if (sprite->animation() != MOVE_RIGHT) {
 					sprite->changeAnimation(MOVE_RIGHT);
 					sprite->setMirrored(false);
@@ -230,7 +231,7 @@ void Player::update(int deltaTime, int camx)
 
 	//UPDATE POSITIONS
 	if (!(speedX < 0 and (map->collisionMoveLeft(posPlayer, glm::ivec2(32, 32)) or posPlayer.x-camx <= 0)) and !(speedX > 0 and map->collisionMoveRight(posPlayer, glm::ivec2(32, 32)))) {
-		posPlayer.x += speedX / 4;
+		posPlayer.x += speedX / DIVISOR;
 	}
 	else speedX = 0;
 
