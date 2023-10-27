@@ -91,5 +91,5 @@ void Menu::render() {
 	modelview = glm::mat4(1.0f);
 	texProgram.setUniformMatrix4f("modelview", modelview);
 	texProgram.setUniform2f("texCoordDispl", 0.f, 0.f);
-	bground_f->render();
+	bground_f->render(0);
 }
