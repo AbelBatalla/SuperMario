@@ -44,7 +44,7 @@ void Scene::init()
 void Scene::update(int deltaTime)
 {
 	currentTime += deltaTime;
-	player->update(deltaTime);
+	player->update(deltaTime, camx);
 }
 
 void Scene::render()
