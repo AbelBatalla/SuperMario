@@ -1,23 +1,21 @@
 #include <iostream>
 #include <glm/gtc/matrix_transform.hpp>
-#include "Menu.h"
+#include "SimpleView.h"
 #include "Game.h"
 #include <GL/glut.h>
 
 
-Menu::Menu() {
-	currentTime = 0;
-	idMenu = 1;
-	menu_1.loadFromFile("images/menu_1.png", TEXTURE_PIXEL_FORMAT_RGBA);
-	menu_2.loadFromFile("images/menu_2.png", TEXTURE_PIXEL_FORMAT_RGBA);
-	menu_3.loadFromFile("images/menu_3.png", TEXTURE_PIXEL_FORMAT_RGBA);
-	menu = menu_1;
+
+
+SimpleView::SimpleView(TypeMenu type) {
+	if(type == CREDITS)	menu.loadFromFile("images/credits.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	else if(type == INSTRUCTIONS) menu.loadFromFile("images/instructions.png", TEXTURE_PIXEL_FORMAT_RGBA);
 }
 
-Menu::~Menu() {
+SimpleView::~SimpleView() {
 }
 
-void Menu::initShaders()
+void SimpleView::initShaders()
 {
 	Shader vShader, fShader;
 
@@ -47,42 +45,24 @@ void Menu::initShaders()
 	fShader.free();
 }
 
-void Menu::init() {
+void SimpleView::init() {
 	initShaders();
 	bground_f = Sprite::createSprite(glm::ivec2(640, 480), glm::vec2(1.0, 1.0), &menu, &texProgram);
 	projection = glm::ortho(0.f, float(SCREEN_WIDTH - 1), float(SCREEN_HEIGHT - 1), 0.f);
-	
+
 }
 
 
-int Menu::update() {
-	static int cooldown = 0; // Variable para controlar el tiempo de espera
-	const int cooldownLimit = 10; // Ajusta esto según tus necesidades
+int SimpleView::update() {
 
-	if (cooldown > 0) {
-		cooldown--; // Reducir el tiempo de espera
-	}
-	else {
-		if (Game::instance().getSpecialKey(GLUT_KEY_DOWN)) {
-			if (idMenu < 3) idMenu += 1;
-			cooldown = cooldownLimit; // Establecer un tiempo de espera
-		}
-		if (Game::instance().getSpecialKey(GLUT_KEY_UP)) {
-			if (idMenu > 1) idMenu -= 1;
-			cooldown = cooldownLimit; // Establecer un tiempo de espera
-		}
-	}
-
-	if (idMenu == 1) menu = menu_1;
-	else if (idMenu == 2) menu = menu_2;
-	else if (idMenu == 3) menu = menu_3;
-	this->init();
-	return idMenu;
+	if (Game::instance().getKey('B') || Game::instance().getKey('b')) return false;
+	return true;
+		
 }
 
 
 
-void Menu::render() {
+void SimpleView::render() {
 	glm::mat4 modelview;
 
 	texProgram.use();

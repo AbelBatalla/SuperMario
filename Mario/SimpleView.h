@@ -1,5 +1,5 @@
-#ifndef _MENU_INCLUDE
-#define _MENU_INCLUDE
+#ifndef _SIMPLEVIEW_INCLUDE
+#define _SIMPLEVIEW_INCLUDE
 
 
 #include <glm/glm.hpp>
@@ -7,25 +7,27 @@
 #include "Sprite.h"
 
 
-class Menu
+class SimpleView
 {
 public:
-	Menu();
-	~Menu();
+
+	enum TypeMenu { CREDITS, INSTRUCTIONS};
+
+	SimpleView(TypeMenu type);
+	~SimpleView();
 
 	void init();
 	void render();
 	int update();
 	void initShaders();
 
+
+
 private:
 	glm::mat4 projection;
-	int idMenu;
-	float currentTime;
 	Sprite* bground_f;
-	Texture menu, menu_1, menu_2, menu_3;
+	Texture menu;
 	ShaderProgram texProgram;
-
 };
 
 #endif

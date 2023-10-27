@@ -4,6 +4,7 @@
 
 #include "Scene.h"
 #include "Menu.h"
+#include "SimpleView.h"
 
 
 #define SCREEN_WIDTH 640
@@ -18,7 +19,7 @@ class Game
 
 private:
 	~Game();
-	Game() {}
+	Game(){}
 	
 public:
 	static Game &instance()
@@ -45,11 +46,13 @@ public:
 	bool getSpecialKey(int key) const;
 
 private:
-	bool bPlay, start;                       // Continue to play game?
+	bool bPlay, goGame, goInstructions, goCredits;                       // Continue to play game?
 	Scene scene;                      // Scene to render
-	bool keys[256], specialKeys[256]; // Store key states so that 
-	                                  // we can have access at any time
+	bool keys[256], specialKeys[256]; // Store key states so that                                  // we can have access at any time
 	Menu* menu;
+	SimpleView* instructions;
+	SimpleView* credits;
+	int idMenu;
 
 };
 
