@@ -18,7 +18,7 @@
 
 enum PlayerAnims
 {
-	STAND_LEFT, STAND_RIGHT, MOVE_LEFT, MOVE_RIGHT, SPRINT_LEFT, SPRINT_RIGHT, JUMP_RIGHT, DRIFT_TO_RIGHT, FALL_RIGHT1, FALL_RIGHT2, FALL_RIGHT3
+	STAND_RIGHT, MOVE_RIGHT, SPRINT_RIGHT, JUMP_RIGHT, DRIFT_TO_RIGHT, FALL_RIGHT1, FALL_RIGHT2, FALL_RIGHT3
 };
 
 
@@ -30,18 +30,10 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 	jumpPress = false;
 	spritesheet.loadFromFile("images/tilesheet.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	sprite = Sprite::createSprite(glm::ivec2(32, 32), glm::vec2(0.0625, 0.0625), &spritesheet, &shaderProgram);
-	sprite->setNumberAnimations(11);
-	
-		sprite->setAnimationSpeed(STAND_LEFT, 8);
-		sprite->addKeyframe(STAND_LEFT, glm::vec2(0.f, 0.f));
-		
+	sprite->setNumberAnimations(8);
+			
 		sprite->setAnimationSpeed(STAND_RIGHT, 8);
 		sprite->addKeyframe(STAND_RIGHT, glm::vec2(0.f, 0.f));
-		
-		sprite->setAnimationSpeed(MOVE_LEFT, 8);
-		sprite->addKeyframe(MOVE_LEFT, glm::vec2(0.0625f, 0.f));
-		sprite->addKeyframe(MOVE_LEFT, glm::vec2(0.125f, 0.f));
-		sprite->addKeyframe(MOVE_LEFT, glm::vec2(0.1875f, 0.f));
 		
 		sprite->setAnimationSpeed(MOVE_RIGHT, 8);
 		sprite->addKeyframe(MOVE_RIGHT, glm::vec2(0.0625f, 0.f));
@@ -61,11 +53,6 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 		sprite->addKeyframe(SPRINT_RIGHT, glm::vec2(0.0625f, 0.f));
 		sprite->addKeyframe(SPRINT_RIGHT, glm::vec2(0.125f, 0.f));
 		sprite->addKeyframe(SPRINT_RIGHT, glm::vec2(0.1875f, 0.f));
-
-		sprite->setAnimationSpeed(SPRINT_LEFT, 32);
-		sprite->addKeyframe(SPRINT_LEFT, glm::vec2(0.0625f, 0.f));
-		sprite->addKeyframe(SPRINT_LEFT, glm::vec2(0.125f, 0.f));
-		sprite->addKeyframe(SPRINT_LEFT, glm::vec2(0.1875f, 0.f));
 
 		sprite->setAnimationSpeed(JUMP_RIGHT, 8);
 		sprite->addKeyframe(JUMP_RIGHT, glm::vec2(0.3125f, 0.f));
@@ -159,7 +146,7 @@ void Player::update(int deltaTime, int camx)
 
 	if (!in_the_air) {
 		//CALCULATE SPEEDS & ESTABLISH ANIMATIONS
-		if (Game::instance().getSpecialKey(GLUT_KEY_LEFT)) { //if the speed is above walk speed the animaton should be running
+		if (Game::instance().getSpecialKey(GLUT_KEY_LEFT)) {
 			//ANIMATIONS
 			sprite->setMirrored(true);
 			if (derrape) {
@@ -168,13 +155,13 @@ void Player::update(int deltaTime, int camx)
 				}
 			}
 			else if (speedX < -MAX_WALK_SPEED) {
-				if (sprite->animation() != SPRINT_LEFT) {
-					sprite->changeAnimation(SPRINT_LEFT);
+				if (sprite->animation() != SPRINT_RIGHT) {
+					sprite->changeAnimation(SPRINT_RIGHT);
 				}
 			}
 			else {
-				if (sprite->animation() != MOVE_LEFT) {
-					sprite->changeAnimation(MOVE_LEFT);
+				if (sprite->animation() != MOVE_RIGHT) {
+					sprite->changeAnimation(MOVE_RIGHT);
 				}
 			}
 			//SPEEDS
@@ -215,25 +202,25 @@ void Player::update(int deltaTime, int camx)
 		}
 		else {
 			if (speedX == 0) {
-				if (sprite->getMirrored()) {//(sprite->animation() == MOVE_LEFT or (sprite->animation() == JUMP_RIGHT and sprite->getMirrored())) {
-					sprite->changeAnimation(STAND_LEFT);
+				if (sprite->getMirrored()) {
+					sprite->changeAnimation(STAND_RIGHT);
 					sprite->setMirrored(true);
 				}
-				else if (!sprite->getMirrored()) { //(sprite->animation() == MOVE_RIGHT or (sprite->animation() == JUMP_RIGHT and !sprite->getMirrored())) {
+				else if (!sprite->getMirrored()) {
 					sprite->changeAnimation(STAND_RIGHT);
 					sprite->setMirrored(false);
 				}
 			}
 			else if (speedX < 0) {
 				speedX += ACCEL;
-				if (sprite->animation() != MOVE_LEFT) { //and speedX < -MAX_WALK_SPEED) {
-					sprite->changeAnimation(MOVE_LEFT);
+				if (sprite->animation() != MOVE_RIGHT) {
+					sprite->changeAnimation(MOVE_RIGHT);
 					sprite->setMirrored(true);
 				}
 			}
 			else {
 				speedX -= ACCEL;
-				if (sprite->animation() != MOVE_RIGHT) { //and speedX > MAX_WALK_SPEED) {
+				if (sprite->animation() != MOVE_RIGHT) {
 					sprite->changeAnimation(MOVE_RIGHT);
 					sprite->setMirrored(false);
 				}
