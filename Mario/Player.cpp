@@ -11,10 +11,10 @@
 #define MAX_JUMP_HEIGHT 150 //maximum jump height depends on jump angle step and jump agreggate
 #define JUMP_AGREGATE 5
 #define FALL_STEP 5
-#define MAX_WALK_SPEED 48  // :DIVISOR
-#define MAX_RUN_SPEED 96  // :DIVISOR
-#define DIVISOR 8
-#define NO_BUTTON_DIVISOR 4 // Augment d'inercia quan no es clica cap key.
+#define MAX_WALK_SPEED 36  // :DIVISOR
+#define MAX_RUN_SPEED 48  // :DIVISOR
+#define DIVISOR 16
+#define NO_BUTTON_DIVISOR 2 // Augment d'inercia quan no es clica cap key.
 #define MARIO_SIZE 16
 
 enum PlayerAnims
@@ -29,7 +29,7 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 	speedX = 0;
 	jumpAcu = 0;
 	jumpPress = false;
-	accel = 4;
+	accel = 2;
 	spritesheet.loadFromFile("images/tilesheet.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	sprite = Sprite::createSprite(glm::ivec2(MARIO_SIZE, MARIO_SIZE), glm::vec2(0.0625, 0.0625), &spritesheet, &shaderProgram);
 	sprite->setNumberAnimations(8);
