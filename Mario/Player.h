@@ -25,13 +25,12 @@ public:
 	
 private:
 	bool bJumping, jumpPress;
-	int speedX;
+	int speedX, accel;
 	glm::ivec2 tileMapDispl, posPlayer;
 	int jumpAngle, startY, jumpAcu;
 	Texture spritesheet;
 	Sprite *sprite;
 	TileMap *map;
-
 };
 
 

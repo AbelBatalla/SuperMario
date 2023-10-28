@@ -62,7 +62,7 @@ void Sprite::render(int offset) const
 	
 	if (mirrored) {
 		modelview = glm::scale(modelview, glm::vec3(-1.0f, 1.0f, 1.0f));
-		modelview = glm::translate(modelview, glm::vec3(-32.f, 0.0f, 0.0f));
+		modelview = glm::translate(modelview, glm::vec3(-16.f, 0.0f, 0.0f)); //MARIO_SIZE
 	}
 	
 	shaderProgram->setUniformMatrix4f("modelview", modelview);

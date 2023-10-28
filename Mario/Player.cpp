@@ -8,14 +8,14 @@
 
 #define JUMP_ANGLE_STEP 5
 #define MIN_JUMP_HEIGHT 50
-#define MAX_JUMP_HEIGHT 200 //maximum jump height depends on jump angle step and jump agreggate
+#define MAX_JUMP_HEIGHT 150 //maximum jump height depends on jump angle step and jump agreggate
 #define JUMP_AGREGATE 5
-#define FALL_STEP 6
-#define ACCEL 4
+#define FALL_STEP 5
 #define MAX_WALK_SPEED 48  // :DIVISOR
 #define MAX_RUN_SPEED 96  // :DIVISOR
-#define DIVISOR 16
+#define DIVISOR 8
 #define NO_BUTTON_DIVISOR 4 // Augment d'inercia quan no es clica cap key.
+#define MARIO_SIZE 16
 
 enum PlayerAnims
 {
@@ -29,8 +29,9 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 	speedX = 0;
 	jumpAcu = 0;
 	jumpPress = false;
+	accel = 4;
 	spritesheet.loadFromFile("images/tilesheet.png", TEXTURE_PIXEL_FORMAT_RGBA);
-	sprite = Sprite::createSprite(glm::ivec2(32, 32), glm::vec2(0.0625, 0.0625), &spritesheet, &shaderProgram);
+	sprite = Sprite::createSprite(glm::ivec2(MARIO_SIZE, MARIO_SIZE), glm::vec2(0.0625, 0.0625), &spritesheet, &shaderProgram);
 	sprite->setNumberAnimations(8);
 			
 		sprite->setAnimationSpeed(STAND_RIGHT, 8);
@@ -88,12 +89,14 @@ void Player::update(int deltaTime, int camx)
 			in_the_air = true;
 			posPlayer.y = int(startY - min(MIN_JUMP_HEIGHT + jumpAcu, MAX_JUMP_HEIGHT) * sin(3.14159f * jumpAngle / 180.f));
 			if (jumpAngle > 90) {
-				bJumping = false; //!map->collisionMoveDown(posPlayer, glm::ivec2(32, 32), &posPlayer.y);
+				bJumping = false;
 				Game::instance().setSpace(false);
 			}
 			else if (jumpPress){
-				if (Game::instance().getKey(' '))
+				if (Game::instance().getKey(' ')) {
 					jumpAcu += JUMP_AGREGATE;
+					jumpAngle -= JUMP_ANGLE_STEP / 3;
+				}
 				else jumpPress = false;
 			}
 			if (sprite->animation() != JUMP_RIGHT) {
@@ -104,7 +107,7 @@ void Player::update(int deltaTime, int camx)
 	else
 	{
 		posPlayer.y += FALL_STEP;
-		if(map->collisionMoveDown(posPlayer, glm::ivec2(32, 32), &posPlayer.y))
+		if(map->collisionMoveDown(posPlayer, glm::ivec2(MARIO_SIZE, MARIO_SIZE), &posPlayer.y))
 		{
 			in_the_air = false;
 			if(Game::instance().getKey(' '))
@@ -145,82 +148,71 @@ void Player::update(int deltaTime, int camx)
 		}
 	}
 
-	if (!in_the_air) {
-		//CALCULATE SPEEDS & ESTABLISH ANIMATIONS
+	if (in_the_air) accel = accel / 2;
+	//CALCULATE SPEEDS & ESTABLISH ANIMATIONS
+	if (Game::instance().getSpecialKey(GLUT_KEY_LEFT) or Game::instance().getSpecialKey(GLUT_KEY_RIGHT)) {
 		if (Game::instance().getSpecialKey(GLUT_KEY_LEFT)) {
-			//ANIMATIONS
-			sprite->setMirrored(true);
-			if (derrape) {
-				if (sprite->animation() != DRIFT_TO_RIGHT) {
-					sprite->changeAnimation(DRIFT_TO_RIGHT);
-				}
-			}
-			else if (speedX < -MAX_WALK_SPEED) {
-				if (sprite->animation() != SPRINT_RIGHT) {
-					sprite->changeAnimation(SPRINT_RIGHT);
-				}
-			}
-			else {
-				if (sprite->animation() != MOVE_RIGHT) {
-					sprite->changeAnimation(MOVE_RIGHT);
-				}
-			}
-			//SPEEDS
+			if (!in_the_air) sprite->setMirrored(true);
 			if (Game::instance().getKey('x')) {
-				if (speedX > -MAX_RUN_SPEED) speedX -= ACCEL;
+				if (speedX > -MAX_RUN_SPEED) speedX -= accel;
 			}
 			else {
-				if (speedX > -MAX_WALK_SPEED) speedX -= ACCEL;
-				if (speedX < -MAX_WALK_SPEED) speedX += ACCEL;
-			}
-		}
-		else if (Game::instance().getSpecialKey(GLUT_KEY_RIGHT)) {
-			//ANIMATIONS
-			sprite->setMirrored(false);
-			if (derrape) {
-				if (sprite->animation() != DRIFT_TO_RIGHT) {
-					sprite->changeAnimation(DRIFT_TO_RIGHT);
-				}
-			}
-			else if (speedX > MAX_WALK_SPEED) {
-				if (sprite->animation() != SPRINT_RIGHT) {
-					sprite->changeAnimation(SPRINT_RIGHT);
-				}
-			}
-			else {
-				if (sprite->animation() != MOVE_RIGHT) {
-					sprite->changeAnimation(MOVE_RIGHT);
-				}
-			}
-			//SPEEDS:
-			if (Game::instance().getKey('x')) {
-				if (speedX < MAX_RUN_SPEED) speedX += ACCEL;
-			}
-			else {
-				if (speedX < MAX_WALK_SPEED) speedX += ACCEL;
-				if (speedX > MAX_WALK_SPEED) speedX -= ACCEL;
+				if (speedX > -MAX_WALK_SPEED) speedX -= accel;
+				if (speedX < -MAX_WALK_SPEED) speedX += accel;
 			}
 		}
 		else {
-			if (speedX == 0) {
-				if (sprite->getMirrored()) {
-					sprite->changeAnimation(STAND_RIGHT);
-					sprite->setMirrored(true);
-				}
-				else if (!sprite->getMirrored()) {
-					sprite->changeAnimation(STAND_RIGHT);
-					sprite->setMirrored(false);
+			if (!in_the_air) sprite->setMirrored(false);
+			if (Game::instance().getKey('x')) {
+				if (speedX < MAX_RUN_SPEED) speedX += accel;
+			}
+			else {
+				if (speedX < MAX_WALK_SPEED) speedX += accel;
+				if (speedX > MAX_WALK_SPEED) speedX -= accel;
+			}
+		}
+
+		if (!in_the_air) {
+			if (derrape) {
+				if (sprite->animation() != DRIFT_TO_RIGHT) {
+					sprite->changeAnimation(DRIFT_TO_RIGHT);
 				}
 			}
-			else if (speedX < 0) {
-				speedX += ACCEL/NO_BUTTON_DIVISOR;
+			else if (speedX < -MAX_WALK_SPEED or speedX > MAX_WALK_SPEED) {
+				if (sprite->animation() != SPRINT_RIGHT) {
+					sprite->changeAnimation(SPRINT_RIGHT);
+				}
+			}
+			else {
+				if (sprite->animation() != MOVE_RIGHT) {
+					sprite->changeAnimation(MOVE_RIGHT);
+				}
+			}
+		}
+	}
+	else {
+		if (speedX == 0) {
+			if (sprite->getMirrored() and !in_the_air) {
+				sprite->changeAnimation(STAND_RIGHT);
+				sprite->setMirrored(true);
+			}
+			else if (!sprite->getMirrored() and !in_the_air) {
+				sprite->changeAnimation(STAND_RIGHT);
+				sprite->setMirrored(false);
+			}
+		}
+		else if (speedX < 0) {
+			if (!in_the_air) {
+				speedX += accel/NO_BUTTON_DIVISOR;
 				if (sprite->animation() != MOVE_RIGHT) {
 					sprite->changeAnimation(MOVE_RIGHT);
 					sprite->setMirrored(true);
 				}
 			}
-			else {
-				speedX -= ACCEL/NO_BUTTON_DIVISOR;
+		}
+		else {
+			if (!in_the_air) {
+				speedX -= accel / NO_BUTTON_DIVISOR;
 				if (sprite->animation() != MOVE_RIGHT) {
 					sprite->changeAnimation(MOVE_RIGHT);
 					sprite->setMirrored(false);
@@ -229,8 +221,10 @@ void Player::update(int deltaTime, int camx)
 		}
 	}
 
+	if (in_the_air) accel = accel * 2;
+
 	//UPDATE POSITIONS
-	if (!(speedX < 0 and (map->collisionMoveLeft(posPlayer, glm::ivec2(32, 32)) or posPlayer.x-camx <= 0)) and !(speedX > 0 and map->collisionMoveRight(posPlayer, glm::ivec2(32, 32)))) {
+	if (!(speedX < 0 and (map->collisionMoveLeft(posPlayer, glm::ivec2(MARIO_SIZE, MARIO_SIZE)) or posPlayer.x-camx <= 0)) and !(speedX > 0 and map->collisionMoveRight(posPlayer, glm::ivec2(MARIO_SIZE, MARIO_SIZE)))) {
 		posPlayer.x += speedX / DIVISOR;
 	}
 	else speedX = 0;
