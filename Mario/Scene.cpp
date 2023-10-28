@@ -9,7 +9,7 @@
 #define SCREEN_Y 32
 
 #define INIT_PLAYER_X_TILES 7
-#define INIT_PLAYER_Y_TILES 23
+#define INIT_PLAYER_Y_TILES 9
 
 
 Scene::Scene()
@@ -35,7 +35,7 @@ void Scene::init()
 	player->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram);
 	player->setPosition(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize(), INIT_PLAYER_Y_TILES * map->getTileSize()));
 	player->setTileMap(map);
-	projection = glm::ortho(0.f, float(SCREEN_WIDTH - 1), float(SCREEN_HEIGHT - 1), 0.f);
+	projection = glm::ortho(0.f, float(SCREEN_WIDTH/2 - 1), float(SCREEN_HEIGHT/2 - 1), 0.f);
 	currentTime = 0.0f;
 	camx = 0; //Posicio x al mon de l'inici de la pantalla
 	oldPosx = INIT_PLAYER_X_TILES;
