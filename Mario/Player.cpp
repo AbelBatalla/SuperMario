@@ -6,13 +6,13 @@
 #include "Game.h"
 
 
-#define JUMP_ANGLE_STEP 5
-#define MIN_JUMP_HEIGHT 50
-#define MAX_JUMP_HEIGHT 150 //maximum jump height depends on jump angle step and jump agreggate
-#define JUMP_AGREGATE 5
-#define FALL_STEP 5
-#define MAX_WALK_SPEED 36  // :DIVISOR
-#define MAX_RUN_SPEED 48  // :DIVISOR
+#define JUMP_ANGLE_STEP 7
+#define MIN_JUMP_HEIGHT 24
+#define MAX_JUMP_HEIGHT 64 //maximum jump height depends on jump angle step and jump agreggate
+#define JUMP_AGREGATE 2
+#define FALL_STEP 3
+#define MAX_WALK_SPEED 36  // :DIVISOR //Es pot incrementar inèrcia incrementant aquests parametres sense que passin un modul del divisor
+#define MAX_RUN_SPEED 50  // :DIVISOR
 #define DIVISOR 16
 #define NO_BUTTON_DIVISOR 2 // Augment d'inercia quan no es clica cap key.
 #define MARIO_SIZE 16
@@ -79,7 +79,7 @@ void Player::update(int deltaTime, int camx)
 	if(bJumping)
 	{
 		jumpAngle += JUMP_ANGLE_STEP;
-		if(jumpAngle == 180)
+		if(jumpAngle >= 180)
 		{
 			bJumping = false;
 			posPlayer.y = startY;
@@ -87,7 +87,6 @@ void Player::update(int deltaTime, int camx)
 		else
 		{
 			in_the_air = true;
-			posPlayer.y = int(startY - min(MIN_JUMP_HEIGHT + jumpAcu, MAX_JUMP_HEIGHT) * sin(3.14159f * jumpAngle / 180.f));
 			if (jumpAngle > 90) {
 				bJumping = false;
 				Game::instance().setSpace(false);
@@ -95,10 +94,11 @@ void Player::update(int deltaTime, int camx)
 			else if (jumpPress){
 				if (Game::instance().getKey(' ')) {
 					jumpAcu += JUMP_AGREGATE;
-					jumpAngle -= JUMP_ANGLE_STEP / 3;
+					jumpAngle -= JUMP_ANGLE_STEP/2;
 				}
 				else jumpPress = false;
 			}
+			posPlayer.y = int(startY - min(MIN_JUMP_HEIGHT + jumpAcu, MAX_JUMP_HEIGHT) * sin(3.14159f * jumpAngle / 180.f));
 			if (sprite->animation() != JUMP_RIGHT) {
 				sprite->changeAnimation(JUMP_RIGHT);
 			}
@@ -191,7 +191,7 @@ void Player::update(int deltaTime, int camx)
 		}
 	}
 	else {
-		if (speedX == 0) {
+		if (speedX / DIVISOR == 0) {
 			if (sprite->getMirrored() and !in_the_air) {
 				sprite->changeAnimation(STAND_RIGHT);
 				sprite->setMirrored(true);
