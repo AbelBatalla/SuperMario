@@ -15,6 +15,7 @@ void Game::init()
 	goGame = false;
 	goInstructions = false;
 	goCredits = false;
+	spaceRelease = true;
 	//glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
@@ -61,13 +62,21 @@ void Game::keyPressed(int key)
 	if (idMenu == 2 && key == 13) goInstructions = true;
 	if (idMenu == 3 && key == 13) goCredits = true;
 	if (key == 66 || key == 98) goGame = false;
+	if (key == ' ') {
+		if (spaceRelease) {
+			keys[key] = true;
+			spaceRelease = false;
+		}
+	} else { 
+		keys[key] = true;
+	}
 
-	keys[key] = true;
 }
 
 void Game::keyReleased(int key)
 {
 	keys[key] = false;
+	if (key == ' ') spaceRelease = true;
 }
 
 void Game::specialKeyPressed(int key)
@@ -102,6 +111,10 @@ bool Game::getSpecialKey(int key) const
 	return specialKeys[key];
 }
 
+void Game::setSpace(bool set)
+{
+	keys[' '] = set;
+}
 
 
 

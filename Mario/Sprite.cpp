@@ -34,6 +34,14 @@ Sprite::Sprite(const glm::vec2 &quadSize, const glm::vec2 &sizeInSpritesheet, Te
 	position = glm::vec2(0.f);
 }
 
+void Sprite::setMirrored(bool mirror) {
+	mirrored = mirror;
+}
+
+bool Sprite::getMirrored() {
+	return mirrored;
+}
+
 void Sprite::update(int deltaTime)
 {
 	if(currentAnimation >= 0)
@@ -51,6 +59,12 @@ void Sprite::update(int deltaTime)
 void Sprite::render(int offset) const
 {
 	glm::mat4 modelview = glm::translate(glm::mat4(1.0f), glm::vec3(position.x-offset, position.y, 0.f));
+	
+	if (mirrored) {
+		modelview = glm::scale(modelview, glm::vec3(-1.0f, 1.0f, 1.0f));
+		modelview = glm::translate(modelview, glm::vec3(-16.f, 0.0f, 0.0f)); //MARIO_SIZE
+	}
+	
 	shaderProgram->setUniformMatrix4f("modelview", modelview);
 	shaderProgram->setUniform2f("texCoordDispl", texCoordDispl.x, texCoordDispl.y);
 	glEnable(GL_TEXTURE_2D);
@@ -99,6 +113,11 @@ void Sprite::changeAnimation(int animId)
 int Sprite::animation() const
 {
 	return currentAnimation;
+}
+
+int Sprite::getFrame() const
+{
+	return currentKeyframe;
 }
 
 void Sprite::setPosition(const glm::vec2 &pos)
