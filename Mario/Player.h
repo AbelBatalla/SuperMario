@@ -24,12 +24,12 @@ public:
 	int getPosX();
 	
 private:
-	bool bJumping, jumpPress;
+	bool bJumping, jumpPress, super, star;
 	int speedX, accel;
 	glm::ivec2 tileMapDispl, posPlayer;
-	int jumpAngle, startY, jumpAcu;
+	int jumpAngle, startY, jumpAcu, starOffset;
 	Texture spritesheet;
-	Sprite *sprite;
+	Sprite *sprite, *spriteT;
 	TileMap *map;
 };
 
