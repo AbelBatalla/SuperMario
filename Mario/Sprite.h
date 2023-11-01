@@ -25,17 +25,17 @@ public:
 
 	void setMirrored(bool mirror);
 	bool getMirrored();
-	void update(int deltaTime);
+	void update(int deltaTime, bool star);
 	void render(int offset) const;
 	void free();
 
 	void setNumberAnimations(int nAnimations);
 	void setAnimationSpeed(int animId, int keyframesPerSec);
 	void addKeyframe(int animId, const glm::vec2 &frame);
-	void changeAnimation(int animId);
+	void changeAnimation(int animId, int starOffset);
 	int animation() const;
 	int getFrame() const;
-
+	void removeStar(int starOffset);
 
 	void setPosition(const glm::vec2 &pos);
 
