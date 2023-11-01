@@ -27,6 +27,8 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 	super = false;
 	star = false;
 	starOffset = 0;
+	starCounter = 0;
+	starTime = 0;
 	bJumping = false;
 	speedX = 0;
 	jumpAcu = 0;
@@ -40,31 +42,73 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 			
 	sprite->setAnimationSpeed(STAND_RIGHT, 8);
 	sprite->addKeyframe(STAND_RIGHT, glm::vec2(0.0f, 0.0f));
+	sprite->addKeyframe(STAND_RIGHT, glm::vec2(0.0f, 0.46875f));
+	sprite->addKeyframe(STAND_RIGHT, glm::vec2(0.0f, 0.28125f));
+	sprite->addKeyframe(STAND_RIGHT, glm::vec2(0.0f, 0.375f));
+
 		
 	sprite->setAnimationSpeed(MOVE_RIGHT, 12);
 	sprite->addKeyframe(MOVE_RIGHT, glm::vec2(0.0625f, 0.0f));
+	sprite->addKeyframe(MOVE_RIGHT, glm::vec2(0.0625f, 0.46875f));
+	sprite->addKeyframe(MOVE_RIGHT, glm::vec2(0.0625f, 0.28125f));
+	sprite->addKeyframe(MOVE_RIGHT, glm::vec2(0.0625f, 0.375f));
+
 	sprite->addKeyframe(MOVE_RIGHT, glm::vec2(0.03125f, 0.0f));
+	sprite->addKeyframe(MOVE_RIGHT, glm::vec2(0.03125f, 0.46875f));
+	sprite->addKeyframe(MOVE_RIGHT, glm::vec2(0.03125f, 0.28125f));
+	sprite->addKeyframe(MOVE_RIGHT, glm::vec2(0.03125f, 0.375f));
+
 	sprite->addKeyframe(MOVE_RIGHT, glm::vec2(0.09375f, 0.0f));
+	sprite->addKeyframe(MOVE_RIGHT, glm::vec2(0.09375f, 0.46875f));
+	sprite->addKeyframe(MOVE_RIGHT, glm::vec2(0.09375f, 0.28125f));
+	sprite->addKeyframe(MOVE_RIGHT, glm::vec2(0.09375f, 0.375f));
+
 
 	sprite->setAnimationSpeed(FALL_RIGHT1, 8);
-	sprite->addKeyframe(FALL_RIGHT3, glm::vec2(0.0625f, 0.0f));
+	sprite->addKeyframe(FALL_RIGHT1, glm::vec2(0.0625f, 0.0f));
+	sprite->addKeyframe(FALL_RIGHT1, glm::vec2(0.0625f, 0.46875f));
+	sprite->addKeyframe(FALL_RIGHT1, glm::vec2(0.0625f, 0.28125f));
+	sprite->addKeyframe(FALL_RIGHT1, glm::vec2(0.0625f, 0.375f));
 
 	sprite->setAnimationSpeed(FALL_RIGHT2, 8);
 	sprite->addKeyframe(FALL_RIGHT2, glm::vec2(0.03125f, 0.0f));
+	sprite->addKeyframe(FALL_RIGHT2, glm::vec2(0.03125f, 0.46875f));
+	sprite->addKeyframe(FALL_RIGHT2, glm::vec2(0.03125f, 0.28125f));
+	sprite->addKeyframe(FALL_RIGHT2, glm::vec2(0.03125f, 0.375f));
 
 	sprite->setAnimationSpeed(FALL_RIGHT3, 8);
-	sprite->addKeyframe(FALL_RIGHT1, glm::vec2(0.09375f, 0.0f));
+	sprite->addKeyframe(FALL_RIGHT3, glm::vec2(0.09375f, 0.0f));
+	sprite->addKeyframe(FALL_RIGHT3, glm::vec2(0.09375f, 0.46875f));
+	sprite->addKeyframe(FALL_RIGHT3, glm::vec2(0.09375f, 0.28125f));
+	sprite->addKeyframe(FALL_RIGHT3, glm::vec2(0.09375f, 0.375f));
 
 	sprite->setAnimationSpeed(SPRINT_RIGHT, 32);
 	sprite->addKeyframe(SPRINT_RIGHT, glm::vec2(0.0625f, 0.0f));
+	sprite->addKeyframe(SPRINT_RIGHT, glm::vec2(0.0625f, 0.46875f));
+	sprite->addKeyframe(SPRINT_RIGHT, glm::vec2(0.0625f, 0.28125f));
+	sprite->addKeyframe(SPRINT_RIGHT, glm::vec2(0.0625f, 0.375f));
+
 	sprite->addKeyframe(SPRINT_RIGHT, glm::vec2(0.03125f, 0.0f));
+	sprite->addKeyframe(SPRINT_RIGHT, glm::vec2(0.03125f, 0.46875f));
+	sprite->addKeyframe(SPRINT_RIGHT, glm::vec2(0.03125f, 0.28125f));
+	sprite->addKeyframe(SPRINT_RIGHT, glm::vec2(0.03125f, 0.375f));
+
 	sprite->addKeyframe(SPRINT_RIGHT, glm::vec2(0.09375f, 0.0f));
+	sprite->addKeyframe(SPRINT_RIGHT, glm::vec2(0.09375f, 0.46875f));
+	sprite->addKeyframe(SPRINT_RIGHT, glm::vec2(0.09375f, 0.28125f));
+	sprite->addKeyframe(SPRINT_RIGHT, glm::vec2(0.09375f, 0.375f));
 
 	sprite->setAnimationSpeed(JUMP_RIGHT, 8);
 	sprite->addKeyframe(JUMP_RIGHT, glm::vec2(0.15625f, 0.0f));
+	sprite->addKeyframe(JUMP_RIGHT, glm::vec2(0.15625f, 0.46875f));
+	sprite->addKeyframe(JUMP_RIGHT, glm::vec2(0.15625f, 0.28125f));
+	sprite->addKeyframe(JUMP_RIGHT, glm::vec2(0.15625f, 0.375f));
 
 	sprite->setAnimationSpeed(DRIFT_TO_RIGHT, 8);
 	sprite->addKeyframe(DRIFT_TO_RIGHT, glm::vec2(0.125f, 0.0f));
+	sprite->addKeyframe(DRIFT_TO_RIGHT, glm::vec2(0.125f, 0.46875f));
+	sprite->addKeyframe(DRIFT_TO_RIGHT, glm::vec2(0.125f, 0.28125f));
+	sprite->addKeyframe(DRIFT_TO_RIGHT, glm::vec2(0.125f, 0.375f));
 		
 	sprite->changeAnimation(0, 0);
 	sprite->setMirrored(false);
@@ -77,31 +121,71 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 
 	spriteT->setAnimationSpeed(STAND_RIGHT, 8);
 	spriteT->addKeyframe(STAND_RIGHT, glm::vec2(0.0f, 0.0625f));
+	spriteT->addKeyframe(STAND_RIGHT, glm::vec2(0.0f, 0.53125f));
+	spriteT->addKeyframe(STAND_RIGHT, glm::vec2(0.0f, 0.34375f));
+	spriteT->addKeyframe(STAND_RIGHT, glm::vec2(0.0f, 0.4375f));
 
 	spriteT->setAnimationSpeed(MOVE_RIGHT, 12);
 	spriteT->addKeyframe(MOVE_RIGHT, glm::vec2(0.0625f, 0.0625f));
+	spriteT->addKeyframe(MOVE_RIGHT, glm::vec2(0.0625f, 0.53125f));
+	spriteT->addKeyframe(MOVE_RIGHT, glm::vec2(0.0625f, 0.34375f));
+	spriteT->addKeyframe(MOVE_RIGHT, glm::vec2(0.0625f, 0.4375f));
+
 	spriteT->addKeyframe(MOVE_RIGHT, glm::vec2(0.03125f, 0.0625f));
+	spriteT->addKeyframe(MOVE_RIGHT, glm::vec2(0.03125f, 0.53125f));
+	spriteT->addKeyframe(MOVE_RIGHT, glm::vec2(0.03125f, 0.34375f));
+	spriteT->addKeyframe(MOVE_RIGHT, glm::vec2(0.03125f, 0.4375f));
+
 	spriteT->addKeyframe(MOVE_RIGHT, glm::vec2(0.09375f, 0.0625f));
+	spriteT->addKeyframe(MOVE_RIGHT, glm::vec2(0.09375f, 0.53125f));
+	spriteT->addKeyframe(MOVE_RIGHT, glm::vec2(0.09375f, 0.34375f));
+	spriteT->addKeyframe(MOVE_RIGHT, glm::vec2(0.09375f, 0.4375f));
 
 	spriteT->setAnimationSpeed(FALL_RIGHT1, 8);
 	spriteT->addKeyframe(FALL_RIGHT1, glm::vec2(0.0625f, 0.0625f));
+	spriteT->addKeyframe(FALL_RIGHT1, glm::vec2(0.0625f, 0.53125f));
+	spriteT->addKeyframe(FALL_RIGHT1, glm::vec2(0.0625f, 0.34375f));
+	spriteT->addKeyframe(FALL_RIGHT1, glm::vec2(0.0625f, 0.4375f));
 
 	spriteT->setAnimationSpeed(FALL_RIGHT2, 8);
 	spriteT->addKeyframe(FALL_RIGHT2, glm::vec2(0.03125f, 0.0625f));
+	spriteT->addKeyframe(FALL_RIGHT2, glm::vec2(0.03125f, 0.53125f));
+	spriteT->addKeyframe(FALL_RIGHT2, glm::vec2(0.03125f, 0.34375f));
+	spriteT->addKeyframe(FALL_RIGHT2, glm::vec2(0.03125f, 0.4375f));
 
 	spriteT->setAnimationSpeed(FALL_RIGHT3, 8);
 	spriteT->addKeyframe(FALL_RIGHT3, glm::vec2(0.09375f, 0.0625f));
+	spriteT->addKeyframe(FALL_RIGHT3, glm::vec2(0.09375f, 0.53125f));
+	spriteT->addKeyframe(FALL_RIGHT3, glm::vec2(0.09375f, 0.34375f));
+	spriteT->addKeyframe(FALL_RIGHT3, glm::vec2(0.09375f, 0.4375f));
 
 	spriteT->setAnimationSpeed(SPRINT_RIGHT, 32);
 	spriteT->addKeyframe(SPRINT_RIGHT, glm::vec2(0.0625f, 0.0625f));
+	spriteT->addKeyframe(SPRINT_RIGHT, glm::vec2(0.0625f, 0.53125f));
+	spriteT->addKeyframe(SPRINT_RIGHT, glm::vec2(0.0625f, 0.34375f));
+	spriteT->addKeyframe(SPRINT_RIGHT, glm::vec2(0.0625f, 0.4375f));
+
 	spriteT->addKeyframe(SPRINT_RIGHT, glm::vec2(0.03125f, 0.0625f));
+	spriteT->addKeyframe(SPRINT_RIGHT, glm::vec2(0.03125f, 0.53125f));
+	spriteT->addKeyframe(SPRINT_RIGHT, glm::vec2(0.03125f, 0.34375f));
+	spriteT->addKeyframe(SPRINT_RIGHT, glm::vec2(0.03125f, 0.4375f));
+	
 	spriteT->addKeyframe(SPRINT_RIGHT, glm::vec2(0.09375f, 0.0625f));
+	spriteT->addKeyframe(SPRINT_RIGHT, glm::vec2(0.09375f, 0.53125f));
+	spriteT->addKeyframe(SPRINT_RIGHT, glm::vec2(0.09375f, 0.34375f));
+	spriteT->addKeyframe(SPRINT_RIGHT, glm::vec2(0.09375f, 0.4375f));
 
 	spriteT->setAnimationSpeed(JUMP_RIGHT, 8);
 	spriteT->addKeyframe(JUMP_RIGHT, glm::vec2(0.15625f, 0.0625f));
+	spriteT->addKeyframe(JUMP_RIGHT, glm::vec2(0.15625f, 0.53125f));
+	spriteT->addKeyframe(JUMP_RIGHT, glm::vec2(0.15625f, 0.34375f));
+	spriteT->addKeyframe(JUMP_RIGHT, glm::vec2(0.15625f, 0.4375f));
 
 	spriteT->setAnimationSpeed(DRIFT_TO_RIGHT, 8);
 	spriteT->addKeyframe(DRIFT_TO_RIGHT, glm::vec2(0.125f, 0.0625f));
+	spriteT->addKeyframe(DRIFT_TO_RIGHT, glm::vec2(0.125f, 0.53125f));
+	spriteT->addKeyframe(DRIFT_TO_RIGHT, glm::vec2(0.125f, 0.34375f));
+	spriteT->addKeyframe(DRIFT_TO_RIGHT, glm::vec2(0.125f, 0.4375f));
 
 	spriteT->changeAnimation(0, 0);
 	spriteT->setMirrored(false);
@@ -112,13 +196,35 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 
 void Player::update(int deltaTime, int camx)
 {
+	bool updateStar = false;
+	if (star) {
+		starTime += deltaTime;
+		if (starTime >= 12000) star = false;
+		else {
+			starCounter += 1;
+			if (starCounter >= 2) { //Indica velocitat del canvid e color del star, ha de ser 2 o 3
+				starCounter = 0;
+				updateStar = true;
+				starOffset = (starOffset + 1) % 4;
+			}
+		}
+	}
 	if (Game::instance().getKey('q') and !super) {
 		super = true;
 		posPlayer.y -= 32;
 	}
 	if (Game::instance().getKey('w') and super) super = false;
-	if (super) sprite->update(deltaTime, star ? starOffset : 0);
-	else spriteT->update(deltaTime, star ? starOffset : 0);
+	if (Game::instance().getKey('e') and !star) star = true;
+	if ((Game::instance().getKey('r') and star) or starTime >= 12000) {
+		if (super) sprite->removeStar(starOffset);
+		else spriteT->removeStar(starOffset);
+		star = false;
+		starOffset = 0;
+		starCounter = 0;
+		starTime = 0;
+	}
+	if (super) sprite->update(deltaTime, updateStar);
+	else spriteT->update(deltaTime, updateStar);
 	bool in_the_air = false;
 	bool derrape = (speedX > 0 and Game::instance().getSpecialKey(GLUT_KEY_LEFT) or speedX < 0 and Game::instance().getSpecialKey(GLUT_KEY_RIGHT));
 
@@ -161,8 +267,7 @@ void Player::update(int deltaTime, int camx)
 	else
 	{
 		posPlayer.y += FALL_STEP;
-		if(map->collisionMoveDown(posPlayer, glm::ivec2(MARIO_SIZE, MARIO_SIZE*(super? 2 : 1)), &posPlayer.y))
-		{
+		if(map->collisionMoveDown(posPlayer, glm::ivec2(MARIO_SIZE, MARIO_SIZE*(super? 2 : 1)), &posPlayer.y)) {
 			in_the_air = false;
 			if(Game::instance().getKey(' '))
 			{
@@ -183,7 +288,7 @@ void Player::update(int deltaTime, int camx)
 			//FALLING
 			if (super and (sprite->animation() != JUMP_RIGHT and !(sprite->animation() == FALL_RIGHT3 or sprite->animation() == FALL_RIGHT2 or sprite->animation() == FALL_RIGHT1))
 				or !super and (spriteT->animation() != JUMP_RIGHT and !(spriteT->animation() == FALL_RIGHT3 or spriteT->animation() == FALL_RIGHT2 or spriteT->animation() == FALL_RIGHT1))) {
-				int frame = super? sprite->getFrame() : spriteT->getFrame();
+				int frame = super? sprite->getFrame() / 4 : spriteT->getFrame() / 4;
 				if (frame == 2) {
 					if (super) {
 						if (sprite->animation() != FALL_RIGHT3) {
@@ -224,7 +329,7 @@ void Player::update(int deltaTime, int camx)
 		}
 	}
 
-	if (in_the_air) accel = accel / 2;
+	//if (in_the_air) accel = accel / 2;
 	//CALCULATE SPEEDS & ESTABLISH ANIMATIONS
 	if (Game::instance().getSpecialKey(GLUT_KEY_LEFT) or Game::instance().getSpecialKey(GLUT_KEY_RIGHT)) {
 		if (Game::instance().getSpecialKey(GLUT_KEY_LEFT)) {
@@ -297,33 +402,56 @@ void Player::update(int deltaTime, int camx)
 	else {
 		if (speedX / DIVISOR == 0) {
 			if (!in_the_air) {
-				if (super) sprite->changeAnimation(STAND_RIGHT, star ? starOffset : 0);
-				else spriteT->changeAnimation(STAND_RIGHT, star ? starOffset : 0);
+				if (super) {
+					if (sprite->animation() != STAND_RIGHT) {
+						sprite->changeAnimation(STAND_RIGHT, star ? starOffset : 0);
+					}
+				}
+				else {
+					if (spriteT->animation() != STAND_RIGHT) {
+						spriteT->changeAnimation(STAND_RIGHT, star ? starOffset : 0);
+					}
+				}
+				speedX = 0;
 			}
 		}
 		else if (speedX < 0) {
 			if (!in_the_air) {
 				speedX += accel/NO_BUTTON_DIVISOR;
-				if (sprite->animation() != MOVE_RIGHT) {
-					sprite->changeAnimation(MOVE_RIGHT, star ? starOffset : 0);
-					sprite->setMirrored(true);
-					spriteT->setMirrored(true);
+				if (super) {
+					if (sprite->animation() != MOVE_RIGHT) {
+						sprite->changeAnimation(MOVE_RIGHT, star ? starOffset : 0);
+					}
 				}
+				else {
+					if (spriteT->animation() != MOVE_RIGHT) {
+						spriteT->changeAnimation(MOVE_RIGHT, star ? starOffset : 0);
+					}
+				}
+				sprite->setMirrored(true);
+				spriteT->setMirrored(true);
 			}
 		}
 		else {
 			if (!in_the_air) {
 				speedX -= accel / NO_BUTTON_DIVISOR;
-				if (sprite->animation() != MOVE_RIGHT) {
-					sprite->changeAnimation(MOVE_RIGHT, star ? starOffset : 0);
-					sprite->setMirrored(false);
-					spriteT->setMirrored(false);
+				if (super) {
+					if (sprite->animation() != MOVE_RIGHT) {
+						sprite->changeAnimation(MOVE_RIGHT, star ? starOffset : 0);
+					}
 				}
+				else {
+					if (spriteT->animation() != MOVE_RIGHT) {
+						spriteT->changeAnimation(MOVE_RIGHT, star ? starOffset : 0);
+					}
+				}
+				sprite->setMirrored(false);
+				spriteT->setMirrored(false);
 			}
 		}
 	}
 
-	if (in_the_air) accel = accel * 2;
+	//if (in_the_air) accel = accel * 2;
 
 	//UPDATE POSITIONS
 	if (!(speedX < 0 and (map->collisionMoveLeft(posPlayer, glm::ivec2(MARIO_SIZE, MARIO_SIZE)) or posPlayer.x-camx <= 0)) and !(speedX > 0 and map->collisionMoveRight(posPlayer, glm::ivec2(MARIO_SIZE, MARIO_SIZE)))) {

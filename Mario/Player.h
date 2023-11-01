@@ -27,7 +27,7 @@ private:
 	bool bJumping, jumpPress, super, star;
 	int speedX, accel;
 	glm::ivec2 tileMapDispl, posPlayer;
-	int jumpAngle, startY, jumpAcu, starOffset;
+	int jumpAngle, startY, jumpAcu, starOffset, starCounter, starTime;
 	Texture spritesheet;
 	Sprite *sprite, *spriteT;
 	TileMap *map;

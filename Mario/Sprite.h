@@ -25,7 +25,7 @@ public:
 
 	void setMirrored(bool mirror);
 	bool getMirrored();
-	void update(int deltaTime, int starOffset);
+	void update(int deltaTime, bool star);
 	void render(int offset) const;
 	void free();
 
@@ -35,7 +35,7 @@ public:
 	void changeAnimation(int animId, int starOffset);
 	int animation() const;
 	int getFrame() const;
-
+	void removeStar(int starOffset);
 
 	void setPosition(const glm::vec2 &pos);
 

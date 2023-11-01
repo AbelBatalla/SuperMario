@@ -11,7 +11,7 @@
 #define ZOOM 2
 
 #define INIT_PLAYER_X_TILES 7
-#define INIT_PLAYER_Y_TILES 9
+#define INIT_PLAYER_Y_TILES 10
 
 
 Scene::Scene()

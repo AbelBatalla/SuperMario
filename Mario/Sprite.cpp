@@ -42,7 +42,7 @@ bool Sprite::getMirrored() {
 	return mirrored;
 }
 
-void Sprite::update(int deltaTime, int starOffset)
+void Sprite::update(int deltaTime, bool star)
 {
 	if(currentAnimation >= 0)
 	{
@@ -50,8 +50,9 @@ void Sprite::update(int deltaTime, int starOffset)
 		while(timeAnimation > animations[currentAnimation].millisecsPerKeyframe)
 		{
 			timeAnimation -= animations[currentAnimation].millisecsPerKeyframe;
-			currentKeyframe = (currentKeyframe + 4 + starOffset) % animations[currentAnimation].keyframeDispl.size();
+			currentKeyframe = (currentKeyframe + 4) % animations[currentAnimation].keyframeDispl.size(); //no cal modul?
 		}
+		if (star) currentKeyframe = (currentKeyframe + (currentKeyframe % 4 == 3 ? -3 : 1)) % animations[currentAnimation].keyframeDispl.size();
 		texCoordDispl = animations[currentAnimation].keyframeDispl[currentKeyframe];
 	}
 }
@@ -123,6 +124,11 @@ int Sprite::getFrame() const
 void Sprite::setPosition(const glm::vec2 &pos)
 {
 	position = pos;
+}
+
+void Sprite::removeStar(int starOffset)
+{
+	currentKeyframe -= starOffset;
 }
 
 
