@@ -30,6 +30,7 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 	jumpAcu = 0;
 	jumpPress = false;
 	accel = 2;
+	collectedCoins = 0;
 	spritesheet.loadFromFile("images/tilesheet.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	sprite = Sprite::createSprite(glm::ivec2(MARIO_SIZE, MARIO_SIZE), glm::vec2(0.0625, 0.0625), &spritesheet, &shaderProgram);
 	sprite->setNumberAnimations(8);
@@ -74,7 +75,7 @@ void Player::update(int deltaTime, int camx)
 	sprite->update(deltaTime);
 	bool in_the_air = false;
 	bool derrape = (speedX > 0 and Game::instance().getSpecialKey(GLUT_KEY_LEFT) or speedX < 0 and Game::instance().getSpecialKey(GLUT_KEY_RIGHT));
-
+	
 	//JUMP
 	if(bJumping)
 	{
@@ -246,6 +247,11 @@ void Player::setPosition(const glm::vec2 &pos)
 {
 	posPlayer = pos;
 	sprite->setPosition(glm::vec2(float(tileMapDispl.x + posPlayer.x), float(tileMapDispl.y + posPlayer.y)));
+}
+
+glm::vec2 Player::getPos()
+{
+	return posPlayer;
 }
 
 int Player::getPosX()

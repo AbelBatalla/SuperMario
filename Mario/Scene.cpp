@@ -3,10 +3,11 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "Scene.h"
 #include "Game.h"
+#include "Coin.h"
 
 
 #define SCREEN_X 0
-#define SCREEN_Y 32
+#define SCREEN_Y -80
 
 #define ZOOM 2
 
@@ -32,7 +33,17 @@ Scene::~Scene()
 void Scene::init()
 {
 	initShaders();
-	map = TileMap::createTileMap("levels/level01.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
+	map = TileMap::createTileMap("levels/mapa3.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
+
+	std::vector<glm::ivec2> coinPositions = map->getCoinPositions();
+	for (const glm::ivec2& coinPos : coinPositions) {
+		Coin* coin = new Coin(0, 0);
+		coin->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram); // Inicializa una moneda en la posición del mapa
+		coin->setPosition(glm::vec2(coinPos.x * map->getTileSize(), coinPos.y * map->getTileSize()));
+		coins.push_back(coin); // Agrega la moneda al vector de monedas
+	}
+
+
 	player = new Player();
 	player->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram);
 	player->setPosition(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize(), INIT_PLAYER_Y_TILES * map->getTileSize()));
@@ -47,11 +58,27 @@ void Scene::update(int deltaTime)
 {
 	currentTime += deltaTime;
 	player->update(deltaTime, camx);
+
+	for (int i = 0; i < coins.size(); i++) {
+		if (coins[i] != nullptr) {
+			if (coins[i]->isCollected(player->getPos(), 16)) {
+				delete coins[i]; // Elimina la moneda actual
+				coins[i] = nullptr;
+			}
+			else coins[i]->update(deltaTime);
+		}
+	}
+
+	// Limpia las monedas nulas del vector (opcional)
+	//coins.erase(std::remove(coins.begin(), coins.end(), nullptr), coins.end());
+
+	
 }
 
 void Scene::render()
 {
 	glm::mat4 modelview;
+
 
 	texProgram.use();
 	texProgram.setUniformMatrix4f("projection", projection);
@@ -73,7 +100,13 @@ void Scene::render()
 	texProgram.setUniformMatrix4f("modelview", modelview);
 	texProgram.setUniform2f("texCoordDispl", 0.f, 0.f);
 	map->render();
+	for (const Coin* coin : coins) {
+		if (coin != nullptr) {
+			coin->render(camx);
+		}
+	}
 	player->render(camx);
+	
 }
 
 void Scene::initShaders()

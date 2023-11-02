@@ -21,6 +21,7 @@ public:
 	void setTileMap(TileMap *tileMap);
 	void setPosition(const glm::vec2 &pos);
 
+	glm::vec2 getPos();
 	int getPosX();
 	
 private:
@@ -31,6 +32,7 @@ private:
 	Texture spritesheet;
 	Sprite *sprite;
 	TileMap *map;
+	int collectedCoins;
 };
 
 
