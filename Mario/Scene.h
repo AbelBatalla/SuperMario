@@ -33,6 +33,7 @@ private:
 	float currentTime;
 	glm::mat4 projection;
 	int camx, oldPosx;
+	std::vector<Coin*> coins;
 };
 
 

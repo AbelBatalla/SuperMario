@@ -97,6 +97,11 @@ bool TileMap::loadLevel(const string &levelFile)
 				num *= 10;
 				num += tile - int('0');
 			}
+			
+			if (num == 99) {
+				coinPositions.push_back(glm::ivec2(i / 3, j));
+				num = 0;
+			}
 			map[j*mapSize.x+i/3] = num;
 		}
 		fin.get(tile);
@@ -108,6 +113,10 @@ bool TileMap::loadLevel(const string &levelFile)
 	fin.close();
 	
 	return true;
+}
+
+const std::vector<glm::ivec2>& TileMap::getCoinPositions() const {
+	return coinPositions;
 }
 
 void TileMap::prepareArrays(const glm::vec2 &minCoords, ShaderProgram &program)
@@ -230,3 +239,4 @@ bool TileMap::collisionMoveUp(const glm::ivec2& pos, const glm::ivec2& size, int
 
 	return false;
 }
+

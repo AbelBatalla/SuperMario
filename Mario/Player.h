@@ -21,7 +21,9 @@ public:
 	void setTileMap(TileMap *tileMap);
 	void setPosition(const glm::vec2 &pos);
 
+	glm::vec2 getPos();
 	int getPosX();
+	bool getMarioState();
 	
 private:
 	bool bJumping, jumpPress, super, star, superTransition;
@@ -30,6 +32,7 @@ private:
 	Texture spritesheet;
 	Sprite *sprite, *spriteT;
 	TileMap *map;
+	int collectedCoins;
 };
 
 

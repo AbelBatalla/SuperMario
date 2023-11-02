@@ -11,7 +11,7 @@
 #define MAX_JUMP_HEIGHT 70 //maximum jump height depends on jump angle step and jump agreggate
 #define JUMP_AGREGATE 2
 #define FALL_STEP 3
-#define MAX_WALK_SPEED 36  // :DIVISOR //Es pot incrementar inèrcia incrementant aquests parametres sense que passin un modul del divisor
+#define MAX_WALK_SPEED 36  // :DIVISOR //Es pot incrementar inÃ¨rcia incrementant aquests parametres sense que passin un modul del divisor
 #define MAX_RUN_SPEED 50  // :DIVISOR
 #define DIVISOR 16
 #define NO_BUTTON_DIVISOR 2 // Augment d'inercia quan no es clica cap key.
@@ -39,6 +39,9 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 	jumpAcu = 0;
 	jumpPress = false;
 	accel = 2;
+
+	collectedCoins = 0;
+
 	spritesheet.loadFromFile("images/marioSpritesheet2.png", TEXTURE_PIXEL_FORMAT_RGBA);
 
 	//SUPER
@@ -262,6 +265,7 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 
 bool Player::update(int deltaTime, int camx)
 {
+
 	timeLife += deltaTime;
 	//FALTA COMPROVACIO MORT PER ENEMICS
 	if (posPlayer.y >= (map->getMapHeight()-2)*16 or timeLife >= 200000) { //200000 -> 200s which are represented in units of 0.5s, so the "timer" starts at 400
@@ -605,6 +609,10 @@ void Player::render(int offset)
 	}
 }
 
+bool Player::getMarioState() {
+	return super;
+}
+
 void Player::setTileMap(TileMap *tileMap)
 {
 	map = tileMap;
@@ -614,6 +622,11 @@ void Player::setPosition(const glm::vec2 &pos)
 {
 	posPlayer = pos;
 	sprite->setPosition(glm::vec2(float(tileMapDispl.x + posPlayer.x), float(tileMapDispl.y + posPlayer.y)));
+}
+
+glm::vec2 Player::getPos()
+{
+	return posPlayer;
 }
 
 int Player::getPosX()
