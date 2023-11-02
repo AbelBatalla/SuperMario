@@ -359,7 +359,7 @@ bool Player::update(int deltaTime, int camx)
 
 	//if (in_the_air) accel = accel / 2;
 	//CALCULATE SPEEDS & ESTABLISH ANIMATIONS
-	if (Game::instance().getSpecialKey(GLUT_KEY_LEFT) or Game::instance().getSpecialKey(GLUT_KEY_RIGHT)) {
+	if ((Game::instance().getSpecialKey(GLUT_KEY_LEFT) or Game::instance().getSpecialKey(GLUT_KEY_RIGHT)) and (in_the_air or !Game::instance().getSpecialKey(GLUT_KEY_DOWN))) {
 		if (Game::instance().getSpecialKey(GLUT_KEY_LEFT)) {
 			if (!in_the_air) {
 				sprite->setMirrored(true);
@@ -431,7 +431,7 @@ bool Player::update(int deltaTime, int camx)
 		if (speedX / DIVISOR == 0) {
 			if (!in_the_air) {
 				if (super) {
-					if (Game::instance().getSpecialKey(GLUT_KEY_DOWN)) {
+					if (Game::instance().getSpecialKey(GLUT_KEY_DOWN) and !(Game::instance().getSpecialKey(GLUT_KEY_LEFT) or Game::instance().getSpecialKey(GLUT_KEY_RIGHT))) {
 						if (sprite->animation() != CROUCH) {
 							sprite->changeAnimation(CROUCH, star ? starOffset : 0);
 						}
@@ -454,8 +454,15 @@ bool Player::update(int deltaTime, int camx)
 			if (!in_the_air) {
 				if (super) {
 					if (Game::instance().getSpecialKey(GLUT_KEY_DOWN)) {
-						if (sprite->animation() != CROUCH) {
-							sprite->changeAnimation(CROUCH, star ? starOffset : 0);
+						if (!(Game::instance().getSpecialKey(GLUT_KEY_LEFT) or Game::instance().getSpecialKey(GLUT_KEY_RIGHT))) {
+							if (sprite->animation() != CROUCH) {
+								sprite->changeAnimation(CROUCH, star ? starOffset : 0);
+							}
+						}
+						else {
+							if (sprite->animation() != MOVE_RIGHT) {
+								sprite->changeAnimation(MOVE_RIGHT, star ? starOffset : 0);
+							}
 						}
 						speedX += accel;
 					}
@@ -480,8 +487,15 @@ bool Player::update(int deltaTime, int camx)
 			if (!in_the_air) {
 				if (super) {
 					if (Game::instance().getSpecialKey(GLUT_KEY_DOWN)) {
-						if (sprite->animation() != CROUCH) {
-							sprite->changeAnimation(CROUCH, star ? starOffset : 0);
+						if (!(Game::instance().getSpecialKey(GLUT_KEY_LEFT) or Game::instance().getSpecialKey(GLUT_KEY_RIGHT))) {
+							if (sprite->animation() != CROUCH) {
+								sprite->changeAnimation(CROUCH, star ? starOffset : 0);
+							}
+						}
+						else {
+							if (sprite->animation() != MOVE_RIGHT) {
+								sprite->changeAnimation(MOVE_RIGHT, star ? starOffset : 0);
+							}
 						}
 						speedX -= accel;
 					}
