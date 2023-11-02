@@ -295,9 +295,9 @@ bool Player::update(int deltaTime, int camx)
 	else
 	{
 		posPlayer.y += FALL_STEP;
-		if(map->collisionMoveDown(posPlayer, glm::ivec2(MARIO_SIZE, MARIO_SIZE*(super? 2 : 1)), &posPlayer.y)) {
+		if (map->collisionMoveDown(posPlayer, glm::ivec2(MARIO_SIZE, MARIO_SIZE * (super ? 2 : 1)), &posPlayer.y)) {
 			in_the_air = false;
-			if(Game::instance().getKey(' '))
+			if (Game::instance().getKey(' '))
 			{
 				if (derrape) {
 					Game::instance().setSpace(false);
@@ -316,7 +316,7 @@ bool Player::update(int deltaTime, int camx)
 			//FALLING
 			if (super and (sprite->animation() != JUMP_RIGHT and !(sprite->animation() == FALL_RIGHT3 or sprite->animation() == FALL_RIGHT2 or sprite->animation() == FALL_RIGHT1))
 				or !super and (spriteT->animation() != JUMP_RIGHT and !(spriteT->animation() == FALL_RIGHT3 or spriteT->animation() == FALL_RIGHT2 or spriteT->animation() == FALL_RIGHT1))) {
-				int frame = super? sprite->getFrame() / 4 : spriteT->getFrame() / 4;
+				int frame = super ? sprite->getFrame() / 4 : spriteT->getFrame() / 4;
 				if (frame == 2) {
 					if (super) {
 						if (sprite->animation() != FALL_RIGHT3) {
@@ -355,7 +355,7 @@ bool Player::update(int deltaTime, int camx)
 				}
 			}
 		}
-	
+	}
 
 	//if (in_the_air) accel = accel / 2;
 	//CALCULATE SPEEDS & ESTABLISH ANIMATIONS
