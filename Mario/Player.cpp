@@ -8,7 +8,7 @@
 
 #define JUMP_ANGLE_STEP 7
 #define MIN_JUMP_HEIGHT 24
-#define MAX_JUMP_HEIGHT 64 //maximum jump height depends on jump angle step and jump agreggate
+#define MAX_JUMP_HEIGHT 70 //maximum jump height depends on jump angle step and jump agreggate
 #define JUMP_AGREGATE 2
 #define FALL_STEP 3
 #define MAX_WALK_SPEED 36  // :DIVISOR //Es pot incrementar inèrcia incrementant aquests parametres sense que passin un modul del divisor
@@ -275,7 +275,7 @@ bool Player::update(int deltaTime, int camx)
 			else if (jumpPress){
 				if (Game::instance().getKey(' ')) {
 					jumpAcu += JUMP_AGREGATE;
-					jumpAngle -= JUMP_ANGLE_STEP/2;
+					jumpAngle -= 4;
 				}
 				else jumpPress = false;
 			}
