@@ -8,7 +8,7 @@
 
 #define JUMP_ANGLE_STEP 7
 #define MIN_JUMP_HEIGHT 24
-#define MAX_JUMP_HEIGHT 64 //maximum jump height depends on jump angle step and jump agreggate
+#define MAX_JUMP_HEIGHT 70 //maximum jump height depends on jump angle step and jump agreggate
 #define JUMP_AGREGATE 2
 #define FALL_STEP 3
 #define MAX_WALK_SPEED 36  // :DIVISOR //Es pot incrementar inèrcia incrementant aquests parametres sense que passin un modul del divisor
@@ -347,11 +347,17 @@ bool Player::update(int deltaTime, int camx)
 				else if (jumpPress) {
 					if (Game::instance().getKey(' ')) {
 						jumpAcu += JUMP_AGREGATE;
-						jumpAngle -= JUMP_ANGLE_STEP / 2;
+						jumpAngle -= 4;
 					}
 					else jumpPress = false;
 				}
-				posPlayer.y = int(startY - min(MIN_JUMP_HEIGHT + jumpAcu, MAX_JUMP_HEIGHT) * sin(3.14159f * jumpAngle / 180.f));
+				if (!map->collisionMoveUp(posPlayer, glm::ivec2(MARIO_SIZE, MARIO_SIZE * (super ? 2 : 1)), &posPlayer.y)) {
+					posPlayer.y = int(startY - min(MIN_JUMP_HEIGHT + jumpAcu, MAX_JUMP_HEIGHT) * sin(3.14159f * jumpAngle / 180.f));
+				}
+				else {
+					bJumping = false;
+					Game::instance().setSpace(false);
+				}
 				if (super) {
 					if (sprite->animation() != JUMP_RIGHT and sprite->animation() != CROUCH) {
 						sprite->changeAnimation(JUMP_RIGHT, star ? starOffset : 0);
@@ -575,8 +581,8 @@ bool Player::update(int deltaTime, int camx)
 		//if (in_the_air) accel = accel * 2;
 
 		//UPDATE POSITIONS
-		if (!(speedX < 0 and (map->collisionMoveLeft(posPlayer, glm::ivec2(MARIO_SIZE, MARIO_SIZE)) or posPlayer.x - camx <= 0)) and !(speedX > 0 and map->collisionMoveRight(posPlayer, glm::ivec2(MARIO_SIZE, MARIO_SIZE)))) {
-			posPlayer.x += speedX / DIVISOR;
+		if (!(speedX < 0 and (map->collisionMoveLeft(posPlayer, glm::ivec2(MARIO_SIZE, MARIO_SIZE * (super ? 2 : 1))) or posPlayer.x - camx <= 0)) and !(speedX > 0 and map->collisionMoveRight(posPlayer, glm::ivec2(MARIO_SIZE, MARIO_SIZE * (super ? 2 : 1))))) {
+			posPlayer.x += speedX / DIVISOR; //NO ES MIRA TENINT EN COMPTE L'SPEED, es pot quedar a 1, 0 o -1 de la paret
 		}
 		else speedX = 0;
 	}
