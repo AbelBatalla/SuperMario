@@ -279,7 +279,13 @@ bool Player::update(int deltaTime, int camx)
 				}
 				else jumpPress = false;
 			}
-			posPlayer.y = int(startY - min(MIN_JUMP_HEIGHT + jumpAcu, MAX_JUMP_HEIGHT) * sin(3.14159f * jumpAngle / 180.f));
+			if (!map->collisionMoveUp(posPlayer, glm::ivec2(MARIO_SIZE, MARIO_SIZE * (super ? 2 : 1)), &posPlayer.y)) {
+				posPlayer.y = int(startY - min(MIN_JUMP_HEIGHT + jumpAcu, MAX_JUMP_HEIGHT) * sin(3.14159f * jumpAngle / 180.f));
+			}
+			else {
+				bJumping = false;
+				Game::instance().setSpace(false);
+			}
 			if (super) {
 				if (sprite->animation() != JUMP_RIGHT and sprite->animation() != CROUCH) {
 					sprite->changeAnimation(JUMP_RIGHT, star? starOffset : 0);
@@ -504,7 +510,7 @@ bool Player::update(int deltaTime, int camx)
 
 	//UPDATE POSITIONS
 	if (!(speedX < 0 and (map->collisionMoveLeft(posPlayer, glm::ivec2(MARIO_SIZE, MARIO_SIZE * (super ? 2 : 1))) or posPlayer.x-camx <= 0)) and !(speedX > 0 and map->collisionMoveRight(posPlayer, glm::ivec2(MARIO_SIZE, MARIO_SIZE * (super ? 2 : 1))))) {
-		posPlayer.x += speedX / DIVISOR;
+		posPlayer.x += speedX / DIVISOR; //NO ES MIRA TENINT EN COMPTE L'SPEED, es pot quedar a 1, 0 o -1 de la paret
 	}
 	else speedX = 0;
 
