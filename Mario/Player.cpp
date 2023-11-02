@@ -503,7 +503,7 @@ bool Player::update(int deltaTime, int camx)
 	//if (in_the_air) accel = accel * 2;
 
 	//UPDATE POSITIONS
-	if (!(speedX < 0 and (map->collisionMoveLeft(posPlayer, glm::ivec2(MARIO_SIZE, MARIO_SIZE)) or posPlayer.x-camx <= 0)) and !(speedX > 0 and map->collisionMoveRight(posPlayer, glm::ivec2(MARIO_SIZE, MARIO_SIZE)))) {
+	if (!(speedX < 0 and (map->collisionMoveLeft(posPlayer, glm::ivec2(MARIO_SIZE, MARIO_SIZE * (super ? 2 : 1))) or posPlayer.x-camx <= 0)) and !(speedX > 0 and map->collisionMoveRight(posPlayer, glm::ivec2(MARIO_SIZE, MARIO_SIZE * (super ? 2 : 1))))) {
 		posPlayer.x += speedX / DIVISOR;
 	}
 	else speedX = 0;
