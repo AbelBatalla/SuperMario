@@ -24,6 +24,8 @@ enum PlayerAnims
 
 void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 {
+	lives = 3;
+	timeLife = 0;
 	super = false;
 	star = false;
 	starOffset = 0;
@@ -194,8 +196,27 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 	
 }
 
-void Player::update(int deltaTime, int camx)
+bool Player::update(int deltaTime, int camx)
 {
+	timeLife += deltaTime;
+	//FALTA COMPROVACIO MORT PER ENEMICS
+	if (posPlayer.y >= (map->getMapHeight()-2)*16 or timeLife >= 200000) { //200000 -> 200s which are represented in units of 0.5s, so the "timer" starts at 400
+		lives -= 1;
+		if (lives < 0) { //death
+			Game::instance().init();
+		}
+		else {
+			speedX = 0;
+			super = false;
+			star = false;
+			starOffset = 0;
+			starCounter = 0;
+			starTime = 0;
+			timeLife = 0;
+			return true;
+		}
+	}
+
 	bool updateStar = false;
 	if (star) {
 		starTime += deltaTime;
@@ -225,6 +246,7 @@ void Player::update(int deltaTime, int camx)
 	}
 	if (super) sprite->update(deltaTime, updateStar);
 	else spriteT->update(deltaTime, updateStar);
+
 	bool in_the_air = false;
 	bool derrape = (speedX > 0 and Game::instance().getSpecialKey(GLUT_KEY_LEFT) or speedX < 0 and Game::instance().getSpecialKey(GLUT_KEY_RIGHT));
 
@@ -465,6 +487,7 @@ void Player::update(int deltaTime, int camx)
 	else {
 		spriteT->setPosition(glm::vec2(float(tileMapDispl.x + posPlayer.x), float(tileMapDispl.y + posPlayer.y)));
 	}
+	return false;
 }
 
 void Player::render(int offset)
