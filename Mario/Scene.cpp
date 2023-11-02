@@ -63,7 +63,7 @@ void Scene::update(int deltaTime)
 
 	for (int i = 0; i < coins.size(); i++) {
 		if (coins[i] != nullptr) {
-			if (coins[i]->isCollected(player->getPos(), 16)) {
+			if (coins[i]->isCollected(player->getPos(), 16, player->getMarioState())) {
 				delete coins[i]; // Elimina la moneda actual
 				coins[i] = nullptr;
 			}

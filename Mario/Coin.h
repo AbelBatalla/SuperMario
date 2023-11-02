@@ -13,7 +13,7 @@ public:
 	void update(int deltatime);
 	void render(int offset) const;
 	void setPosition(const glm::vec2& pos);
-	bool isCollected(const glm::vec2& playerPosition, int playerSize) const;
+	bool isCollected(const glm::vec2& playerPosition, int playerSize, bool super) const;
 private:
 	int x;
 	int y;

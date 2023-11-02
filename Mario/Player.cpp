@@ -609,6 +609,10 @@ void Player::render(int offset)
 	}
 }
 
+bool Player::getMarioState() {
+	return super;
+}
+
 void Player::setTileMap(TileMap *tileMap)
 {
 	map = tileMap;
