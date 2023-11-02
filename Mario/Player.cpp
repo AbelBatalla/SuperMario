@@ -28,6 +28,7 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 	timeLife = 0;
 	super = false;
 	star = false;
+	starColorSpeed = 2;
 	starOffset = 0;
 	starCounter = 0;
 	starTime = 0;
@@ -229,7 +230,8 @@ bool Player::update(int deltaTime, int camx)
 		if (starTime >= 12000) star = false;
 		else {
 			starCounter += 1;
-			if (starCounter >= 2) { //Indica velocitat del canvid e color del star, ha de ser 2 o 3
+			if (starTime >= 8500) starColorSpeed = 10;
+			if (starCounter >= starColorSpeed) { //Indica velocitat del canvide color del star, ha de ser 2 o 3
 				starCounter = 0;
 				updateStar = true;
 				starOffset = (starOffset + 1) % 4;
@@ -249,6 +251,7 @@ bool Player::update(int deltaTime, int camx)
 		starOffset = 0;
 		starCounter = 0;
 		starTime = 0;
+		starColorSpeed = 2;
 	}
 	if (super) sprite->update(deltaTime, updateStar);
 	else spriteT->update(deltaTime, updateStar);
