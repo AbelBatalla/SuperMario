@@ -15,7 +15,7 @@ class Player
 
 public:
 	void init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram);
-	void update(int deltaTime, int camx);
+	bool update(int deltaTime, int camx);
 	void render(int offset);
 	
 	void setTileMap(TileMap *tileMap);
@@ -25,12 +25,11 @@ public:
 	int getPosX();
 	
 private:
-	bool bJumping, jumpPress;
-	int speedX, accel;
+	bool bJumping, jumpPress, super, star, superTransition;
 	glm::ivec2 tileMapDispl, posPlayer;
-	int jumpAngle, startY, jumpAcu;
+	int speedX, accel, jumpAngle, startY, jumpAcu, starOffset, starCounter, starTime, lives, timeLife, starColorSpeed, superTransTimer;
 	Texture spritesheet;
-	Sprite *sprite;
+	Sprite *sprite, *spriteT;
 	TileMap *map;
 	int collectedCoins;
 };

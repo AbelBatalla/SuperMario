@@ -30,14 +30,14 @@ public:
 	void free();
 	
 	int getTileSize() const { return tileSize; }
+	int getMapHeight() const { return mapSize.y; }
 
 	bool collisionMoveLeft(const glm::ivec2 &pos, const glm::ivec2 &size) const;
 	bool collisionMoveRight(const glm::ivec2 &pos, const glm::ivec2 &size) const;
 	bool collisionMoveDown(const glm::ivec2 &pos, const glm::ivec2 &size, int *posY) const;
-	bool collisionMoveDownCheck(const glm::ivec2& pos, const glm::ivec2& size, int posY) const;
-	//bool collisionCoin(const glm::ivec2& pos) const;
-	//void initCoins(ShaderProgram& program);
 	const std::vector<glm::ivec2>& getCoinPositions() const;
+	bool collisionMoveUp(const glm::ivec2& pos, const glm::ivec2& size, int* posY) const;
+
 
 	
 private:

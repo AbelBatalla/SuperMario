@@ -12,7 +12,7 @@
 #define ZOOM 2
 
 #define INIT_PLAYER_X_TILES 7
-#define INIT_PLAYER_Y_TILES 10
+#define INIT_PLAYER_Y_TILES 9
 
 
 Scene::Scene()
@@ -38,10 +38,11 @@ void Scene::init()
 	std::vector<glm::ivec2> coinPositions = map->getCoinPositions();
 	for (const glm::ivec2& coinPos : coinPositions) {
 		Coin* coin = new Coin(0, 0);
-		coin->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram); // Inicializa una moneda en la posición del mapa
+		coin->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram); // Inicializa una moneda en la posiciï¿½n del mapa
 		coin->setPosition(glm::vec2(coinPos.x * map->getTileSize(), coinPos.y * map->getTileSize()));
 		coins.push_back(coin); // Agrega la moneda al vector de monedas
 	}
+
 
 
 	player = new Player();
@@ -57,7 +58,8 @@ void Scene::init()
 void Scene::update(int deltaTime)
 {
 	currentTime += deltaTime;
-	player->update(deltaTime, camx);
+
+	
 
 	for (int i = 0; i < coins.size(); i++) {
 		if (coins[i] != nullptr) {
@@ -73,6 +75,11 @@ void Scene::update(int deltaTime)
 	//coins.erase(std::remove(coins.begin(), coins.end(), nullptr), coins.end());
 
 	
+	if (player->update(deltaTime, camx)) {
+		player->setPosition(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize(), INIT_PLAYER_Y_TILES * map->getTileSize()));
+		camx = 0;
+		oldPosx = INIT_PLAYER_X_TILES;
+	}
 }
 
 void Scene::render()
@@ -138,6 +145,3 @@ void Scene::initShaders()
 	vShader.free();
 	fShader.free();
 }
-
-
-
