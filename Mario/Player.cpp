@@ -281,7 +281,7 @@ bool Player::update(int deltaTime, int camx)
 			}
 			posPlayer.y = int(startY - min(MIN_JUMP_HEIGHT + jumpAcu, MAX_JUMP_HEIGHT) * sin(3.14159f * jumpAngle / 180.f));
 			if (super) {
-				if (sprite->animation() != JUMP_RIGHT) {
+				if (sprite->animation() != JUMP_RIGHT and sprite->animation() != CROUCH) {
 					sprite->changeAnimation(JUMP_RIGHT, star? starOffset : 0);
 				}
 			}
@@ -329,7 +329,7 @@ bool Player::update(int deltaTime, int camx)
 						}
 					}
 				}
-				else if (frame == 1) {
+				else if (frame == 1 or (super and sprite->animation() == CROUCH)) {
 					if (super) {
 						if (sprite->animation() != FALL_RIGHT2) {
 							sprite->changeAnimation(FALL_RIGHT2, star ? starOffset : 0);
@@ -355,7 +355,7 @@ bool Player::update(int deltaTime, int camx)
 				}
 			}
 		}
-	}
+	
 
 	//if (in_the_air) accel = accel / 2;
 	//CALCULATE SPEEDS & ESTABLISH ANIMATIONS
@@ -452,32 +452,23 @@ bool Player::update(int deltaTime, int camx)
 		}
 		else if (speedX < 0) {
 			if (!in_the_air) {
+				speedX += accel / NO_BUTTON_DIVISOR;
 				if (super) {
-					if (Game::instance().getSpecialKey(GLUT_KEY_DOWN)) {
-						if (!(Game::instance().getSpecialKey(GLUT_KEY_LEFT) or Game::instance().getSpecialKey(GLUT_KEY_RIGHT))) {
-							if (sprite->animation() != CROUCH) {
-								sprite->changeAnimation(CROUCH, star ? starOffset : 0);
-							}
+					if (Game::instance().getSpecialKey(GLUT_KEY_DOWN) and (!(Game::instance().getSpecialKey(GLUT_KEY_LEFT) or Game::instance().getSpecialKey(GLUT_KEY_RIGHT)))) {
+						if (sprite->animation() != CROUCH) {
+							sprite->changeAnimation(CROUCH, star ? starOffset : 0);
 						}
-						else {
-							if (sprite->animation() != MOVE_RIGHT) {
-								sprite->changeAnimation(MOVE_RIGHT, star ? starOffset : 0);
-							}
-						}
-						speedX += accel;
 					}
 					else {
 						if (sprite->animation() != MOVE_RIGHT) {
 							sprite->changeAnimation(MOVE_RIGHT, star ? starOffset : 0);
 						}
-						speedX += accel / NO_BUTTON_DIVISOR;
 					}
 				}
 				else {
 					if (spriteT->animation() != MOVE_RIGHT) {
 						spriteT->changeAnimation(MOVE_RIGHT, star ? starOffset : 0);
 					}
-					speedX += accel / NO_BUTTON_DIVISOR;
 				}
 				sprite->setMirrored(true);
 				spriteT->setMirrored(true);
@@ -485,32 +476,23 @@ bool Player::update(int deltaTime, int camx)
 		}
 		else {
 			if (!in_the_air) {
+				speedX -= accel / NO_BUTTON_DIVISOR;
 				if (super) {
-					if (Game::instance().getSpecialKey(GLUT_KEY_DOWN)) {
-						if (!(Game::instance().getSpecialKey(GLUT_KEY_LEFT) or Game::instance().getSpecialKey(GLUT_KEY_RIGHT))) {
-							if (sprite->animation() != CROUCH) {
-								sprite->changeAnimation(CROUCH, star ? starOffset : 0);
-							}
+					if (Game::instance().getSpecialKey(GLUT_KEY_DOWN) and (!(Game::instance().getSpecialKey(GLUT_KEY_LEFT) or Game::instance().getSpecialKey(GLUT_KEY_RIGHT)))) {
+						if (sprite->animation() != CROUCH) {
+							sprite->changeAnimation(CROUCH, star ? starOffset : 0);
 						}
-						else {
-							if (sprite->animation() != MOVE_RIGHT) {
-								sprite->changeAnimation(MOVE_RIGHT, star ? starOffset : 0);
-							}
-						}
-						speedX -= accel;
 					}
 					else {
 						if (sprite->animation() != MOVE_RIGHT) {
 							sprite->changeAnimation(MOVE_RIGHT, star ? starOffset : 0);
 						}
-						speedX -= accel / NO_BUTTON_DIVISOR;
 					}
 				}
 				else {
 					if (spriteT->animation() != MOVE_RIGHT) {
 						spriteT->changeAnimation(MOVE_RIGHT, star ? starOffset : 0);
 					}
-					speedX -= accel / NO_BUTTON_DIVISOR;
 				}
 				sprite->setMirrored(false);
 				spriteT->setMirrored(false);
