@@ -24,9 +24,9 @@ public:
 	int getPosX();
 	
 private:
-	bool bJumping, jumpPress, super, star;
+	bool bJumping, jumpPress, super, star, superTransition;
 	glm::ivec2 tileMapDispl, posPlayer;
-	int speedX, accel, jumpAngle, startY, jumpAcu, starOffset, starCounter, starTime, lives, timeLife;
+	int speedX, accel, jumpAngle, startY, jumpAcu, starOffset, starCounter, starTime, lives, timeLife, starColorSpeed, superTransTimer;
 	Texture spritesheet;
 	Sprite *sprite, *spriteT;
 	TileMap *map;

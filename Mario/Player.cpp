@@ -19,7 +19,7 @@
 
 enum PlayerAnims
 {
-	STAND_RIGHT, MOVE_RIGHT, SPRINT_RIGHT, JUMP_RIGHT, DRIFT_TO_RIGHT, FALL_RIGHT1, FALL_RIGHT2, FALL_RIGHT3, CROUCH
+	STAND_RIGHT, MOVE_RIGHT, SPRINT_RIGHT, JUMP_RIGHT, DRIFT_TO_RIGHT, FALL_RIGHT1, FALL_RIGHT2, FALL_RIGHT3, CROUCH, TRANSITION
 };
 
 void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
@@ -27,7 +27,10 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 	lives = 3;
 	timeLife = 0;
 	super = false;
+	superTransition = false;
+	superTransTimer = 0;
 	star = false;
+	starColorSpeed = 2;
 	starOffset = 0;
 	starCounter = 0;
 	starTime = 0;
@@ -36,18 +39,17 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 	jumpAcu = 0;
 	jumpPress = false;
 	accel = 2;
-	spritesheet.loadFromFile("images/marioSpritesheet.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	spritesheet.loadFromFile("images/marioSpritesheet2.png", TEXTURE_PIXEL_FORMAT_RGBA);
 
 	//SUPER
 	sprite = Sprite::createSprite(glm::ivec2(MARIO_SIZE, MARIO_SIZE*2), glm::vec2(0.03125, 0.0625), &spritesheet, &shaderProgram);
-	sprite->setNumberAnimations(9);
+	sprite->setNumberAnimations(10);
 			
 	sprite->setAnimationSpeed(STAND_RIGHT, 8);
 	sprite->addKeyframe(STAND_RIGHT, glm::vec2(0.0f, 0.0f));
 	sprite->addKeyframe(STAND_RIGHT, glm::vec2(0.0f, 0.46875f));
 	sprite->addKeyframe(STAND_RIGHT, glm::vec2(0.0f, 0.28125f));
 	sprite->addKeyframe(STAND_RIGHT, glm::vec2(0.0f, 0.375f));
-
 		
 	sprite->setAnimationSpeed(MOVE_RIGHT, 12);
 	sprite->addKeyframe(MOVE_RIGHT, glm::vec2(0.0625f, 0.0f));
@@ -117,6 +119,62 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 	sprite->addKeyframe(CROUCH, glm::vec2(0.1875f, 0.46875f));
 	sprite->addKeyframe(CROUCH, glm::vec2(0.1875f, 0.28125f));
 	sprite->addKeyframe(CROUCH, glm::vec2(0.1875f, 0.375f));
+
+	sprite->setAnimationSpeed(TRANSITION, 8);
+	sprite->addKeyframe(TRANSITION, glm::vec2(0.65625f, 0.0f));
+	sprite->addKeyframe(TRANSITION, glm::vec2(0.65625f, 0.46875f));
+	sprite->addKeyframe(TRANSITION, glm::vec2(0.65625f, 0.28125f));
+	sprite->addKeyframe(TRANSITION, glm::vec2(0.65625f, 0.375f));
+
+	sprite->addKeyframe(TRANSITION, glm::vec2(0.46875f, 0.0f));
+	sprite->addKeyframe(TRANSITION, glm::vec2(0.46875f, 0.46875f));
+	sprite->addKeyframe(TRANSITION, glm::vec2(0.46875f, 0.28125f));
+	sprite->addKeyframe(TRANSITION, glm::vec2(0.46875f, 0.375f));
+
+	sprite->addKeyframe(TRANSITION, glm::vec2(0.65625f, 0.0f));
+	sprite->addKeyframe(TRANSITION, glm::vec2(0.65625f, 0.46875f));
+	sprite->addKeyframe(TRANSITION, glm::vec2(0.65625f, 0.28125f));
+	sprite->addKeyframe(TRANSITION, glm::vec2(0.65625f, 0.375f));
+
+	sprite->addKeyframe(TRANSITION, glm::vec2(0.46875f, 0.0f));
+	sprite->addKeyframe(TRANSITION, glm::vec2(0.46875f, 0.46875f));
+	sprite->addKeyframe(TRANSITION, glm::vec2(0.46875f, 0.28125f));
+	sprite->addKeyframe(TRANSITION, glm::vec2(0.46875f, 0.375f));
+
+	sprite->addKeyframe(TRANSITION, glm::vec2(0.65625f, 0.0f));
+	sprite->addKeyframe(TRANSITION, glm::vec2(0.65625f, 0.46875f));
+	sprite->addKeyframe(TRANSITION, glm::vec2(0.65625f, 0.28125f));
+	sprite->addKeyframe(TRANSITION, glm::vec2(0.65625f, 0.375f));
+
+	sprite->addKeyframe(TRANSITION, glm::vec2(0.46875f, 0.0f));
+	sprite->addKeyframe(TRANSITION, glm::vec2(0.46875f, 0.46875f));
+	sprite->addKeyframe(TRANSITION, glm::vec2(0.46875f, 0.28125f));
+	sprite->addKeyframe(TRANSITION, glm::vec2(0.46875f, 0.375f));
+
+	sprite->addKeyframe(TRANSITION, glm::vec2(0.0f, 0.0f));
+	sprite->addKeyframe(TRANSITION, glm::vec2(0.0f, 0.46875f));
+	sprite->addKeyframe(TRANSITION, glm::vec2(0.0f, 0.28125f));
+	sprite->addKeyframe(TRANSITION, glm::vec2(0.0f, 0.375f));
+
+	sprite->addKeyframe(TRANSITION, glm::vec2(0.65625f, 0.0f));
+	sprite->addKeyframe(TRANSITION, glm::vec2(0.65625f, 0.46875f));
+	sprite->addKeyframe(TRANSITION, glm::vec2(0.65625f, 0.28125f));
+	sprite->addKeyframe(TRANSITION, glm::vec2(0.65625f, 0.375f));
+
+	sprite->addKeyframe(TRANSITION, glm::vec2(0.46875f, 0.0f));
+	sprite->addKeyframe(TRANSITION, glm::vec2(0.46875f, 0.46875f));
+	sprite->addKeyframe(TRANSITION, glm::vec2(0.46875f, 0.28125f));
+	sprite->addKeyframe(TRANSITION, glm::vec2(0.46875f, 0.375f));
+
+	sprite->addKeyframe(TRANSITION, glm::vec2(0.0f, 0.0f));
+	sprite->addKeyframe(TRANSITION, glm::vec2(0.0f, 0.46875f));
+	sprite->addKeyframe(TRANSITION, glm::vec2(0.0f, 0.28125f));
+	sprite->addKeyframe(TRANSITION, glm::vec2(0.0f, 0.375f));
+
+	sprite->addKeyframe(TRANSITION, glm::vec2(0.0f, 0.0f));
+	sprite->addKeyframe(TRANSITION, glm::vec2(0.0f, 0.46875f));
+	sprite->addKeyframe(TRANSITION, glm::vec2(0.0f, 0.28125f));
+	sprite->addKeyframe(TRANSITION, glm::vec2(0.0f, 0.375f));
 		
 	sprite->changeAnimation(0, 0);
 	sprite->setMirrored(false);
@@ -229,18 +287,30 @@ bool Player::update(int deltaTime, int camx)
 		if (starTime >= 12000) star = false;
 		else {
 			starCounter += 1;
-			if (starCounter >= 2) { //Indica velocitat del canvid e color del star, ha de ser 2 o 3
+			if (starTime >= 8500) starColorSpeed = 10;
+			if (starCounter >= starColorSpeed) { //Indica velocitat del canvide color del star, ha de ser 2 o 3
 				starCounter = 0;
 				updateStar = true;
 				starOffset = (starOffset + 1) % 4;
 			}
 		}
 	}
+	if (superTransition) {
+		superTransTimer += deltaTime;
+		if (sprite->getFrame() >= 40) superTransition = false;
+	}
 	if (Game::instance().getKey('q') and !super) {
 		super = true;
-		posPlayer.y -= 32;
+		posPlayer.y -= MARIO_SIZE;
+		superTransition = true;
+		superTransTimer = 0;
+		sprite->changeAnimation(TRANSITION, star ? starOffset : 0);
 	}
-	if (Game::instance().getKey('w') and super) super = false;
+	if (Game::instance().getKey('w') and super) {
+		super = false;
+		superTransition = false;
+		superTransTimer = 0;
+	}
 	if (Game::instance().getKey('e') and !star) star = true;
 	if ((Game::instance().getKey('r') and star) or starTime >= 12000) {
 		if (super) sprite->removeStar(starOffset);
@@ -249,265 +319,267 @@ bool Player::update(int deltaTime, int camx)
 		starOffset = 0;
 		starCounter = 0;
 		starTime = 0;
+		starColorSpeed = 2;
 	}
 	if (super) sprite->update(deltaTime, updateStar);
 	else spriteT->update(deltaTime, updateStar);
 
-	bool in_the_air = false;
-	bool derrape = (speedX > 0 and Game::instance().getSpecialKey(GLUT_KEY_LEFT) or speedX < 0 and Game::instance().getSpecialKey(GLUT_KEY_RIGHT));
+	if (!superTransition) {
+		bool in_the_air = false;
+		bool derrape = (speedX > 0 and Game::instance().getSpecialKey(GLUT_KEY_LEFT) or speedX < 0 and Game::instance().getSpecialKey(GLUT_KEY_RIGHT));
 
-	//JUMP
-	if(bJumping)
-	{
-		jumpAngle += JUMP_ANGLE_STEP;
-		if(jumpAngle >= 180)
+		//JUMP
+		if (bJumping)
 		{
-			bJumping = false;
-			posPlayer.y = startY;
+			jumpAngle += JUMP_ANGLE_STEP;
+			if (jumpAngle >= 180)
+			{
+				bJumping = false;
+				posPlayer.y = startY;
+			}
+			else
+			{
+				in_the_air = true;
+				if (jumpAngle > 90) {
+					bJumping = false;
+					Game::instance().setSpace(false);
+				}
+				else if (jumpPress) {
+					if (Game::instance().getKey(' ')) {
+						jumpAcu += JUMP_AGREGATE;
+						jumpAngle -= JUMP_ANGLE_STEP / 2;
+					}
+					else jumpPress = false;
+				}
+				posPlayer.y = int(startY - min(MIN_JUMP_HEIGHT + jumpAcu, MAX_JUMP_HEIGHT) * sin(3.14159f * jumpAngle / 180.f));
+				if (super) {
+					if (sprite->animation() != JUMP_RIGHT and sprite->animation() != CROUCH) {
+						sprite->changeAnimation(JUMP_RIGHT, star ? starOffset : 0);
+					}
+				}
+				else {
+					if (spriteT->animation() != JUMP_RIGHT) {
+						spriteT->changeAnimation(JUMP_RIGHT, star ? starOffset : 0);
+					}
+				}
+			}
 		}
 		else
 		{
-			in_the_air = true;
-			if (jumpAngle > 90) {
-				bJumping = false;
-				Game::instance().setSpace(false);
-			}
-			else if (jumpPress){
-				if (Game::instance().getKey(' ')) {
-					jumpAcu += JUMP_AGREGATE;
-					jumpAngle -= JUMP_ANGLE_STEP/2;
-				}
-				else jumpPress = false;
-			}
-			posPlayer.y = int(startY - min(MIN_JUMP_HEIGHT + jumpAcu, MAX_JUMP_HEIGHT) * sin(3.14159f * jumpAngle / 180.f));
-			if (super) {
-				if (sprite->animation() != JUMP_RIGHT and sprite->animation() != CROUCH) {
-					sprite->changeAnimation(JUMP_RIGHT, star? starOffset : 0);
+			posPlayer.y += FALL_STEP;
+			if (map->collisionMoveDown(posPlayer, glm::ivec2(MARIO_SIZE, MARIO_SIZE * (super ? 2 : 1)), &posPlayer.y)) {
+				in_the_air = false;
+				if (Game::instance().getKey(' '))
+				{
+					if (derrape) {
+						Game::instance().setSpace(false);
+					}
+					else {
+						jumpPress = true;
+						jumpAcu = 0;
+						bJumping = true;
+						jumpAngle = 0;
+						startY = posPlayer.y;
+					}
 				}
 			}
 			else {
-				if (spriteT->animation() != JUMP_RIGHT) {
-					spriteT->changeAnimation(JUMP_RIGHT, star ? starOffset : 0);
+				in_the_air = true;
+				//FALLING
+				if (super and (sprite->animation() != JUMP_RIGHT and !(sprite->animation() == FALL_RIGHT3 or sprite->animation() == FALL_RIGHT2 or sprite->animation() == FALL_RIGHT1))
+					or !super and (spriteT->animation() != JUMP_RIGHT and !(spriteT->animation() == FALL_RIGHT3 or spriteT->animation() == FALL_RIGHT2 or spriteT->animation() == FALL_RIGHT1))) {
+					int frame = super ? sprite->getFrame() / 4 : spriteT->getFrame() / 4;
+					if (frame == 2) {
+						if (super) {
+							if (sprite->animation() != FALL_RIGHT3) {
+								sprite->changeAnimation(FALL_RIGHT3, star ? starOffset : 0);
+							}
+						}
+						else {
+							if (spriteT->animation() != FALL_RIGHT3) {
+								spriteT->changeAnimation(FALL_RIGHT3, star ? starOffset : 0);
+							}
+						}
+					}
+					else if (frame == 1 or (super and sprite->animation() == CROUCH)) {
+						if (super) {
+							if (sprite->animation() != FALL_RIGHT2) {
+								sprite->changeAnimation(FALL_RIGHT2, star ? starOffset : 0);
+							}
+						}
+						else {
+							if (spriteT->animation() != FALL_RIGHT2) {
+								spriteT->changeAnimation(FALL_RIGHT2, star ? starOffset : 0);
+							}
+						}
+					}
+					else if (frame == 0) {
+						if (super) {
+							if (sprite->animation() != FALL_RIGHT1) {
+								sprite->changeAnimation(FALL_RIGHT1, star ? starOffset : 0);
+							}
+						}
+						else {
+							if (spriteT->animation() != FALL_RIGHT1) {
+								spriteT->changeAnimation(FALL_RIGHT1, star ? starOffset : 0);
+							}
+						}
+					}
 				}
 			}
 		}
-	}
-	else
-	{
-		posPlayer.y += FALL_STEP;
-		if (map->collisionMoveDown(posPlayer, glm::ivec2(MARIO_SIZE, MARIO_SIZE * (super ? 2 : 1)), &posPlayer.y)) {
-			in_the_air = false;
-			if (Game::instance().getKey(' '))
-			{
+
+		//if (in_the_air) accel = accel / 2;
+		//CALCULATE SPEEDS & ESTABLISH ANIMATIONS
+		if ((Game::instance().getSpecialKey(GLUT_KEY_LEFT) or Game::instance().getSpecialKey(GLUT_KEY_RIGHT)) and (in_the_air or !Game::instance().getSpecialKey(GLUT_KEY_DOWN))) {
+			if (Game::instance().getSpecialKey(GLUT_KEY_LEFT)) {
+				if (!in_the_air) {
+					sprite->setMirrored(true);
+					spriteT->setMirrored(true);
+				}
+				if (Game::instance().getKey('x')) {
+					if (speedX > -MAX_RUN_SPEED) speedX -= accel;
+				}
+				else {
+					if (speedX > -MAX_WALK_SPEED) speedX -= accel;
+					if (speedX < -MAX_WALK_SPEED) speedX += accel;
+				}
+			}
+			else {
+				if (!in_the_air) {
+					sprite->setMirrored(false);
+					spriteT->setMirrored(false);
+				}
+				if (Game::instance().getKey('x')) {
+					if (speedX < MAX_RUN_SPEED) speedX += accel;
+				}
+				else {
+					if (speedX < MAX_WALK_SPEED) speedX += accel;
+					if (speedX > MAX_WALK_SPEED) speedX -= accel;
+				}
+			}
+
+			if (!in_the_air) {
 				if (derrape) {
-					Game::instance().setSpace(false);
-				}
-				else {
-					jumpPress = true;
-					jumpAcu = 0;
-					bJumping = true;
-					jumpAngle = 0;
-					startY = posPlayer.y;
-				}
-			}
-		}
-		else {
-			in_the_air = true;
-			//FALLING
-			if (super and (sprite->animation() != JUMP_RIGHT and !(sprite->animation() == FALL_RIGHT3 or sprite->animation() == FALL_RIGHT2 or sprite->animation() == FALL_RIGHT1))
-				or !super and (spriteT->animation() != JUMP_RIGHT and !(spriteT->animation() == FALL_RIGHT3 or spriteT->animation() == FALL_RIGHT2 or spriteT->animation() == FALL_RIGHT1))) {
-				int frame = super ? sprite->getFrame() / 4 : spriteT->getFrame() / 4;
-				if (frame == 2) {
 					if (super) {
-						if (sprite->animation() != FALL_RIGHT3) {
-							sprite->changeAnimation(FALL_RIGHT3, star ? starOffset : 0);
+						if (sprite->animation() != DRIFT_TO_RIGHT) {
+							sprite->changeAnimation(DRIFT_TO_RIGHT, star ? starOffset : 0);
 						}
 					}
 					else {
-						if (spriteT->animation() != FALL_RIGHT3) {
-							spriteT->changeAnimation(FALL_RIGHT3, star ? starOffset : 0);
+						if (spriteT->animation() != DRIFT_TO_RIGHT) {
+							spriteT->changeAnimation(DRIFT_TO_RIGHT, star ? starOffset : 0);
 						}
 					}
 				}
-				else if (frame == 1 or (super and sprite->animation() == CROUCH)) {
+				else if (speedX < -MAX_WALK_SPEED or speedX > MAX_WALK_SPEED) {
 					if (super) {
-						if (sprite->animation() != FALL_RIGHT2) {
-							sprite->changeAnimation(FALL_RIGHT2, star ? starOffset : 0);
+						if (sprite->animation() != SPRINT_RIGHT) {
+							sprite->changeAnimation(SPRINT_RIGHT, star ? starOffset : 0);
 						}
 					}
 					else {
-						if (spriteT->animation() != FALL_RIGHT2) {
-							spriteT->changeAnimation(FALL_RIGHT2, star ? starOffset : 0);
+						if (spriteT->animation() != SPRINT_RIGHT) {
+							spriteT->changeAnimation(SPRINT_RIGHT, star ? starOffset : 0);
 						}
 					}
-				}
-				else if (frame == 0) {
-					if (super) {
-						if (sprite->animation() != FALL_RIGHT1) {
-							sprite->changeAnimation(FALL_RIGHT1, star ? starOffset : 0);
-						}
-					}
-					else {
-						if (spriteT->animation() != FALL_RIGHT1) {
-							spriteT->changeAnimation(FALL_RIGHT1, star ? starOffset : 0);
-						}
-					}
-				}
-			}
-		}
-	}
 
-	//if (in_the_air) accel = accel / 2;
-	//CALCULATE SPEEDS & ESTABLISH ANIMATIONS
-	if ((Game::instance().getSpecialKey(GLUT_KEY_LEFT) or Game::instance().getSpecialKey(GLUT_KEY_RIGHT)) and (in_the_air or !Game::instance().getSpecialKey(GLUT_KEY_DOWN))) {
-		if (Game::instance().getSpecialKey(GLUT_KEY_LEFT)) {
-			if (!in_the_air) {
-				sprite->setMirrored(true);
-				spriteT->setMirrored(true);
-			}
-			if (Game::instance().getKey('x')) {
-				if (speedX > -MAX_RUN_SPEED) speedX -= accel;
-			}
-			else {
-				if (speedX > -MAX_WALK_SPEED) speedX -= accel;
-				if (speedX < -MAX_WALK_SPEED) speedX += accel;
-			}
-		}
-		else {
-			if (!in_the_air) {
-				sprite->setMirrored(false);
-				spriteT->setMirrored(false);
-			}
-			if (Game::instance().getKey('x')) {
-				if (speedX < MAX_RUN_SPEED) speedX += accel;
-			}
-			else {
-				if (speedX < MAX_WALK_SPEED) speedX += accel;
-				if (speedX > MAX_WALK_SPEED) speedX -= accel;
-			}
-		}
-
-		if (!in_the_air) {
-			if (derrape) {
-				if (super) {
-					if (sprite->animation() != DRIFT_TO_RIGHT) {
-						sprite->changeAnimation(DRIFT_TO_RIGHT, star ? starOffset : 0);
-					}
 				}
 				else {
-					if (spriteT->animation() != DRIFT_TO_RIGHT) {
-						spriteT->changeAnimation(DRIFT_TO_RIGHT, star ? starOffset : 0);
-					}
-				}
-			}
-			else if (speedX < -MAX_WALK_SPEED or speedX > MAX_WALK_SPEED) {
-				if (super) {
-					if (sprite->animation() != SPRINT_RIGHT) {
-						sprite->changeAnimation(SPRINT_RIGHT, star ? starOffset : 0);
-					}
-				}
-				else {
-					if (spriteT->animation() != SPRINT_RIGHT) {
-						spriteT->changeAnimation(SPRINT_RIGHT, star ? starOffset : 0);
-					}
-				}
-				
-			}
-			else {
-				if (super) {
-					if (sprite->animation() != MOVE_RIGHT) {
-						sprite->changeAnimation(MOVE_RIGHT, star ? starOffset : 0);
-					}
-				}
-				else {
-					if (spriteT->animation() != MOVE_RIGHT) {
-						spriteT->changeAnimation(MOVE_RIGHT, star ? starOffset : 0);
-					}
-				}
-			}
-		}
-	}
-	else {
-		if (speedX / DIVISOR == 0) {
-			if (!in_the_air) {
-				if (super) {
-					if (Game::instance().getSpecialKey(GLUT_KEY_DOWN) and !(Game::instance().getSpecialKey(GLUT_KEY_LEFT) or Game::instance().getSpecialKey(GLUT_KEY_RIGHT))) {
-						if (sprite->animation() != CROUCH) {
-							sprite->changeAnimation(CROUCH, star ? starOffset : 0);
-						}
-					}
-					else {
-						if (sprite->animation() != STAND_RIGHT) {
-							sprite->changeAnimation(STAND_RIGHT, star ? starOffset : 0);
-						}
-					}
-				}
-				else {
-					if (spriteT->animation() != STAND_RIGHT) {
-						spriteT->changeAnimation(STAND_RIGHT, star ? starOffset : 0);
-					}
-				}
-				speedX = 0;
-			}
-		}
-		else if (speedX < 0) {
-			if (!in_the_air) {
-				speedX += accel / NO_BUTTON_DIVISOR;
-				if (super) {
-					if (Game::instance().getSpecialKey(GLUT_KEY_DOWN) and (!(Game::instance().getSpecialKey(GLUT_KEY_LEFT) or Game::instance().getSpecialKey(GLUT_KEY_RIGHT)))) {
-						if (sprite->animation() != CROUCH) {
-							sprite->changeAnimation(CROUCH, star ? starOffset : 0);
-						}
-					}
-					else {
+					if (super) {
 						if (sprite->animation() != MOVE_RIGHT) {
 							sprite->changeAnimation(MOVE_RIGHT, star ? starOffset : 0);
 						}
 					}
-				}
-				else {
-					if (spriteT->animation() != MOVE_RIGHT) {
-						spriteT->changeAnimation(MOVE_RIGHT, star ? starOffset : 0);
+					else {
+						if (spriteT->animation() != MOVE_RIGHT) {
+							spriteT->changeAnimation(MOVE_RIGHT, star ? starOffset : 0);
+						}
 					}
 				}
-				sprite->setMirrored(true);
-				spriteT->setMirrored(true);
 			}
 		}
 		else {
-			if (!in_the_air) {
-				speedX -= accel / NO_BUTTON_DIVISOR;
-				if (super) {
-					if (Game::instance().getSpecialKey(GLUT_KEY_DOWN) and (!(Game::instance().getSpecialKey(GLUT_KEY_LEFT) or Game::instance().getSpecialKey(GLUT_KEY_RIGHT)))) {
-						if (sprite->animation() != CROUCH) {
-							sprite->changeAnimation(CROUCH, star ? starOffset : 0);
+			if (speedX / DIVISOR == 0) {
+				if (!in_the_air) {
+					if (super) {
+						if (Game::instance().getSpecialKey(GLUT_KEY_DOWN) and !(Game::instance().getSpecialKey(GLUT_KEY_LEFT) or Game::instance().getSpecialKey(GLUT_KEY_RIGHT))) {
+							if (sprite->animation() != CROUCH) {
+								sprite->changeAnimation(CROUCH, star ? starOffset : 0);
+							}
+						}
+						else {
+							if (sprite->animation() != STAND_RIGHT) {
+								sprite->changeAnimation(STAND_RIGHT, star ? starOffset : 0);
+							}
 						}
 					}
 					else {
-						if (sprite->animation() != MOVE_RIGHT) {
-							sprite->changeAnimation(MOVE_RIGHT, star ? starOffset : 0);
+						if (spriteT->animation() != STAND_RIGHT) {
+							spriteT->changeAnimation(STAND_RIGHT, star ? starOffset : 0);
 						}
 					}
+					speedX = 0;
 				}
-				else {
-					if (spriteT->animation() != MOVE_RIGHT) {
-						spriteT->changeAnimation(MOVE_RIGHT, star ? starOffset : 0);
+			}
+			else if (speedX < 0) {
+				if (!in_the_air) {
+					speedX += accel / NO_BUTTON_DIVISOR;
+					if (super) {
+						if (Game::instance().getSpecialKey(GLUT_KEY_DOWN) and (!(Game::instance().getSpecialKey(GLUT_KEY_LEFT) or Game::instance().getSpecialKey(GLUT_KEY_RIGHT)))) {
+							if (sprite->animation() != CROUCH) {
+								sprite->changeAnimation(CROUCH, star ? starOffset : 0);
+							}
+						}
+						else {
+							if (sprite->animation() != MOVE_RIGHT) {
+								sprite->changeAnimation(MOVE_RIGHT, star ? starOffset : 0);
+							}
+						}
 					}
+					else {
+						if (spriteT->animation() != MOVE_RIGHT) {
+							spriteT->changeAnimation(MOVE_RIGHT, star ? starOffset : 0);
+						}
+					}
+					sprite->setMirrored(true);
+					spriteT->setMirrored(true);
 				}
-				sprite->setMirrored(false);
-				spriteT->setMirrored(false);
+			}
+			else {
+				if (!in_the_air) {
+					speedX -= accel / NO_BUTTON_DIVISOR;
+					if (super) {
+						if (Game::instance().getSpecialKey(GLUT_KEY_DOWN) and (!(Game::instance().getSpecialKey(GLUT_KEY_LEFT) or Game::instance().getSpecialKey(GLUT_KEY_RIGHT)))) {
+							if (sprite->animation() != CROUCH) {
+								sprite->changeAnimation(CROUCH, star ? starOffset : 0);
+							}
+						}
+						else {
+							if (sprite->animation() != MOVE_RIGHT) {
+								sprite->changeAnimation(MOVE_RIGHT, star ? starOffset : 0);
+							}
+						}
+					}
+					else {
+						if (spriteT->animation() != MOVE_RIGHT) {
+							spriteT->changeAnimation(MOVE_RIGHT, star ? starOffset : 0);
+						}
+					}
+					sprite->setMirrored(false);
+					spriteT->setMirrored(false);
+				}
 			}
 		}
+
+		//if (in_the_air) accel = accel * 2;
+
+		//UPDATE POSITIONS
+		if (!(speedX < 0 and (map->collisionMoveLeft(posPlayer, glm::ivec2(MARIO_SIZE, MARIO_SIZE)) or posPlayer.x - camx <= 0)) and !(speedX > 0 and map->collisionMoveRight(posPlayer, glm::ivec2(MARIO_SIZE, MARIO_SIZE)))) {
+			posPlayer.x += speedX / DIVISOR;
+		}
+		else speedX = 0;
 	}
-
-	//if (in_the_air) accel = accel * 2;
-
-	//UPDATE POSITIONS
-	if (!(speedX < 0 and (map->collisionMoveLeft(posPlayer, glm::ivec2(MARIO_SIZE, MARIO_SIZE)) or posPlayer.x-camx <= 0)) and !(speedX > 0 and map->collisionMoveRight(posPlayer, glm::ivec2(MARIO_SIZE, MARIO_SIZE)))) {
-		posPlayer.x += speedX / DIVISOR;
-	}
-	else speedX = 0;
-
 	if (super) {
 		sprite->setPosition(glm::vec2(float(tileMapDispl.x + posPlayer.x), float(tileMapDispl.y + posPlayer.y)));
 	}
