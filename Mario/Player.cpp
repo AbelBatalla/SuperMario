@@ -19,7 +19,7 @@
 
 enum PlayerAnims
 {
-	STAND_RIGHT, MOVE_RIGHT, SPRINT_RIGHT, JUMP_RIGHT, DRIFT_TO_RIGHT, FALL_RIGHT1, FALL_RIGHT2, FALL_RIGHT3
+	STAND_RIGHT, MOVE_RIGHT, SPRINT_RIGHT, JUMP_RIGHT, DRIFT_TO_RIGHT, FALL_RIGHT1, FALL_RIGHT2, FALL_RIGHT3, CROUCH
 };
 
 void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
@@ -40,7 +40,7 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 
 	//SUPER
 	sprite = Sprite::createSprite(glm::ivec2(MARIO_SIZE, MARIO_SIZE*2), glm::vec2(0.03125, 0.0625), &spritesheet, &shaderProgram);
-	sprite->setNumberAnimations(8);
+	sprite->setNumberAnimations(9);
 			
 	sprite->setAnimationSpeed(STAND_RIGHT, 8);
 	sprite->addKeyframe(STAND_RIGHT, glm::vec2(0.0f, 0.0f));
@@ -111,6 +111,12 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 	sprite->addKeyframe(DRIFT_TO_RIGHT, glm::vec2(0.125f, 0.46875f));
 	sprite->addKeyframe(DRIFT_TO_RIGHT, glm::vec2(0.125f, 0.28125f));
 	sprite->addKeyframe(DRIFT_TO_RIGHT, glm::vec2(0.125f, 0.375f));
+
+	sprite->setAnimationSpeed(CROUCH, 8);
+	sprite->addKeyframe(CROUCH, glm::vec2(0.1875f, 0.0f));
+	sprite->addKeyframe(CROUCH, glm::vec2(0.1875f, 0.46875f));
+	sprite->addKeyframe(CROUCH, glm::vec2(0.1875f, 0.28125f));
+	sprite->addKeyframe(CROUCH, glm::vec2(0.1875f, 0.375f));
 		
 	sprite->changeAnimation(0, 0);
 	sprite->setMirrored(false);
@@ -425,8 +431,15 @@ bool Player::update(int deltaTime, int camx)
 		if (speedX / DIVISOR == 0) {
 			if (!in_the_air) {
 				if (super) {
-					if (sprite->animation() != STAND_RIGHT) {
-						sprite->changeAnimation(STAND_RIGHT, star ? starOffset : 0);
+					if (Game::instance().getSpecialKey(GLUT_KEY_DOWN)) {
+						if (sprite->animation() != CROUCH) {
+							sprite->changeAnimation(CROUCH, star ? starOffset : 0);
+						}
+					}
+					else {
+						if (sprite->animation() != STAND_RIGHT) {
+							sprite->changeAnimation(STAND_RIGHT, star ? starOffset : 0);
+						}
 					}
 				}
 				else {
@@ -439,16 +452,25 @@ bool Player::update(int deltaTime, int camx)
 		}
 		else if (speedX < 0) {
 			if (!in_the_air) {
-				speedX += accel/NO_BUTTON_DIVISOR;
 				if (super) {
-					if (sprite->animation() != MOVE_RIGHT) {
-						sprite->changeAnimation(MOVE_RIGHT, star ? starOffset : 0);
+					if (Game::instance().getSpecialKey(GLUT_KEY_DOWN)) {
+						if (sprite->animation() != CROUCH) {
+							sprite->changeAnimation(CROUCH, star ? starOffset : 0);
+						}
+						speedX += accel;
+					}
+					else {
+						if (sprite->animation() != MOVE_RIGHT) {
+							sprite->changeAnimation(MOVE_RIGHT, star ? starOffset : 0);
+						}
+						speedX += accel / NO_BUTTON_DIVISOR;
 					}
 				}
 				else {
 					if (spriteT->animation() != MOVE_RIGHT) {
 						spriteT->changeAnimation(MOVE_RIGHT, star ? starOffset : 0);
 					}
+					speedX += accel / NO_BUTTON_DIVISOR;
 				}
 				sprite->setMirrored(true);
 				spriteT->setMirrored(true);
@@ -456,16 +478,25 @@ bool Player::update(int deltaTime, int camx)
 		}
 		else {
 			if (!in_the_air) {
-				speedX -= accel / NO_BUTTON_DIVISOR;
 				if (super) {
-					if (sprite->animation() != MOVE_RIGHT) {
-						sprite->changeAnimation(MOVE_RIGHT, star ? starOffset : 0);
+					if (Game::instance().getSpecialKey(GLUT_KEY_DOWN)) {
+						if (sprite->animation() != CROUCH) {
+							sprite->changeAnimation(CROUCH, star ? starOffset : 0);
+						}
+						speedX -= accel;
+					}
+					else {
+						if (sprite->animation() != MOVE_RIGHT) {
+							sprite->changeAnimation(MOVE_RIGHT, star ? starOffset : 0);
+						}
+						speedX -= accel / NO_BUTTON_DIVISOR;
 					}
 				}
 				else {
 					if (spriteT->animation() != MOVE_RIGHT) {
 						spriteT->changeAnimation(MOVE_RIGHT, star ? starOffset : 0);
 					}
+					speedX -= accel / NO_BUTTON_DIVISOR;
 				}
 				sprite->setMirrored(false);
 				spriteT->setMirrored(false);
