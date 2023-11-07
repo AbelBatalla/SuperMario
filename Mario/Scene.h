@@ -48,7 +48,7 @@ private:
 	float currentTime;
 	int playerLives, timeLife;
 	glm::mat4 projection;
-	int camx, oldPosx, numCoins;
+	int camx, oldPosx, numCoins, playerScore;
 	std::vector<Coin*> coins;
 	std::vector<ItemBlock*> itemBlocks;
 	std::vector<PowerUp*> powerUps;
