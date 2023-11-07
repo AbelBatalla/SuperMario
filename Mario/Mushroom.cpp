@@ -25,7 +25,7 @@ void Mushroom::init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram, 
 }
 
 
-void Mushroom::update(int deltatime) {
+bool Mushroom::update(int deltatime) {
 	
 	if (startAnimation) {
 		stAnim += 1;
@@ -33,6 +33,8 @@ void Mushroom::update(int deltatime) {
 		if (stAnim >= 64) startAnimation = false;
 	}
 	else {
+		timeout += deltatime;
+		if (timeout >= 16000) return false;
 		pos.y += 2;
 		map->collisionMoveDown(pos, glm::ivec2(16, 16), &pos.y);
 
@@ -56,6 +58,7 @@ void Mushroom::update(int deltatime) {
 	sprite->setPosition(glm::vec2(float(tileMapDispl.x + pos.x), float(tileMapDispl.y + pos.y)));
 	sprite->update(deltatime, false, 1);
 	if (startAnimation) db->update(deltatime);
+	return true;
 }
 
 int Mushroom::type() {

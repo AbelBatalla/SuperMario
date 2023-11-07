@@ -9,7 +9,8 @@ void PowerUp::init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram, T
 }
 
 
-void PowerUp::update(int deltatime) {
+bool PowerUp::update(int deltatime) {
+	return true;
 }
 
 int PowerUp::type() {

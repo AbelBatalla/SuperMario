@@ -8,7 +8,7 @@
 class PowerUp {
 public:
 	virtual void init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram, TileMap* tileMap);
-	virtual void update(int deltatime);
+	virtual bool update(int deltatime);
 	virtual int type();
 	void render(int offset) const;
 	void setPosition(const glm::vec2& pos);
@@ -20,7 +20,7 @@ protected:
 	Texture spritesheet;
 	Sprite* sprite;
 	TileMap* map;
-	int stAnim;
+	int stAnim, timeout;
 	DeadBlock* db;
 };
 

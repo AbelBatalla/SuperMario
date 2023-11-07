@@ -17,6 +17,7 @@ void Star::init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram, Tile
 	moveRight = true;
 	startAnimation = true;
 	stAnim = 0;
+	timeout = 0;
 	tileMapDispl = tileMapPos;
 	map = tileMap;
 	db = new DeadBlock();
@@ -25,7 +26,7 @@ void Star::init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram, Tile
 }
 
 
-void Star::update(int deltatime) {
+bool Star::update(int deltatime) {
 
 	if (startAnimation) {
 		stAnim += 1;
@@ -33,6 +34,8 @@ void Star::update(int deltatime) {
 		if (stAnim >= 64) startAnimation = false;
 	}
 	else {
+		timeout += deltatime;
+		if (timeout >= 8000) return false;
 		pos.y += 2;
 		map->collisionMoveDown(pos, glm::ivec2(16, 16), &pos.y);
 
@@ -56,6 +59,7 @@ void Star::update(int deltatime) {
 	sprite->setPosition(glm::vec2(float(tileMapDispl.x + pos.x), float(tileMapDispl.y + pos.y)));
 	sprite->update(deltatime, false, 1);
 	if (startAnimation) db->update(deltatime);
+	return true;
 }
 
 int Star::type() {
