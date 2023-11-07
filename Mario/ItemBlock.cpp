@@ -26,9 +26,8 @@ void ItemBlock::init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram,
 	sprite->changeAnimation(0, 0);
 
 	tileMapDispl = tileMapPos;
-	//if (type == 0) powerUp = new Mushroom();
-	//else powerUp = new Star();
-	powerUp = new Mushroom();
+	if (type == 0) powerUp = new Mushroom();
+	else powerUp = new Star();
 	powerUp->init(tileMapDispl, shaderProgram, tileMap);
 
 }

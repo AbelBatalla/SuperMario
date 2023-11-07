@@ -653,4 +653,9 @@ void Player::turnSuper()
 	}
 }
 
+void Player::turnStar()
+{
+	star = true;
+	starTime = 0;
+}
 

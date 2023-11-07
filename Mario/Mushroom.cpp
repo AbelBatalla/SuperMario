@@ -58,22 +58,6 @@ void Mushroom::update(int deltatime) {
 	if (startAnimation) db->update(deltatime);
 }
 
-void Mushroom::setPosition(const glm::vec2& position)
-{
-	pos = position;
-	//pos.y -= 16;
-	sprite->setPosition(glm::vec2(float(tileMapDispl.x + position.x), float(tileMapDispl.y + position.y)));
-	if (startAnimation) db->setPosition(position);
-}
-
-
-void Mushroom::render(int offset) const
-{
-	sprite->render(offset);
-	if (startAnimation) db->render(offset);
-}
-
-bool Mushroom::checkCollision(const glm::vec2& posPlayer, bool super)
-{
-	return (abs(posPlayer.x - pos.x) <= 15 and ((!super and abs(posPlayer.y - pos.y) <= 15) or (super and pos.y >= posPlayer.y - 15 and pos.y <= posPlayer.y + 31)));
+int Mushroom::type() {
+	return 0;
 }

@@ -12,6 +12,10 @@ void PowerUp::init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram, T
 void PowerUp::update(int deltatime) {
 }
 
+int PowerUp::type() {
+	return 4;
+}
+
 void PowerUp::setPosition(const glm::vec2& position)
 {
 	pos = position;

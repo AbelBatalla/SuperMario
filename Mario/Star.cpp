@@ -6,11 +6,12 @@
 #include "Game.h"
 
 void Star::init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram, TileMap* tileMap) {
-	spritesheet.loadFromFile("images/tilesheetv2.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	spritesheet.loadFromFile("images/tilesheetv3.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	sprite = Sprite::createSprite(glm::ivec2(16, 16), glm::vec2(0.0625, 0.0625), &spritesheet, &shaderProgram);
 	sprite->setNumberAnimations(1);
-	sprite->setAnimationSpeed(0, 4);
-	sprite->addKeyframe(0, glm::vec2(0.1875f, 0.0625f));
+	sprite->setAnimationSpeed(0, 16);
+	sprite->addKeyframe(0, glm::vec2(0.5f, 0.1875f));
+	sprite->addKeyframe(0, glm::vec2(0.9375f, 0.5f));
 	sprite->changeAnimation(0, 0);
 
 	moveRight = true;
@@ -55,4 +56,8 @@ void Star::update(int deltatime) {
 	sprite->setPosition(glm::vec2(float(tileMapDispl.x + pos.x), float(tileMapDispl.y + pos.y)));
 	sprite->update(deltatime, false, 1);
 	if (startAnimation) db->update(deltatime);
+}
+
+int Star::type() {
+	return 1;
 }

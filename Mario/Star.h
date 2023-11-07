@@ -8,8 +8,9 @@
 
 class Star : public PowerUp {
 public:
-	void init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram, TileMap* tileMap);
-	void update(int deltatime);
+	void init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram, TileMap* tileMap) override;
+	void update(int deltatime) override;
+	int type() override;
 };
 
 #endif
