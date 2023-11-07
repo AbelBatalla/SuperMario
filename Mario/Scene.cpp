@@ -117,10 +117,10 @@ void Scene::update(int deltaTime)
 	
 	for (int i = 0; i < powerUps.size(); i++) {
 		if (powerUps[i] != nullptr) {
-			powerUps[i]->update(deltaTime); //T or F segons si delete o no
+			powerUps[i]->update(deltaTime); //T or F segons si delete o no (timeout? death?)
 			if (powerUps[i]->checkCollision(player->getPos(), player->getMarioState())) {
-				if (powerUps[i]->type() == 0) player->turnSuper(); //or star depending on type
-				else if (powerUps[i]->type() == 1) player->turnStar(); //or star depending on type
+				if (powerUps[i]->type() == 0) player->turnSuper();
+				else if (powerUps[i]->type() == 1) player->turnStar();
 				delete powerUps[i];
 				powerUps[i] = nullptr;
 			}
