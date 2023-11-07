@@ -11,6 +11,11 @@ public:
 	void init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram, TileMap* tileMap) override;
 	bool update(int deltatime) override;
 	int type() override;
+
+private:
+	int jumpAngle, startY;
+	bool bJumping;
+
 };
 
 #endif
