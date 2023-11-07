@@ -2,16 +2,16 @@
 #include <iostream>
 #include <GL/glew.h>
 #include <GL/glut.h>
-#include "Mushroom.h"
+#include "Star.h"
 #include "Game.h"
 
-void Mushroom::init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram, TileMap* tileMap) {
-	//initialize(tileMapPos, shaderProgram, tileMap, "images/tilesheetv2.png", 0.0625, 0.0625)
-	spritesheet.loadFromFile("images/tilesheetv2.png", TEXTURE_PIXEL_FORMAT_RGBA);
+void Star::init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram, TileMap* tileMap) {
+	spritesheet.loadFromFile("images/tilesheetv3.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	sprite = Sprite::createSprite(glm::ivec2(16, 16), glm::vec2(0.0625, 0.0625), &spritesheet, &shaderProgram);
 	sprite->setNumberAnimations(1);
-	sprite->setAnimationSpeed(0, 4);
-	sprite->addKeyframe(0, glm::vec2(0.1875f, 0.0625f));
+	sprite->setAnimationSpeed(0, 16);
+	sprite->addKeyframe(0, glm::vec2(0.5f, 0.1875f));
+	sprite->addKeyframe(0, glm::vec2(0.9375f, 0.5f));
 	sprite->changeAnimation(0, 0);
 
 	moveRight = true;
@@ -25,8 +25,8 @@ void Mushroom::init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram, 
 }
 
 
-void Mushroom::update(int deltatime) {
-	
+void Star::update(int deltatime) {
+
 	if (startAnimation) {
 		stAnim += 1;
 		if (stAnim % 4 == 0) pos.y -= 1;
@@ -58,6 +58,6 @@ void Mushroom::update(int deltatime) {
 	if (startAnimation) db->update(deltatime);
 }
 
-int Mushroom::type() {
-	return 0;
+int Star::type() {
+	return 1;
 }

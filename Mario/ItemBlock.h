@@ -3,7 +3,7 @@
 
 
 #include "Sprite.h"
-#include "Mushroom.h"
+#include "PowerUp.h"
 
 class ItemBlock
 {
@@ -14,13 +14,13 @@ public:
 	void render(int offset) const;
 	void setPosition(const glm::vec2& pos);
 	bool isHit(const glm::vec2& playerPosition) const;
-	Mushroom* getPowerUp();
+	PowerUp* getPowerUp();
 private:
 	int x, y, type;
 	glm::ivec2 tileMapDispl, posItemBlock;
 	Texture spritesheet;
 	Sprite* sprite;
-	Mushroom* powerUp;
+	PowerUp* powerUp;
 
 };
 #endif

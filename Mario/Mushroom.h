@@ -4,22 +4,13 @@
 #include "Sprite.h"
 #include "TileMap.h"
 #include "DeadBlock.h"
+#include "PowerUp.h"
 
-class Mushroom {
+class Mushroom : public PowerUp {
 	public:
-		void init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram, TileMap* tileMap);
-		void update(int deltatime);
-		void render(int offset) const;
-		void setPosition(const glm::vec2& pos);
-
-	private:
-		bool moveRight, startAnimation;
-		glm::ivec2 tileMapDispl, pos;
-		Texture spritesheet;
-		Sprite* sprite;
-		TileMap* map;
-		int stAnim;
-		DeadBlock* db;
+		void init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram, TileMap* tileMap) override;
+		void update(int deltatime) override;
+		int type() override;
 };
 
 #endif
