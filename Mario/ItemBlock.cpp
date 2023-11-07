@@ -5,12 +5,14 @@
 #include "ItemBlock.h"
 #include "Game.h"
 
-ItemBlock::ItemBlock(int px, int py) {
+
+ItemBlock::ItemBlock(int px, int py, int ptype) {
 	x = px;
 	y = py;
+	type = ptype;
 }
 
-void ItemBlock::init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram) {
+void ItemBlock::init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram, TileMap* tileMap) {
 	spritesheet.loadFromFile("images/itembricktiles.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	sprite = Sprite::createSprite(glm::ivec2(16, 16), glm::vec2(0.0625, 0.0625), &spritesheet, &shaderProgram);
 	sprite->setNumberAnimations(1);
@@ -20,17 +22,19 @@ void ItemBlock::init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram)
 	sprite->addKeyframe(0, glm::vec2(0.125f, 0.f));
 	sprite->changeAnimation(0, 0);
 
-
 	tileMapDispl = tileMapPos;
-	sprite->setPosition(glm::vec2(float(tileMapDispl.x + 20), float(tileMapDispl.y + posItemBlock.y)));
+	powerUp = new Mushroom();
+	powerUp->init(tileMapDispl, shaderProgram, tileMap);
+
 }
 
 void ItemBlock::setPosition(const glm::vec2& pos)
 {
 	posItemBlock = pos;
 	sprite->setPosition(glm::vec2(float(tileMapDispl.x + posItemBlock.x), float(tileMapDispl.y + posItemBlock.y)));
-}
+	powerUp->setPosition(pos);
 
+}
 
 bool ItemBlock::isHit(const glm::vec2& playerPosition) const
 {
@@ -48,8 +52,6 @@ bool ItemBlock::isHit(const glm::vec2& playerPosition) const
 	return false;
 }
 
-
-
 void ItemBlock::render(int offset) const
 {
 	sprite->render(offset);
@@ -58,4 +60,32 @@ void ItemBlock::render(int offset) const
 void ItemBlock::update(int deltatime) {
 
 	sprite->update(deltatime, false);
+}
+
+Mushroom* ItemBlock::getPowerUp() {
+
+	return powerUp;
+
+	/*
+	PowerUp* powerUp = new Mushroom();
+	powerUp->init(tileMapDispl, texProgram, map);
+	//mush->setPosition()
+	return powerUp;
+
+	*/
+	/*
+	if (type == 0) { //MUSHROOM
+		PowerUp* powerUp = new Mushroom();
+		powerUp->init();
+		//mush->setPosition()
+		return powerUp;
+	}
+	else if (type == 1) { //STAR
+	}
+	else { //COIN
+	}
+	*/
+	
+	//coin->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram); // Inicializa una moneda en la posicin del mapa
+	//coin->setPosition(glm::vec2(coinPos.x * map->getTileSize(), coinPos.y * map->getTileSize()));
 }

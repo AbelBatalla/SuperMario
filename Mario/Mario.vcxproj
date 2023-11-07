@@ -139,8 +139,10 @@
     <ClCompile Include="ItemBlock.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Menu.cpp" />
+    <ClCompile Include="Mushroom.cpp" />
     <ClCompile Include="Number.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="PowerUp.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
@@ -156,8 +158,10 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="ItemBlock.h" />
     <ClInclude Include="Menu.h" />
+    <ClInclude Include="Mushroom.h" />
     <ClInclude Include="Number.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="PowerUp.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderProgram.h" />

@@ -68,11 +68,11 @@ void Scene::init()
 		coins.push_back(coin); // Agrega la moneda al vector de monedas
 	}
 
-	std::vector<glm::ivec2> itemPositions = map->getItemPositions();
-	for (const glm::ivec2& itemPos : itemPositions) {
-		ItemBlock* item = new ItemBlock(itemPos.x, itemPos.y);
-		item->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram);
-		item->setPosition(glm::vec2(itemPos.x * map->getTileSize(), itemPos.y * map->getTileSize()));
+	std::vector<glm::ivec3> itemProperties = map->getItemPositions();
+	for (const glm::ivec3& itemProp : itemProperties) {
+		ItemBlock* item = new ItemBlock(itemProp.x, itemProp.y, itemProp.z);
+		item->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram, map);
+		item->setPosition(glm::vec2(itemProp.x * map->getTileSize(), itemProp.y * map->getTileSize()));
 		itemBlocks.push_back(item);
 	}
 
@@ -107,25 +107,20 @@ void Scene::update(int deltaTime)
 	for (int i = 0; i < itemBlocks.size(); i++) {
 		if (itemBlocks[i] != nullptr) {
 			if (itemBlocks[i]->isHit(player->getPos())) {
+				powerUps.push_back(itemBlocks[i]->getPowerUp());
 				delete itemBlocks[i];
 				itemBlocks[i] = nullptr;
-				//Afegir al vector power-ups
 			}
 			else itemBlocks[i]->update(deltaTime);
 		}
 	}
-	/*
+	
 	for (int i = 0; i < powerUps.size(); i++) {
-		if (itemBlocks[i] != nullptr) {
-			if (itemBlocks[i]->isHit(player->getPos(), 16, player->getMarioState())) {
-				delete itemBlocks[i]; // Elimina la moneda actual
-				itemBlocks[i] = nullptr;
-
-			}
-			else itemBlocks[i]->update(deltaTime);
+		if (powerUps[i] != nullptr) {
+			powerUps[i]->update(deltaTime);
 		}
 	}
-	*/
+
 
 
 	if (player->getLives() != playerLives) liveCounter->set(player->getLives());
@@ -182,6 +177,12 @@ void Scene::render()
 			itemBlock->render(camx);
 		}
 	}
+	for (const Mushroom* mush : powerUps) {
+		if (mush != nullptr) {
+			mush->render(camx);
+		}
+	}
+
 	player->render(camx);
 	coinCounter->render();
 	liveCounter->render();

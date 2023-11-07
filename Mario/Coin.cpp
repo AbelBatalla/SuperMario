@@ -17,7 +17,6 @@ void Coin::init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram) {
 
 
 	tileMapDispl = tileMapPos;
-	sprite->setPosition(glm::vec2(float(tileMapDispl.x + 20), float(tileMapDispl.y + posCoin.y)));
 }
 
 void Coin::setPosition(const glm::vec2& pos)
@@ -37,7 +36,7 @@ bool Coin::isCollected(const glm::vec2& playerPosition, int playerSize, bool sup
 	else  playerCenter = glm::vec2(playerPosition.x + tileMapDispl.x + playerSize / 2, playerPosition.y + tileMapDispl.y + playerSize / 2);
 	// Verifica si el jugador está exactamente en el mismo centro que la moneda
 
-	int toleranceX = 1;
+	int toleranceX = 8;
 	return (playerCenter.y == coinCenter.y && abs(playerCenter.x - coinCenter.x) <= toleranceX);
 }
 
