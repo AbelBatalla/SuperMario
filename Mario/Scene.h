@@ -9,6 +9,7 @@
 #include "Number.h"
 #include "Counter.h"
 #include "SimpleView.h"
+#include "ItemBlock.h"
 
 // Scene contains all the entities of our game.
 // It is responsible for updating and render them.
@@ -43,7 +44,8 @@ private:
 	glm::mat4 projection;
 	int camx, oldPosx, numCoins;
 	std::vector<Coin*> coins;
-	
+	std::vector<ItemBlock*> itemBlocks;
+
 	
 };
 #endif // _SCENE_INCLUDE

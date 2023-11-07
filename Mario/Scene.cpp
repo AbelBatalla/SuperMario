@@ -8,7 +8,7 @@
 
 
 #define SCREEN_X 0
-#define SCREEN_Y -80
+#define SCREEN_Y 32 //-80
 
 #define ZOOM 2
 
@@ -41,7 +41,7 @@ void Scene::init()
 {
 	initShaders();
 	numCoins =0;
-	map = TileMap::createTileMap("levels/mapa3.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
+	map = TileMap::createTileMap("levels/level01.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
 
 
 	hud = new SimpleView(SimpleView::TypeMenu::HUD);
@@ -62,10 +62,18 @@ void Scene::init()
 
 	std::vector<glm::ivec2> coinPositions = map->getCoinPositions();
 	for (const glm::ivec2& coinPos : coinPositions) {
-		Coin* coin = new Coin(0, 0);
+		Coin* coin = new Coin();
 		coin->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram); // Inicializa una moneda en la posici�n del mapa
 		coin->setPosition(glm::vec2(coinPos.x * map->getTileSize(), coinPos.y * map->getTileSize()));
 		coins.push_back(coin); // Agrega la moneda al vector de monedas
+	}
+
+	std::vector<glm::ivec2> itemPositions = map->getItemPositions();
+	for (const glm::ivec2& itemPos : itemPositions) {
+		ItemBlock* item = new ItemBlock(itemPos.x, itemPos.y);
+		item->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram);
+		item->setPosition(glm::vec2(itemPos.x * map->getTileSize(), itemPos.y * map->getTileSize()));
+		itemBlocks.push_back(item);
 	}
 
 
@@ -95,6 +103,31 @@ void Scene::update(int deltaTime)
 			else coins[i]->update(deltaTime);
 		}
 	}
+
+	for (int i = 0; i < itemBlocks.size(); i++) {
+		if (itemBlocks[i] != nullptr) {
+			if (itemBlocks[i]->isHit(player->getPos())) {
+				delete itemBlocks[i];
+				itemBlocks[i] = nullptr;
+				//Afegir al vector power-ups
+			}
+			else itemBlocks[i]->update(deltaTime);
+		}
+	}
+	/*
+	for (int i = 0; i < powerUps.size(); i++) {
+		if (itemBlocks[i] != nullptr) {
+			if (itemBlocks[i]->isHit(player->getPos(), 16, player->getMarioState())) {
+				delete itemBlocks[i]; // Elimina la moneda actual
+				itemBlocks[i] = nullptr;
+
+			}
+			else itemBlocks[i]->update(deltaTime);
+		}
+	}
+	*/
+
+
 	if (player->getLives() != playerLives) liveCounter->set(player->getLives());
 	timeCounter->set(200 - player->getTimeLife()/1000);
 	coinCounter->update(deltaTime);
@@ -142,6 +175,11 @@ void Scene::render()
 	for (const Coin* coin : coins) {
 		if (coin != nullptr) {
 			coin->render(camx);
+		}
+	}
+	for (const ItemBlock* itemBlock : itemBlocks) {
+		if (itemBlock != nullptr) {
+			itemBlock->render(camx);
 		}
 	}
 	player->render(camx);

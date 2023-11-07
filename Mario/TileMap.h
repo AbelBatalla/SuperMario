@@ -36,6 +36,7 @@ public:
 	bool collisionMoveRight(const glm::ivec2 &pos, const glm::ivec2 &size) const;
 	bool collisionMoveDown(const glm::ivec2 &pos, const glm::ivec2 &size, int *posY) const;
 	const std::vector<glm::ivec2>& getCoinPositions() const;
+	const std::vector<glm::ivec2>& getItemPositions() const;
 	bool collisionMoveUp(const glm::ivec2& pos, const glm::ivec2& size, int* posY) const;
 
 
@@ -54,7 +55,7 @@ private:
 	Texture tilesheet;
 	glm::vec2 tileTexSize;
 	int *map;
-	std::vector<glm::ivec2> coinPositions;
+	std::vector<glm::ivec2> coinPositions, itemPositions;
 };
 
 

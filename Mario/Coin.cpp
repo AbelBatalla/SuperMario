@@ -5,11 +5,6 @@
 #include "Coin.h"
 #include "Game.h"
 
-Coin::Coin(int px, int py) {
-	x = px;
-	y = py;
-}
-
 void Coin::init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram) {
 	spritesheet.loadFromFile("images/coins.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	sprite = Sprite::createSprite(glm::ivec2(16, 16), glm::vec2(0.5, 0.5), &spritesheet, &shaderProgram);
@@ -23,7 +18,6 @@ void Coin::init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram) {
 
 	tileMapDispl = tileMapPos;
 	sprite->setPosition(glm::vec2(float(tileMapDispl.x + 20), float(tileMapDispl.y + posCoin.y)));
-	collected = false;
 }
 
 void Coin::setPosition(const glm::vec2& pos)
