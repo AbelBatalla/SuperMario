@@ -270,7 +270,7 @@ bool Player::update(int deltaTime, int camx)
 	//FALTA COMPROVACIO MORT PER ENEMICS
 	if (posPlayer.y >= (map->getMapHeight()-2)*16 or timeLife >= 200000) { //200000 -> 200s which are represented in units of 0.5s, so the "timer" starts at 400
 		lives -= 1;
-		if (lives < 0) { //death
+		if (lives == 0) { //death
 			Game::instance().init();
 		}
 		else {
@@ -597,6 +597,14 @@ bool Player::update(int deltaTime, int camx)
 		spriteT->setPosition(glm::vec2(float(tileMapDispl.x + posPlayer.x), float(tileMapDispl.y + posPlayer.y)));
 	}
 	return false;
+}
+
+int Player::getLives() {
+	return lives;
+}
+
+int Player::getTimeLife() {
+	return timeLife;
 }
 
 void Player::render(int offset)

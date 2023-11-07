@@ -43,7 +43,7 @@ bool Coin::isCollected(const glm::vec2& playerPosition, int playerSize, bool sup
 	else  playerCenter = glm::vec2(playerPosition.x + tileMapDispl.x + playerSize / 2, playerPosition.y + tileMapDispl.y + playerSize / 2);
 	// Verifica si el jugador está exactamente en el mismo centro que la moneda
 
-	int toleranceX = 0.5;
+	int toleranceX = 1;
 	return (playerCenter.y == coinCenter.y && abs(playerCenter.x - coinCenter.x) <= toleranceX);
 }
 
