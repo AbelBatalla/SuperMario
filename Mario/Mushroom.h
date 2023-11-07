@@ -3,6 +3,7 @@
 
 #include "Sprite.h"
 #include "TileMap.h"
+#include "DeadBlock.h"
 
 class Mushroom {
 	public:
@@ -18,6 +19,7 @@ class Mushroom {
 		Sprite* sprite;
 		TileMap* map;
 		int stAnim;
+		DeadBlock* db;
 };
 
 #endif

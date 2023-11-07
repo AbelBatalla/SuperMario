@@ -18,6 +18,9 @@ void Mushroom::init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram, 
 	stAnim = 0;
 	tileMapDispl = tileMapPos;
 	map = tileMap;
+	db = new DeadBlock();
+	db->init(tileMapPos, shaderProgram);
+
 }
 
 
@@ -50,7 +53,8 @@ void Mushroom::update(int deltatime) {
 		}
 	}
 	sprite->setPosition(glm::vec2(float(tileMapDispl.x + pos.x), float(tileMapDispl.y + pos.y)));
-	sprite->update(deltatime, false);
+	sprite->update(deltatime, false, 1);
+	if (startAnimation) db->update(deltatime);
 }
 
 void Mushroom::setPosition(const glm::vec2& position)
@@ -58,10 +62,12 @@ void Mushroom::setPosition(const glm::vec2& position)
 	pos = position;
 	//pos.y -= 16;
 	sprite->setPosition(glm::vec2(float(tileMapDispl.x + position.x), float(tileMapDispl.y + position.y)));
+	if (startAnimation) db->setPosition(position);
 }
 
 
 void Mushroom::render(int offset) const
 {
 	sprite->render(offset);
+	if (startAnimation) db->render(offset);
 }

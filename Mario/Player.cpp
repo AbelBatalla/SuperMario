@@ -325,8 +325,8 @@ bool Player::update(int deltaTime, int camx)
 		starTime = 0;
 		starColorSpeed = 2;
 	}
-	if (super) sprite->update(deltaTime, updateStar);
-	else spriteT->update(deltaTime, updateStar);
+	if (super) sprite->update(deltaTime, updateStar, 4);
+	else spriteT->update(deltaTime, updateStar, 4);
 
 	if (!superTransition) {
 		bool in_the_air = false;

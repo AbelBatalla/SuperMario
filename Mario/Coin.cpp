@@ -9,10 +9,14 @@ void Coin::init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram) {
 	spritesheet.loadFromFile("images/coins.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	sprite = Sprite::createSprite(glm::ivec2(16, 16), glm::vec2(0.5, 0.5), &spritesheet, &shaderProgram);
 	sprite->setNumberAnimations(1);
-	sprite->setAnimationSpeed(0, 4);
+	sprite->setAnimationSpeed(0, 6);
 	sprite->addKeyframe(0, glm::vec2(0.f, 0.f));
 	sprite->addKeyframe(0, glm::vec2(0.0f, 0.5f));
 	sprite->addKeyframe(0, glm::vec2(0.5f, 0.f));
+	sprite->addKeyframe(0, glm::vec2(0.0f, 0.5f));
+	sprite->addKeyframe(0, glm::vec2(0.f, 0.f));
+	sprite->addKeyframe(0, glm::vec2(0.f, 0.f));
+
 	sprite->changeAnimation(0, 0);
 
 
@@ -49,5 +53,5 @@ void Coin::render(int offset) const
 
 void Coin::update(int deltatime) {
 	
-	sprite->update(deltatime, false);
+	sprite->update(deltatime, false, 1);
 }
