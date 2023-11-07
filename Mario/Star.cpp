@@ -17,6 +17,10 @@ void Star::init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram, Tile
 	moveRight = true;
 	startAnimation = true;
 	stAnim = 0;
+	timeout = 0;
+	jumpAngle = 0;
+	startY = 0;
+	bJumping = false;
 	tileMapDispl = tileMapPos;
 	map = tileMap;
 	db = new DeadBlock();
@@ -25,7 +29,7 @@ void Star::init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram, Tile
 }
 
 
-void Star::update(int deltatime) {
+bool Star::update(int deltatime) {
 
 	if (startAnimation) {
 		stAnim += 1;
@@ -33,8 +37,37 @@ void Star::update(int deltatime) {
 		if (stAnim >= 64) startAnimation = false;
 	}
 	else {
-		pos.y += 2;
-		map->collisionMoveDown(pos, glm::ivec2(16, 16), &pos.y);
+		timeout += deltatime;
+		if (timeout >= 12000) return false;
+
+		if (bJumping) {
+			jumpAngle += 4;
+			if (jumpAngle >= 180)
+			{
+				bJumping = false;
+				pos.y = startY;
+			}
+			else {
+				if (jumpAngle > 90) {
+					bJumping = false;
+				}
+				if (!map->collisionMoveUp(pos, glm::ivec2(16, 16), &pos.y)) {
+					pos.y = int(startY - 48 * sin(3.14159f * jumpAngle / 180.f));
+				}
+				else {
+					bJumping = false;
+				}
+			}
+		}
+		else {
+			pos.y += 2;
+			if (map->collisionMoveDown(pos, glm::ivec2(16, 16), &pos.y)) {
+				bJumping = true;
+				jumpAngle = 0;
+				startY = pos.y;
+
+			}
+		}
 
 		if (moveRight) {
 			if (map->collisionMoveRight(pos, glm::ivec2(16, 16))) {
@@ -56,6 +89,7 @@ void Star::update(int deltatime) {
 	sprite->setPosition(glm::vec2(float(tileMapDispl.x + pos.x), float(tileMapDispl.y + pos.y)));
 	sprite->update(deltatime, false, 1);
 	if (startAnimation) db->update(deltatime);
+	return true;
 }
 
 int Star::type() {

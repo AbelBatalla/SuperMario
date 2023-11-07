@@ -9,7 +9,8 @@ void PowerUp::init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram, T
 }
 
 
-void PowerUp::update(int deltatime) {
+bool PowerUp::update(int deltatime) {
+	return true;
 }
 
 int PowerUp::type() {
@@ -33,5 +34,5 @@ void PowerUp::render(int offset) const
 
 bool PowerUp::checkCollision(const glm::vec2& posPlayer, bool super)
 {
-	return (abs(posPlayer.x - pos.x) <= 15 and ((!super and abs(posPlayer.y - pos.y) <= 15) or (super and pos.y >= posPlayer.y - 15 and pos.y <= posPlayer.y + 31)));
+	return (abs(posPlayer.x - pos.x) <= 14 and ((!super and abs(posPlayer.y - pos.y) <= 14) or (super and pos.y >= posPlayer.y - 14 and pos.y <= posPlayer.y + 30)));
 }
