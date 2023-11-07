@@ -135,6 +135,8 @@ void Scene::update(int deltaTime)
 				if (powerUps[i]->type() == 2) {
 					newScore(200, powerUps[i]->getPos());
 					playerScore += 200;
+					++numCoins;
+					coinCounter->set(numCoins);
 					pointsCounter->set(playerScore);
 				}
 				delete powerUps[i];
