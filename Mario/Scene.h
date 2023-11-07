@@ -12,6 +12,8 @@
 #include "ItemBlock.h"
 #include "Mushroom.h"
 #include "Star.h"
+#include "Score.h"
+
 
 
 // Scene contains all the entities of our game.
@@ -31,6 +33,7 @@ public:
 
 private:
 	void initShaders();
+	void newScore(int s, glm::vec2 posScore);
 
 private:
 	TileMap *map;
@@ -49,6 +52,8 @@ private:
 	std::vector<Coin*> coins;
 	std::vector<ItemBlock*> itemBlocks;
 	std::vector<PowerUp*> powerUps;
+	std::vector<Score*> scores;
+
 	
 };
 #endif // _SCENE_INCLUDE
