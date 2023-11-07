@@ -42,7 +42,7 @@ bool Sprite::getMirrored() {
 	return mirrored;
 }
 
-void Sprite::update(int deltaTime, bool star)
+void Sprite::update(int deltaTime, bool star, int offset)
 {
 	if(currentAnimation >= 0)
 	{
@@ -50,7 +50,7 @@ void Sprite::update(int deltaTime, bool star)
 		while(timeAnimation > animations[currentAnimation].millisecsPerKeyframe)
 		{
 			timeAnimation -= animations[currentAnimation].millisecsPerKeyframe;
-			currentKeyframe = (currentKeyframe + 4) % animations[currentAnimation].keyframeDispl.size(); //no cal modul?
+			currentKeyframe = (currentKeyframe + offset) % animations[currentAnimation].keyframeDispl.size();
 		}
 		if (star) currentKeyframe = (currentKeyframe + (currentKeyframe % 4 == 3 ? -3 : 1)) % animations[currentAnimation].keyframeDispl.size();
 		texCoordDispl = animations[currentAnimation].keyframeDispl[currentKeyframe];

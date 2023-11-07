@@ -25,7 +25,7 @@ public:
 
 	void setMirrored(bool mirror);
 	bool getMirrored();
-	void update(int deltaTime, bool star);
+	void update(int deltaTime, bool star, int offset);
 	void render(int offset) const;
 	void free();
 

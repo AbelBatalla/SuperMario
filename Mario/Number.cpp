@@ -72,5 +72,5 @@ void Number::render() const
 
 void Number::update(int deltatime) {
 
-	sprite->update(deltatime, false);
+	sprite->update(deltatime, false, 4);
 }

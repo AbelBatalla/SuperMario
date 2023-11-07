@@ -98,7 +98,7 @@ bool TileMap::loadLevel(const string &levelFile)
 				num += tile - int('0');
 			}
 			if (num >= 96 and num <= 98) {
-				itemPositions.push_back(glm::ivec2(i / 3, j));
+				itemPositions.push_back(glm::ivec3(i / 3, j, num-96));
 				num = 128;
 			}
 			if (num == 99) {
@@ -122,7 +122,7 @@ const std::vector<glm::ivec2>& TileMap::getCoinPositions() const {
 	return coinPositions;
 }
 
-const std::vector<glm::ivec2>& TileMap::getItemPositions() const {
+const std::vector<glm::ivec3>& TileMap::getItemPositions() const {
 	return itemPositions;
 }
 
