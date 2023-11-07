@@ -36,3 +36,7 @@ bool PowerUp::checkCollision(const glm::vec2& posPlayer, bool super)
 {
 	return (abs(posPlayer.x - pos.x) <= 14 and ((!super and abs(posPlayer.y - pos.y) <= 14) or (super and pos.y >= posPlayer.y - 14 and pos.y <= posPlayer.y + 30)));
 }
+
+glm::ivec2 PowerUp::getPos() {
+	return pos;
+}

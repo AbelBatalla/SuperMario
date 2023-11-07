@@ -11,8 +11,9 @@ public:
 	virtual bool update(int deltatime);
 	virtual int type();
 	void render(int offset) const;
-	void setPosition(const glm::vec2& pos);
+	virtual void setPosition(const glm::vec2& pos);
 	bool checkCollision(const glm::vec2& pos, bool super);
+	glm::ivec2 getPos();
 
 protected:
 	bool moveRight, startAnimation;

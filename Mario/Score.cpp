@@ -34,7 +34,7 @@ void Score::render(int offset) const
 
 bool Score::update(int deltatime) {
 	pos.y -= 1;
-	if (initialY - pos.y >= 64) return false;
+	if (initialY - pos.y >= 48) return false;
 	sprite->setPosition(glm::vec2(float(tileMapDispl.x + pos.x), float(tileMapDispl.y + pos.y)));
 	sprite->update(deltatime, false, 1);
 	return true;

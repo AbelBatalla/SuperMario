@@ -4,6 +4,7 @@
 
 #include "Sprite.h"
 #include "PowerUp.h"
+#include "CoinPU.h"
 
 class ItemBlock
 {
