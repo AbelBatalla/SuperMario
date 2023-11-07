@@ -642,5 +642,15 @@ int Player::getPosX()
 	return posPlayer.x;
 }
 
+void Player::turnSuper()
+{
+	if (!super) {
+		super = true;
+		posPlayer.y -= MARIO_SIZE;
+		superTransition = true;
+		superTransTimer = 0;
+		sprite->changeAnimation(TRANSITION, star ? starOffset : 0);
+	}
+}
 
 

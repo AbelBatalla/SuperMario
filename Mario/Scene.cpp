@@ -117,7 +117,12 @@ void Scene::update(int deltaTime)
 	
 	for (int i = 0; i < powerUps.size(); i++) {
 		if (powerUps[i] != nullptr) {
-			powerUps[i]->update(deltaTime);
+			powerUps[i]->update(deltaTime); //T or F segons si delete o no
+			if (powerUps[i]->checkCollision(player->getPos(), player->getMarioState())) {
+				player->turnSuper(); //or star depending on type
+				delete powerUps[i];
+				powerUps[i] = nullptr;
+			}
 		}
 	}
 
@@ -177,9 +182,9 @@ void Scene::render()
 			itemBlock->render(camx);
 		}
 	}
-	for (const Mushroom* mush : powerUps) {
-		if (mush != nullptr) {
-			mush->render(camx);
+	for (const PowerUp* pu : powerUps) {
+		if (pu != nullptr) {
+			pu->render(camx);
 		}
 	}
 

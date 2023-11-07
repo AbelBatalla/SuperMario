@@ -11,6 +11,8 @@
 #include "SimpleView.h"
 #include "ItemBlock.h"
 #include "Mushroom.h"
+#include "Star.h"
+
 
 // Scene contains all the entities of our game.
 // It is responsible for updating and render them.
@@ -46,8 +48,7 @@ private:
 	int camx, oldPosx, numCoins;
 	std::vector<Coin*> coins;
 	std::vector<ItemBlock*> itemBlocks;
-	std::vector<Mushroom*> powerUps;
-
+	std::vector<PowerUp*> powerUps;
 	
 };
 #endif // _SCENE_INCLUDE

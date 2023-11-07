@@ -2,11 +2,10 @@
 #include <iostream>
 #include <GL/glew.h>
 #include <GL/glut.h>
-#include "Mushroom.h"
+#include "Star.h"
 #include "Game.h"
 
-void Mushroom::init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram, TileMap* tileMap) {
-	//initialize(tileMapPos, shaderProgram, tileMap, "images/tilesheetv2.png", 0.0625, 0.0625)
+void Star::init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram, TileMap* tileMap) {
 	spritesheet.loadFromFile("images/tilesheetv2.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	sprite = Sprite::createSprite(glm::ivec2(16, 16), glm::vec2(0.0625, 0.0625), &spritesheet, &shaderProgram);
 	sprite->setNumberAnimations(1);
@@ -25,8 +24,8 @@ void Mushroom::init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram, 
 }
 
 
-void Mushroom::update(int deltatime) {
-	
+void Star::update(int deltatime) {
+
 	if (startAnimation) {
 		stAnim += 1;
 		if (stAnim % 4 == 0) pos.y -= 1;
@@ -56,24 +55,4 @@ void Mushroom::update(int deltatime) {
 	sprite->setPosition(glm::vec2(float(tileMapDispl.x + pos.x), float(tileMapDispl.y + pos.y)));
 	sprite->update(deltatime, false, 1);
 	if (startAnimation) db->update(deltatime);
-}
-
-void Mushroom::setPosition(const glm::vec2& position)
-{
-	pos = position;
-	//pos.y -= 16;
-	sprite->setPosition(glm::vec2(float(tileMapDispl.x + position.x), float(tileMapDispl.y + position.y)));
-	if (startAnimation) db->setPosition(position);
-}
-
-
-void Mushroom::render(int offset) const
-{
-	sprite->render(offset);
-	if (startAnimation) db->render(offset);
-}
-
-bool Mushroom::checkCollision(const glm::vec2& posPlayer, bool super)
-{
-	return (abs(posPlayer.x - pos.x) <= 15 and ((!super and abs(posPlayer.y - pos.y) <= 15) or (super and pos.y >= posPlayer.y - 15 and pos.y <= posPlayer.y + 31)));
 }

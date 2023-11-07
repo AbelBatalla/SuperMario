@@ -26,6 +26,7 @@ public:
 	bool getMarioState();
 	int getLives();
 	int getTimeLife();
+	void turnSuper();
 	
 private:
 	bool bJumping, jumpPress, super, star, superTransition;
