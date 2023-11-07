@@ -40,7 +40,8 @@ Scene::~Scene()
 void Scene::init()
 {
 	initShaders();
-	numCoins =0;
+	numCoins = 0;
+	playerScore = 0;
 	map = TileMap::createTileMap("levels/level01.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
 
 
@@ -98,7 +99,9 @@ void Scene::update(int deltaTime)
 				delete coins[i]; // Elimina la moneda actual
 				coins[i] = nullptr;
 				++numCoins;
+				playerScore += 200;
 				coinCounter->set(numCoins);
+				pointsCounter->set(playerScore);
 			}
 			else coins[i]->update(deltaTime);
 		}
@@ -119,6 +122,9 @@ void Scene::update(int deltaTime)
 		if (powerUps[i] != nullptr) {
 			if (powerUps[i]->update(deltaTime)) { //T or F segons si delete o no (timeout? death?)
 				if (powerUps[i]->checkCollision(player->getPos(), player->getMarioState())) {
+					newScore(1000, player->getPos());
+					playerScore += 1000;
+					pointsCounter->set(playerScore);
 					if (powerUps[i]->type() == 0) player->turnSuper();
 					else if (powerUps[i]->type() == 1) player->turnStar();
 					delete powerUps[i];
@@ -128,6 +134,15 @@ void Scene::update(int deltaTime)
 			else {
 				delete powerUps[i];
 				powerUps[i] = nullptr;
+			}
+		}
+	}
+
+	for (int i = 0; i < scores.size(); i++) {
+		if (scores[i] != nullptr) {
+			if (!(scores[i]->update(deltaTime))) {
+				delete scores[i];
+				scores[i] = nullptr;
 			}
 		}
 	}
@@ -195,6 +210,11 @@ void Scene::render()
 	}
 
 	player->render(camx);
+	for (const Score* sc : scores) {
+		if (sc != nullptr) {
+			sc->render(camx);
+		}
+	}
 	coinCounter->render();
 	liveCounter->render();
 	timeCounter->render();
@@ -232,4 +252,13 @@ void Scene::initShaders()
 	texProgram.bindFragmentOutput("outColor");
 	vShader.free();
 	fShader.free();
+}
+
+
+void Scene::newScore(int s, glm::vec2 posScore)
+{
+	Score* sc = new Score();
+	sc->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram, s);
+	sc->setPosition(posScore);
+	scores.push_back(sc);
 }
