@@ -20,6 +20,8 @@ Scene::Scene()
 {
 	map = NULL;
 	player = NULL;
+	coinCounter = NULL;
+	liveCounter = NULL;
 }
 
 Scene::~Scene()
@@ -28,49 +30,36 @@ Scene::~Scene()
 		delete map;
 	if(player != NULL)
 		delete player;
-}
-
-void Scene::initCoinCounter() {
-	std::vector<int> number(2, 0);
-	number[1] = 1;
-	for (int i = 0; i < 2; ++i) {
-		counterCoins.push_back(new Number(0, 0));
-		counterCoins[i]->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram);
-		counterCoins[i]->setPosition(glm::vec2((10 + number[i]) * map->getTileSize(), 9 * map->getTileSize()));
-		counterCoins[i]->setNumber(0);
-	}
-}
-
-
-void Scene::setCoinCounter(int num) {
-	std::vector<int> number = transformNumber(num);
-	int j = 1;
-	for (int i = 0; i < 2; ++i) {
-		if (num > 9) counterCoins[i]->setNumber(number[i]);
-		else {
-			counterCoins[i]->setNumber(number[j]);
-			--j;
-		}
-	}
-}
-
-std::vector<int> Scene::transformNumber(int num) {
-	std::vector<int> result(2, 0); // Inicializa un vector con dos elementos, ambos en 0
-	while (num > 0) {
-		int digit = num % 10; // Obtiene el último dígito
-		result.insert(result.begin(), digit); // Agrega el dígito al inicio del vector
-		num /= 10; // Elimina el último dígito
-	}
-	return result;
+	if (coinCounter != NULL)
+		delete coinCounter;
+	if (liveCounter != NULL)
+		delete liveCounter;
 }
 
 
 void Scene::init()
 {
 	initShaders();
-	numCoins = 8;
+	numCoins =0;
 	map = TileMap::createTileMap("levels/mapa3.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
-	initCoinCounter();
+
+
+	hud = new SimpleView(SimpleView::TypeMenu::HUD);
+	hud->init();
+
+
+	coinCounter = new Counter();
+	liveCounter = new Counter();
+	timeCounter = new Counter();
+	pointsCounter = new Counter();
+	worldCounter = new Counter();
+	coinCounter->init(texProgram, 6, 6, 0, 2);
+	liveCounter->init(texProgram, 18, 6, 3, 1);
+	timeCounter->init(texProgram, 14, 6, 200, 3);
+	pointsCounter->init(texProgram, 1, 6, 0, 4);
+	worldCounter->init(texProgram, 10, 6, 1, 1);
+
+
 	std::vector<glm::ivec2> coinPositions = map->getCoinPositions();
 	for (const glm::ivec2& coinPos : coinPositions) {
 		Coin* coin = new Coin(0, 0);
@@ -80,11 +69,12 @@ void Scene::init()
 	}
 
 
-
 	player = new Player();
 	player->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram);
 	player->setPosition(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize(), INIT_PLAYER_Y_TILES * map->getTileSize()));
 	player->setTileMap(map);
+	playerLives = player->getLives();
+	//liveCounter->set(player->getLives());
 	projection = glm::ortho(0.f, float(SCREEN_WIDTH / ZOOM - 1), float(SCREEN_HEIGHT / ZOOM - 1), 0.f);
 	currentTime = 0.0f;
 	camx = 0; //Posicio x al mon de l'inici de la pantalla
@@ -100,15 +90,18 @@ void Scene::update(int deltaTime)
 				delete coins[i]; // Elimina la moneda actual
 				coins[i] = nullptr;
 				++numCoins;
-				setCoinCounter(numCoins);
+				coinCounter->set(numCoins);
 			}
 			else coins[i]->update(deltaTime);
 		}
 	}
-
-	for (int i = 0; i < 2; ++i) {
-		counterCoins[i]->update(deltaTime);
-	}
+	if (player->getLives() != playerLives) liveCounter->set(player->getLives());
+	timeCounter->set(200 - player->getTimeLife()/1000);
+	coinCounter->update(deltaTime);
+	liveCounter->update(deltaTime);
+	timeCounter->update(deltaTime);
+	pointsCounter->update(deltaTime);
+	worldCounter->update(deltaTime);
 
 	// Limpia las monedas nulas del vector (opcional)
 	//coins.erase(std::remove(coins.begin(), coins.end(), nullptr), coins.end());
@@ -152,9 +145,12 @@ void Scene::render()
 		}
 	}
 	player->render(camx);
-	for (int i = 0; i < 2; ++i) {
-		counterCoins[i]->render();
-	}
+	coinCounter->render();
+	liveCounter->render();
+	timeCounter->render();
+	pointsCounter->render();
+	worldCounter->render();
+	hud->render();
 	
 }
 

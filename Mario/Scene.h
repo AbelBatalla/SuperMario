@@ -7,6 +7,8 @@
 #include "TileMap.h"
 #include "Player.h"
 #include "Number.h"
+#include "Counter.h"
+#include "SimpleView.h"
 
 // Scene contains all the entities of our game.
 // It is responsible for updating and render them.
@@ -25,20 +27,23 @@ public:
 
 private:
 	void initShaders();
-	void initCoinCounter();
-	void setCoinCounter(int num);
-	std::vector<int> transformNumber(int num);
 
 private:
 	TileMap *map;
 	Player *player;
 	ShaderProgram texProgram;
+	Counter *coinCounter;
+	Counter *liveCounter;
+	Counter *timeCounter;
+	Counter *pointsCounter;
+	Counter *worldCounter;
+	SimpleView* hud;
 	float currentTime;
+	int playerLives, timeLife;
 	glm::mat4 projection;
 	int camx, oldPosx, numCoins;
 	std::vector<Coin*> coins;
-	//Number* counterCoins;
-	std::vector<Number*> counterCoins;
+	
 	
 };
 #endif // _SCENE_INCLUDE

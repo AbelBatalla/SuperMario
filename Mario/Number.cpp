@@ -10,7 +10,7 @@ Number::Number(int px, int py) {
 
 void Number::init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram) {
 	spritesheet.loadFromFile("images/numbers.png", TEXTURE_PIXEL_FORMAT_RGBA);
-	sprite = Sprite::createSprite(glm::ivec2(16, 16), glm::vec2(0.25, 0.3333), &spritesheet, &shaderProgram);
+	sprite = Sprite::createSprite(glm::ivec2(8, 8), glm::vec2(0.25, 0.3333), &spritesheet, &shaderProgram);
 
 	sprite->setNumberAnimations(10);
 	sprite->setAnimationSpeed(0, 1);

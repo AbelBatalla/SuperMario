@@ -24,6 +24,8 @@ public:
 	glm::vec2 getPos();
 	int getPosX();
 	bool getMarioState();
+	int getLives();
+	int getTimeLife();
 	
 private:
 	bool bJumping, jumpPress, super, star, superTransition;
