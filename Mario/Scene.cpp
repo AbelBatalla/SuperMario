@@ -121,7 +121,7 @@ void Scene::update(int deltaTime)
 	for (int i = 0; i < powerUps.size(); i++) {
 		if (powerUps[i] != nullptr) {
 			if (powerUps[i]->update(deltaTime)) { //T or F segons si delete o no (timeout? death?)
-				if (powerUps[i]->checkCollision(player->getPos(), player->getMarioState())) {
+				if (powerUps[i]->type() != 2 and powerUps[i]->checkCollision(player->getPos(), player->getMarioState())) {
 					newScore(1000, player->getPos());
 					playerScore += 1000;
 					pointsCounter->set(playerScore);
@@ -132,6 +132,11 @@ void Scene::update(int deltaTime)
 				}
 			}
 			else {
+				if (powerUps[i]->type() == 2) {
+					newScore(200, powerUps[i]->getPos());
+					playerScore += 200;
+					pointsCounter->set(playerScore);
+				}
 				delete powerUps[i];
 				powerUps[i] = nullptr;
 			}

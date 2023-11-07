@@ -134,6 +134,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Coin.cpp" />
+    <ClCompile Include="CoinPU.cpp" />
     <ClCompile Include="Counter.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="ItemBlock.cpp" />
@@ -157,6 +158,7 @@
   <ItemGroup>
     <ClInclude Include="AnimKeyframes.h" />
     <ClInclude Include="Coin.h" />
+    <ClInclude Include="CoinPU.h" />
     <ClInclude Include="Counter.h" />
     <ClInclude Include="DeadBlock.h" />
     <ClInclude Include="Game.h" />
