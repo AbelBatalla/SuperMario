@@ -681,9 +681,4 @@ void Player::collisionUp()
 	Game::instance().setSpace(false);
 }
 
-bool Player::goingUp()
-{
-	return (bJumping or jumpAngle < 98);
-}
-
 

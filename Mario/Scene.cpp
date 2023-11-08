@@ -50,7 +50,7 @@ void Scene::init()
 	initShaders();
 	numCoins = 0;
 	playerScore = 0;
-	hitLast = false;
+	hitLast = 0;
 	goombas.erase(goombas.begin(), goombas.end());
 	map = TileMap::createTileMap("levels/level01.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
 
@@ -179,18 +179,18 @@ void Scene::update(int deltaTime)
 		oldPosx = INIT_PLAYER_X_TILES;
 	}
 
-
-	int primaryCollisonBlock = map->getPrimaryCollisionBlock(player->getPos());
+	int primaryCollisonBlock = -1;
+	if (hitLast == 0) primaryCollisonBlock = map->getPrimaryCollisionBlock(player->getPos());
 	bool found = false;
 	if (primaryCollisonBlock == -1) {
 		found = true;
-		hitLast = false;
 	}
+
 	for (int i = 0; i < itemBlocks.size(); i++) {
 		if (itemBlocks[i] != nullptr) {
-			if (!found and !hitLast and player->goingUp() and itemBlocks[i]->isHit(player->getPos(), primaryCollisonBlock)) {
+			if (!found and hitLast == 0 and itemBlocks[i]->isHit(player->getPos(), primaryCollisonBlock)) {
+				hitLast++;
 				found = true;
-				hitLast = true;
 				powerUps.push_back(itemBlocks[i]->getPowerUp());
 				delete itemBlocks[i];
 				itemBlocks[i] = nullptr;
@@ -201,11 +201,11 @@ void Scene::update(int deltaTime)
 
 	for (int i = 0; i < bricks.size(); i++) {
 		if (bricks[i] != nullptr) {
-			if (!found and !hitLast and player->goingUp() and bricks[i]->isHit(player->getPos(), player->getMarioState(), primaryCollisonBlock)) {
+			if (!found and hitLast == 0 and bricks[i]->isHit(player->getPos(), player->getMarioState(), primaryCollisonBlock)) {
 				found = true;
-				hitLast = true;
-				powerUps.push_back(bricks[i]->getPowerUp());
+				hitLast++;
 				int state = bricks[i]->getState();
+				if (state != 2) powerUps.push_back(bricks[i]->getPowerUp());
 				if (state == 0) { //Brick Broken
 					player->collisionUp();
 					map->setClearBlock(bricks[i]->getPos());
@@ -217,8 +217,10 @@ void Scene::update(int deltaTime)
 			else bricks[i]->update(deltaTime);
 		}
 	}
-	if (hitLast and !found) hitLast = false;
-
+	if (hitLast != 0) {
+		++hitLast;
+		hitLast = hitLast % 5;
+	}
 	
 	for (int i = 0; i < powerUps.size(); i++) {
 		if (powerUps[i] != nullptr) {

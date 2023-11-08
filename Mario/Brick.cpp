@@ -26,7 +26,7 @@ void Brick::init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram, Til
 	up = true;
 	hitLast = false;
 	bumpMov = 0;
-	state = 2;
+	state = type+2;
 	coinCounter = 10;
 	tileMapDispl = tileMapPos;
 	if (type == 0) powerUp = new Debris();
@@ -62,12 +62,12 @@ bool Brick::isHit(const glm::vec2& playerPosition, bool super, int block)
 		for (int xi = xm0; xi <= xm1; xi++) {
 			if (xi == x) {
 				if (type == 0) {
-					if (!super and type == 0) {
+					if (!super) {
 						bumpAnim = true;
 						hitLast = true;
-						return false;
+						//return false;
 					} 
-					else state = 0;;
+					else state = 0;
 				}
 				else if (type == 1) {
 					state = 1;
