@@ -268,9 +268,3 @@ void TileMap::setClearBlock(glm::ivec2 pos) {
 	int y = pos.y / tileSize;
 	map[y * mapSize.x + x] = 0;
 }
-
-void TileMap::setDeadBlock(glm::ivec2 pos) {
-	int x = pos.x / tileSize;
-	int y = pos.y / tileSize;
-	map[y * mapSize.x + x] = 0;
-}
