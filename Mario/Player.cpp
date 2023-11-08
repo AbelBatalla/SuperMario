@@ -39,6 +39,7 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 	jumpAcu = 0;
 	jumpPress = false;
 	accel = 2;
+	killed = false;
 
 	collectedCoins = 0;
 
@@ -268,8 +269,9 @@ bool Player::update(int deltaTime, int camx)
 
 	timeLife += deltaTime;
 	//FALTA COMPROVACIO MORT PER ENEMICS
-	if (posPlayer.y >= (map->getMapHeight()-2)*16 or timeLife >= 200000) { //200000 -> 200s which are represented in units of 0.5s, so the "timer" starts at 400
+	if (posPlayer.y >= (map->getMapHeight()-2)*16 or timeLife >= 200000 or killed) { //200000 -> 200s which are represented in units of 0.5s, so the "timer" starts at 400
 		lives -= 1;
+		killed = false;
 		if (lives == 0) { //death
 			Game::instance().init();
 		}
@@ -603,6 +605,15 @@ int Player::getLives() {
 	return lives;
 }
 
+void Player::kill() {
+	if (super) super = false;
+	killed = true;
+}
+
+bool Player::isKilled() {
+	return killed;
+}
+
 int Player::getTimeLife() {
 	return timeLife;
 }
@@ -619,6 +630,10 @@ void Player::render(int offset)
 
 bool Player::getMarioState() {
 	return super;
+}
+
+void Player::setMarioState(bool state) {
+	super = state;
 }
 
 void Player::setTileMap(TileMap *tileMap)

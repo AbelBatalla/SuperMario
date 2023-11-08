@@ -136,6 +136,7 @@
     <ClCompile Include="Coin.cpp" />
     <ClCompile Include="Counter.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Goomba.cpp" />
     <ClCompile Include="ItemBlock.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Menu.cpp" />
@@ -160,6 +161,7 @@
     <ClInclude Include="Counter.h" />
     <ClInclude Include="DeadBlock.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="Goomba.h" />
     <ClInclude Include="ItemBlock.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="Mushroom.h" />

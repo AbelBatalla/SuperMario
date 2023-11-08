@@ -5,10 +5,11 @@
 #include "Game.h"
 #include "Coin.h"
 #include "Number.h"
+#include <windows.h>
 
 
 #define SCREEN_X 0
-#define SCREEN_Y 32 //-80
+#define SCREEN_Y -80
 
 #define ZOOM 2
 
@@ -22,6 +23,7 @@ Scene::Scene()
 	player = NULL;
 	coinCounter = NULL;
 	liveCounter = NULL;
+	
 }
 
 Scene::~Scene()
@@ -34,6 +36,12 @@ Scene::~Scene()
 		delete coinCounter;
 	if (liveCounter != NULL)
 		delete liveCounter;
+	for (int i = 0; i < goombas.size(); ++i) {
+		delete goombas[i];
+		goombas[i] = nullptr;
+	}
+	goombas.erase(std::remove(goombas.begin(), goombas.end(), nullptr), goombas.end());
+	
 }
 
 
@@ -42,7 +50,8 @@ void Scene::init()
 	initShaders();
 	numCoins = 0;
 	playerScore = 0;
-	map = TileMap::createTileMap("levels/level01.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
+	goombas.erase(goombas.begin(), goombas.end());
+	map = TileMap::createTileMap("levels/mapa4.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
 
 
 	hud = new SimpleView(SimpleView::TypeMenu::HUD);
@@ -61,6 +70,14 @@ void Scene::init()
 	worldCounter->init(texProgram, 10, 6, 1, 1);
 
 
+	std::vector<glm::ivec2> goombaPositions = map->getGoombaPositions();
+	for (const glm::ivec2& goombaPos : goombaPositions) {
+		Goomba* g = new Goomba();
+		g->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram, map); // Inicializa una moneda en la posici�n del mapa
+		g->setPosition(glm::vec2(goombaPos.x * map->getTileSize(), goombaPos.y * map->getTileSize()));
+		goombas.push_back(g); // Agrega la moneda al vector de monedas
+	}
+
 	std::vector<glm::ivec2> coinPositions = map->getCoinPositions();
 	for (const glm::ivec2& coinPos : coinPositions) {
 		Coin* coin = new Coin();
@@ -77,7 +94,9 @@ void Scene::init()
 		itemBlocks.push_back(item);
 	}
 
-
+	//gom = new Goomba();
+	//gom->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram, map);
+	//gom->setPosition(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize(), 24 * map->getTileSize()));
 	player = new Player();
 	player->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram);
 	player->setPosition(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize(), INIT_PLAYER_Y_TILES * map->getTileSize()));
@@ -104,6 +123,30 @@ void Scene::update(int deltaTime)
 				pointsCounter->set(playerScore);
 			}
 			else coins[i]->update(deltaTime);
+		}
+	}
+
+
+	for (int i = 0; i < goombas.size(); i++) {
+		if (goombas[i] != nullptr) {
+			if (goombas[i]->getDeathTime() != 0 and (currentTime - goombas[i]->getDeathTime()) > 200) {
+				delete goombas[i]; // Elimina la moneda actual
+				goombas[i] = nullptr;
+			}
+			if (goombas[i] != nullptr) {
+				goombas[i]->update(deltaTime);
+				if (not player->isKilled() and goombas[i]->getDeathTime() == 0) {
+					int state = goombas[i]->checkCollision(player->getPos(), player->getMarioState());
+					if (state == 2) {
+						newScore(100, player->getPos());
+						playerScore += 100;
+						pointsCounter->set(playerScore);
+					}
+					else if (state == 1) {
+					 player->kill();
+					}
+				}
+			}
 		}
 	}
 
@@ -156,8 +199,10 @@ void Scene::update(int deltaTime)
 	timeCounter->update(deltaTime);
 	pointsCounter->update(deltaTime);
 	worldCounter->update(deltaTime);
+	//gom->update(deltaTime);
 
 	// Limpia las monedas nulas del vector (opcional)
+	// scores[i] = nullptr;
 	//coins.erase(std::remove(coins.begin(), coins.end(), nullptr), coins.end());
 
 	
@@ -198,6 +243,7 @@ void Scene::render()
 			coin->render(camx);
 		}
 	}
+	
 	for (const ItemBlock* itemBlock : itemBlocks) {
 		if (itemBlock != nullptr) {
 			itemBlock->render(camx);
@@ -215,12 +261,19 @@ void Scene::render()
 			sc->render(camx);
 		}
 	}
+
+	for (const Goomba* g : goombas) {
+		if (g != nullptr) {
+			g->render(camx);
+		}
+	}
 	coinCounter->render();
 	liveCounter->render();
 	timeCounter->render();
 	pointsCounter->render();
 	worldCounter->render();
 	hud->render();
+	//gom->render(camx);
 	
 }
 
