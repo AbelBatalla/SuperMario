@@ -632,6 +632,10 @@ bool Player::getMarioState() {
 	return super;
 }
 
+bool Player::getMarioTransitionState() {
+	return superTransition;
+}
+
 void Player::setMarioState(bool state) {
 	super = state;
 }

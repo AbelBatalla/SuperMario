@@ -41,12 +41,16 @@ void ItemBlock::setPosition(const glm::vec2& pos)
 
 }
 
-bool ItemBlock::isHit(const glm::vec2& playerPosition) const
+bool ItemBlock::isHit(const glm::vec2& playerPosition, int block) const
 {
+	if (block != -1 and posItemBlock.x / 16 != block) {
+		return false;
+	}
+
 	int xm0, xm1, ym;
 
 	xm0 = (playerPosition.x + 3) / 16;
-	xm1 = (playerPosition.x + 16 - 4) / 16;
+	xm1 = (playerPosition.x + 12) / 16;
 	ym = (playerPosition.y - 3) / 16;
 
 	if (ym == y) {
