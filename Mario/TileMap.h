@@ -40,8 +40,8 @@ public:
 	const std::vector<glm::ivec3>& getItemPositions() const;
 	const std::vector<glm::ivec3>& getBrickPositions() const;
 	bool collisionMoveUp(const glm::ivec2& pos, const glm::ivec2& size, int* posY) const;
-
-
+	void setClearBlock(glm::ivec2 pos);
+	void setDeadBlock(glm::ivec2 pos);
 	
 private:
 	bool loadLevel(const string &levelFile);

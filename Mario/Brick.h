@@ -14,14 +14,18 @@ public:
 	void update(int deltatime);
 	void render(int offset) const;
 	void setPosition(const glm::vec2& pos);
-	bool isHit(const glm::vec2& playerPosition) const;
+	bool isHit(const glm::vec2& playerPosition);
 	PowerUp* getPowerUp();
+	int getState();
+	glm::ivec2 getPos();
+
 private:
-	int x, y, type, coinCounter;
+	int x, y, type, state, coinCounter;
 	glm::ivec2 tileMapDispl, posBrick;
 	Texture spritesheet;
 	Sprite* sprite;
 	PowerUp* powerUp;
+	bool hitLast;
 
 };
 #endif

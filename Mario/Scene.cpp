@@ -173,22 +173,13 @@ void Scene::update(int deltaTime)
 		if (bricks[i] != nullptr) {
 			if (bricks[i]->isHit(player->getPos())) {
 				powerUps.push_back(bricks[i]->getPowerUp());
-				delete bricks[i];
-				bricks[i] = nullptr;
-				/*
 				int state = bricks[i]->getState();
 				if (state == 0) { //Brick Broken
-					map->clearBlock(bricks[i]->getPos());
-					delete bricks[i];
-					bricks[i] = nullptr;
-				}
-				else if (state == 1) { //Turned DeadBlock
-					map->setDeadBlock(bricks[i]->getPos());
+					map->setClearBlock(bricks[i]->getPos());
 					delete bricks[i];
 					bricks[i] = nullptr;
 				}
 				else bricks[i]->update(deltaTime);
-				*/
 			}
 			else bricks[i]->update(deltaTime);
 		}
@@ -214,9 +205,13 @@ void Scene::update(int deltaTime)
 					++numCoins;
 					coinCounter->set(numCoins);
 					pointsCounter->set(playerScore);
+					powerUps[i] = nullptr;
+					powerUps.erase(powerUps.begin() + i);
 				}
-				delete powerUps[i];
-				powerUps[i] = nullptr;
+				else {
+					delete powerUps[i];
+					powerUps[i] = nullptr;
+				}
 			}
 		}
 	}
