@@ -29,6 +29,8 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 	super = false;
 	superTransition = false;
 	superTransTimer = 0;
+	loseSuper = false;
+	loseSuperCounter = 0;
 	star = false;
 	starColorSpeed = 2;
 	starOffset = 0;
@@ -310,12 +312,15 @@ bool Player::update(int deltaTime, int camx)
 		posPlayer.y -= MARIO_SIZE;
 		superTransition = true;
 		superTransTimer = 0;
+		loseSuper = false;
 		sprite->changeAnimation(TRANSITION, star ? starOffset : 0);
 	}
 	if (Game::instance().getKey('w') and super) {
 		super = false;
 		superTransition = false;
 		superTransTimer = 0;
+		loseSuper = true;
+		loseSuperCounter = 0;
 	}
 	if (Game::instance().getKey('e') and !star) star = true;
 	if ((Game::instance().getKey('r') and star) or starTime >= 12000) {
@@ -624,7 +629,12 @@ void Player::render(int offset)
 		sprite->render(offset);
 	}
 	else {
-		spriteT->render(offset);
+		if (loseSuper) {
+			++loseSuperCounter;
+			loseSuperCounter = loseSuperCounter%3;
+			if (loseSuperCounter != 0) spriteT->render(offset);
+		}
+		else spriteT->render(offset);
 	}
 }
 
