@@ -169,12 +169,33 @@ void Scene::update(int deltaTime)
 		}
 	}
 
+	if (player->getLives() != playerLives) liveCounter->set(player->getLives());
+	timeCounter->set(200 - player->getTimeLife() / 1000);
+	coinCounter->update(deltaTime);
+	liveCounter->update(deltaTime);
+	timeCounter->update(deltaTime);
+	pointsCounter->update(deltaTime);
+	worldCounter->update(deltaTime);
+	//gom->update(deltaTime);
+
+	// Limpia las monedas nulas del vector (opcional)
+	// scores[i] = nullptr;
+	//coins.erase(std::remove(coins.begin(), coins.end(), nullptr), coins.end());
+
+
+	if (player->update(deltaTime, camx)) {
+		player->setPosition(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize(), INIT_PLAYER_Y_TILES * map->getTileSize()));
+		camx = 0;
+		oldPosx = INIT_PLAYER_X_TILES;
+	}
+
 	for (int i = 0; i < bricks.size(); i++) {
 		if (bricks[i] != nullptr) {
 			if (bricks[i]->isHit(player->getPos())) {
 				powerUps.push_back(bricks[i]->getPowerUp());
 				int state = bricks[i]->getState();
 				if (state == 0) { //Brick Broken
+					player->collisionUp();
 					map->setClearBlock(bricks[i]->getPos());
 					delete bricks[i];
 					bricks[i] = nullptr;
@@ -225,27 +246,6 @@ void Scene::update(int deltaTime)
 		}
 	}
 
-
-
-	if (player->getLives() != playerLives) liveCounter->set(player->getLives());
-	timeCounter->set(200 - player->getTimeLife()/1000);
-	coinCounter->update(deltaTime);
-	liveCounter->update(deltaTime);
-	timeCounter->update(deltaTime);
-	pointsCounter->update(deltaTime);
-	worldCounter->update(deltaTime);
-	//gom->update(deltaTime);
-
-	// Limpia las monedas nulas del vector (opcional)
-	// scores[i] = nullptr;
-	//coins.erase(std::remove(coins.begin(), coins.end(), nullptr), coins.end());
-
-	
-	if (player->update(deltaTime, camx)) {
-		player->setPosition(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize(), INIT_PLAYER_Y_TILES * map->getTileSize()));
-		camx = 0;
-		oldPosx = INIT_PLAYER_X_TILES;
-	}
 }
 
 void Scene::render()

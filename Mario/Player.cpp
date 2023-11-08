@@ -674,3 +674,11 @@ void Player::turnStar()
 	starTime = 0;
 }
 
+
+void Player::collisionUp()
+{
+	bJumping = false;
+	Game::instance().setSpace(false);
+}
+
+

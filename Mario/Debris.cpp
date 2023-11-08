@@ -20,27 +20,35 @@ void Debris::init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram, Ti
 	up = true;
 	acum = 0;
 	tileMapDispl = tileMapPos;
+	xCount = 0;
+	distX = 8;
+	distY = 8;
+	jumpAngle = 0;
 }
 
 
 bool Debris::update(int deltatime) {
-	if (up) {
-		pos.y -= 1;
-		acum -= 1;
-		if (acum <= -48) {
-			up = false;
-		}
+
+	++xCount;
+	if (xCount % 2 == 0) {
+		pos.x -= 1;
+		distX += 2;
+	}
+	if (xCount > 64) return false;
+
+	//---------------------------------
+	jumpAngle += 4;
+	if (jumpAngle <= 90) {
+		pos.y = int(startY - 56 * sin(3.14159f * jumpAngle / 180.f));
+		distY = int(startY - 28 * sin(3.14159f * jumpAngle / 180.f));
 	}
 	else {
-		pos.y += 1;
-		acum += 1;
-		if (acum >= -8) {
-			up = true;
-			pos.y -= acum;
-			acum = 0;
-			return false;
-		}
+		pos.y += 2;
+		distY += 2;
 	}
+
+	//---------------------------------
+
 	sprite->setPosition(glm::vec2(float(tileMapDispl.x + pos.x), float(tileMapDispl.y + pos.y)));
 	sprite->update(deltatime, false, 1);
 	return true;
@@ -53,6 +61,18 @@ int Debris::type() {
 void Debris::setPosition(const glm::vec2& position)
 {
 	pos = position;
-	pos.y -= 16;
+	startY = pos.y;
+	distY = pos.y + 8;
 	sprite->setPosition(glm::vec2(float(tileMapDispl.x + pos.x), float(tileMapDispl.y + pos.y)));
+}
+
+void Debris::render(int offset) const
+{
+	sprite->render(offset);
+	sprite->setPosition(glm::vec2(float(tileMapDispl.x + pos.x + distX), float(tileMapDispl.y + pos.y)));
+	sprite->render(offset);
+	sprite->setPosition(glm::vec2(float(tileMapDispl.x + pos.x + distX), float(tileMapDispl.y + distY)));
+	sprite->render(offset);
+	sprite->setPosition(glm::vec2(float(tileMapDispl.x + pos.x), float(tileMapDispl.y + distY)));
+	sprite->render(offset);
 }
