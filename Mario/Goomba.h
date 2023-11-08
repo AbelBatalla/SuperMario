@@ -21,7 +21,7 @@ protected:
 	Texture spritesheet;
 	Sprite* sprite;
 	TileMap* map;
-	int stAnim, time, deathTime;
+	int stAnim, time, deathTime, move;
 	DeadBlock* db;
 };
 
