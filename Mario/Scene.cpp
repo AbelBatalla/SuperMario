@@ -9,7 +9,7 @@
 
 
 #define SCREEN_X 0
-#define SCREEN_Y -80
+#define SCREEN_Y 32 //-80
 
 #define ZOOM 2
 
@@ -51,7 +51,7 @@ void Scene::init()
 	numCoins = 0;
 	playerScore = 0;
 	goombas.erase(goombas.begin(), goombas.end());
-	map = TileMap::createTileMap("levels/mapa4.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
+	map = TileMap::createTileMap("levels/level01.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
 
 
 	hud = new SimpleView(SimpleView::TypeMenu::HUD);
@@ -92,6 +92,14 @@ void Scene::init()
 		item->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram, map);
 		item->setPosition(glm::vec2(itemProp.x * map->getTileSize(), itemProp.y * map->getTileSize()));
 		itemBlocks.push_back(item);
+	}
+
+	std::vector<glm::ivec3> brickProperties = map->getBrickPositions();
+	for (const glm::ivec3& brickProp : brickProperties) {
+		Brick* brick = new Brick(brickProp.x, brickProp.y, brickProp.z);
+		brick->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram, map);
+		brick->setPosition(glm::vec2(brickProp.x * map->getTileSize(), brickProp.y * map->getTileSize()));
+		bricks.push_back(brick);
 	}
 
 	//gom = new Goomba();
@@ -158,6 +166,31 @@ void Scene::update(int deltaTime)
 				itemBlocks[i] = nullptr;
 			}
 			else itemBlocks[i]->update(deltaTime);
+		}
+	}
+
+	for (int i = 0; i < bricks.size(); i++) {
+		if (bricks[i] != nullptr) {
+			if (bricks[i]->isHit(player->getPos())) {
+				powerUps.push_back(bricks[i]->getPowerUp());
+				delete bricks[i];
+				bricks[i] = nullptr;
+				/*
+				int state = bricks[i]->getState();
+				if (state == 0) { //Brick Broken
+					map->clearBlock(bricks[i]->getPos());
+					delete bricks[i];
+					bricks[i] = nullptr;
+				}
+				else if (state == 1) { //Turned DeadBlock
+					map->setDeadBlock(bricks[i]->getPos());
+					delete bricks[i];
+					bricks[i] = nullptr;
+				}
+				else bricks[i]->update(deltaTime);
+				*/
+			}
+			else bricks[i]->update(deltaTime);
 		}
 	}
 	
@@ -256,6 +289,13 @@ void Scene::render()
 			itemBlock->render(camx);
 		}
 	}
+
+	for (const Brick* brick : bricks) {
+		if (brick != nullptr) {
+			brick->render(camx);
+		}
+	}
+
 	for (const PowerUp* pu : powerUps) {
 		if (pu != nullptr) {
 			pu->render(camx);

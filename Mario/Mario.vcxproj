@@ -133,6 +133,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Brick.cpp" />
     <ClCompile Include="Coin.cpp" />
     <ClCompile Include="CoinPU.cpp" />
     <ClCompile Include="Counter.cpp" />
@@ -164,6 +165,7 @@
     <ClInclude Include="DeadBlock.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Goomba.h" />
+    <ClInclude Include="Brick.h" />
     <ClInclude Include="ItemBlock.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="Mushroom.h" />

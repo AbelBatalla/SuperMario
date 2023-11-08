@@ -2,46 +2,43 @@
 #include <iostream>
 #include <GL/glew.h>
 #include <GL/glut.h>
-#include "ItemBlock.h"
+#include "Brick.h"
 #include "Game.h"
 
 
-ItemBlock::ItemBlock(int px, int py, int ptype) {
+Brick::Brick(int px, int py, int ptype) {
 	x = px;
 	y = py;
 	type = ptype;
 }
 
-void ItemBlock::init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram, TileMap* tileMap) {
+void Brick::init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram, TileMap* tileMap) {
 	spritesheet.loadFromFile("images/itembricktiles.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	sprite = Sprite::createSprite(glm::ivec2(16, 16), glm::vec2(0.0625, 0.0625), &spritesheet, &shaderProgram);
 	sprite->setNumberAnimations(1);
 	sprite->setAnimationSpeed(0, 6);
-	sprite->addKeyframe(0, glm::vec2(0.0f, 0.f));
-	sprite->addKeyframe(0, glm::vec2(0.0625f, 0.f));
-	sprite->addKeyframe(0, glm::vec2(0.125f, 0.f));
-	sprite->addKeyframe(0, glm::vec2(0.0625f, 0.f));
-	sprite->addKeyframe(0, glm::vec2(0.0f, 0.f));
-	sprite->addKeyframe(0, glm::vec2(0.0f, 0.f));
+	sprite->addKeyframe(0, glm::vec2(0.75f, 0.3125f));
 	sprite->changeAnimation(0, 0);
 
+	coinCounter = 10,
 	tileMapDispl = tileMapPos;
-	if (type == 0) powerUp = new Mushroom();
+	if (type == 0) powerUp = new Mushroom(); //Debris
 	else if (type == 1) powerUp = new Star();
 	else powerUp = new CoinPU();
+
 	powerUp->init(tileMapDispl, shaderProgram, tileMap);
 
 }
 
-void ItemBlock::setPosition(const glm::vec2& pos)
+void Brick::setPosition(const glm::vec2& pos)
 {
-	posItemBlock = pos;
-	sprite->setPosition(glm::vec2(float(tileMapDispl.x + posItemBlock.x), float(tileMapDispl.y + posItemBlock.y)));
+	posBrick = pos;
+	sprite->setPosition(glm::vec2(float(tileMapDispl.x + posBrick.x), float(tileMapDispl.y + posBrick.y)));
 	powerUp->setPosition(pos);
 
 }
 
-bool ItemBlock::isHit(const glm::vec2& playerPosition) const
+bool Brick::isHit(const glm::vec2& playerPosition) const
 {
 	int xm0, xm1, ym;
 
@@ -57,17 +54,17 @@ bool ItemBlock::isHit(const glm::vec2& playerPosition) const
 	return false;
 }
 
-void ItemBlock::render(int offset) const
+void Brick::render(int offset) const
 {
 	sprite->render(offset);
 }
 
-void ItemBlock::update(int deltatime) {
+void Brick::update(int deltatime) {
 
 	sprite->update(deltatime, false, 1);
 }
 
-PowerUp* ItemBlock::getPowerUp() {
-
+PowerUp* Brick::getPowerUp() {
 	return powerUp;
+
 }

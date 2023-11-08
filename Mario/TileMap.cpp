@@ -97,6 +97,10 @@ bool TileMap::loadLevel(const string &levelFile)
 				num *= 10;
 				num += tile - int('0');
 			}
+			if (num >= 91 and num <= 93) {
+				brickPositions.push_back(glm::ivec3(i / 3, j, num - 91));
+				num = 159;
+			}
 			if (num >= 96 and num <= 98) {
 				itemPositions.push_back(glm::ivec3(i / 3, j, num-96));
 				num = 11;
@@ -132,6 +136,10 @@ const std::vector<glm::ivec2>& TileMap::getGoombaPositions() const {
 
 const std::vector<glm::ivec3>& TileMap::getItemPositions() const {
 	return itemPositions;
+}
+
+const std::vector<glm::ivec3>& TileMap::getBrickPositions() const {
+	return brickPositions;
 }
 
 void TileMap::prepareArrays(const glm::vec2 &minCoords, ShaderProgram &program)

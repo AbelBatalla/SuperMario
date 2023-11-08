@@ -14,6 +14,7 @@
 #include "Star.h"
 #include "Score.h"
 #include "Goomba.h"
+#include "Brick.h"
 
 
 
@@ -56,6 +57,8 @@ private:
 	std::vector<PowerUp*> powerUps;
 	Goomba* gom;
 	std::vector<Score*> scores;
+	std::vector<Brick*> bricks;
+
 
 	
 };
