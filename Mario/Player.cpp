@@ -19,7 +19,7 @@
 
 enum PlayerAnims
 {
-	STAND_RIGHT, MOVE_RIGHT, SPRINT_RIGHT, JUMP_RIGHT, DRIFT_TO_RIGHT, FALL_RIGHT1, FALL_RIGHT2, FALL_RIGHT3, CROUCH, TRANSITION
+	STAND_RIGHT, MOVE_RIGHT, SPRINT_RIGHT, JUMP_RIGHT, DRIFT_TO_RIGHT, FALL_RIGHT1, FALL_RIGHT2, FALL_RIGHT3, CROUCH, TRANSITION, DETRANSITION
 };
 
 void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
@@ -28,7 +28,8 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 	timeLife = 0;
 	super = false;
 	superTransition = false;
-	superTransTimer = 0;
+	superDetransition = false;
+	loseSuperTimer = 0;
 	loseSuper = false;
 	loseSuperCounter = 0;
 	star = false;
@@ -45,11 +46,11 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 
 	collectedCoins = 0;
 
-	spritesheet.loadFromFile("images/marioSpritesheet2.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	spritesheet.loadFromFile("images/marioSpritesheet3.png", TEXTURE_PIXEL_FORMAT_RGBA);
 
 	//SUPER
 	sprite = Sprite::createSprite(glm::ivec2(MARIO_SIZE, MARIO_SIZE*2), glm::vec2(0.03125, 0.0625), &spritesheet, &shaderProgram);
-	sprite->setNumberAnimations(10);
+	sprite->setNumberAnimations(11);
 			
 	sprite->setAnimationSpeed(STAND_RIGHT, 8);
 	sprite->addKeyframe(STAND_RIGHT, glm::vec2(0.0f, 0.0f));
@@ -181,6 +182,23 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 	sprite->addKeyframe(TRANSITION, glm::vec2(0.0f, 0.46875f));
 	sprite->addKeyframe(TRANSITION, glm::vec2(0.0f, 0.28125f));
 	sprite->addKeyframe(TRANSITION, glm::vec2(0.0f, 0.375f));
+
+
+	sprite->setAnimationSpeed(DETRANSITION, 6);
+	sprite->addKeyframe(DETRANSITION, glm::vec2(0.15625f, 0.0f)); //Jump
+	sprite->addKeyframe(DETRANSITION, glm::vec2(0.15625f, 0.0f)); //Jump
+	sprite->addKeyframe(DETRANSITION, glm::vec2(0.6875f, 0.0f)); //"swimming" tiny mario
+	sprite->addKeyframe(DETRANSITION, glm::vec2(0.3125f, 0.0f)); //"swimming" big mario
+	sprite->addKeyframe(DETRANSITION, glm::vec2(0.6875f, 0.0f)); //"swimming" tiny mario
+	sprite->addKeyframe(DETRANSITION, glm::vec2(0.3125f, 0.0f)); //"swimming" big mario
+	sprite->addKeyframe(DETRANSITION, glm::vec2(0.6875f, 0.0f)); //"swimming" tiny mario
+	sprite->addKeyframe(DETRANSITION, glm::vec2(0.3125f, 0.0f)); //"swimming" big mario
+	sprite->addKeyframe(DETRANSITION, glm::vec2(0.6875f, 0.0f)); //"swimming" tiny mario
+	sprite->addKeyframe(DETRANSITION, glm::vec2(0.3125f, 0.0f)); //"swimming" big mario
+	sprite->addKeyframe(DETRANSITION, glm::vec2(0.6875f, 0.0f)); //"swimming" tiny mario
+	sprite->addKeyframe(DETRANSITION, glm::vec2(0.6875f, 0.0f)); //"swimming" tiny mario
+	sprite->addKeyframe(DETRANSITION, glm::vec2(0.6875f, 0.0f)); //"swimming" tiny mario
+
 		
 	sprite->changeAnimation(0, 0);
 	sprite->setMirrored(false);
@@ -304,23 +322,37 @@ bool Player::update(int deltaTime, int camx)
 		}
 	}
 	if (superTransition) {
-		superTransTimer += deltaTime;
 		if (sprite->getFrame() >= 40) superTransition = false;
 	}
+	if (superDetransition) {
+		if (sprite->getFrame() >= 11) superDetransition = false;
+	}
+	if (loseSuper){
+		loseSuperTimer += deltaTime;
+		if (loseSuperTimer >= 4000) {
+			loseSuper = false;
+			superDetransition = false;
+			loseSuperCounter = 0;
+			loseSuperTimer = 0;
+		}
+	}
+
 	if (Game::instance().getKey('q') and !super) {
 		super = true;
 		posPlayer.y -= MARIO_SIZE;
 		superTransition = true;
-		superTransTimer = 0;
+		superDetransition = false;
 		loseSuper = false;
 		sprite->changeAnimation(TRANSITION, star ? starOffset : 0);
 	}
 	if (Game::instance().getKey('w') and super) {
 		super = false;
 		superTransition = false;
-		superTransTimer = 0;
+		superDetransition = true;
 		loseSuper = true;
 		loseSuperCounter = 0;
+		loseSuperTimer = 0;
+		sprite->changeAnimation(DETRANSITION, star ? starOffset : 0);
 	}
 	if (Game::instance().getKey('e') and !star) star = true;
 	if ((Game::instance().getKey('r') and star) or starTime >= 12000) {
@@ -332,10 +364,10 @@ bool Player::update(int deltaTime, int camx)
 		starTime = 0;
 		starColorSpeed = 2;
 	}
-	if (super) sprite->update(deltaTime, updateStar, 4);
+	if (super or superDetransition) sprite->update(deltaTime, updateStar, (superDetransition ? 1 : 4));
 	else spriteT->update(deltaTime, updateStar, 4);
 
-	if (!superTransition) {
+	if (!superTransition and !superDetransition) {
 		bool in_the_air = false;
 		bool derrape = (speedX > 0 and Game::instance().getSpecialKey(GLUT_KEY_LEFT) or speedX < 0 and Game::instance().getSpecialKey(GLUT_KEY_RIGHT));
 
@@ -632,7 +664,10 @@ void Player::render(int offset)
 		if (loseSuper) {
 			++loseSuperCounter;
 			loseSuperCounter = loseSuperCounter%3;
-			if (loseSuperCounter != 0) spriteT->render(offset);
+			if (loseSuperCounter != 0) {
+				if (superDetransition) sprite->render(offset);
+				else spriteT->render(offset);
+			}
 		}
 		else spriteT->render(offset);
 	}
@@ -677,7 +712,6 @@ void Player::turnSuper()
 		super = true;
 		posPlayer.y -= MARIO_SIZE;
 		superTransition = true;
-		superTransTimer = 0;
 		sprite->changeAnimation(TRANSITION, star ? starOffset : 0);
 	}
 }

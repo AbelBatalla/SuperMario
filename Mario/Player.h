@@ -35,9 +35,9 @@ public:
 	bool getMarioTransitionState();
 	
 private:
-	bool bJumping, jumpPress, super, star, superTransition, killed, loseSuper;
+	bool bJumping, jumpPress, super, star, superTransition, superDetransition, killed, loseSuper;
 	glm::ivec2 tileMapDispl, posPlayer;
-	int speedX, accel, jumpAngle, startY, jumpAcu, starOffset, starCounter, starTime, lives, timeLife, starColorSpeed, superTransTimer, loseSuperCounter;
+	int speedX, accel, jumpAngle, startY, jumpAcu, starOffset, starCounter, starTime, lives, timeLife, starColorSpeed, loseSuperCounter, loseSuperTimer;
 	Texture spritesheet;
 	Sprite *sprite, *spriteT;
 	TileMap *map;
