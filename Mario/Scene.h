@@ -13,6 +13,7 @@
 #include "Mushroom.h"
 #include "Star.h"
 #include "Score.h"
+#include "Goomba.h"
 
 
 
@@ -50,8 +51,10 @@ private:
 	glm::mat4 projection;
 	int camx, oldPosx, numCoins, playerScore;
 	std::vector<Coin*> coins;
+	std::vector<Goomba*> goombas;
 	std::vector<ItemBlock*> itemBlocks;
 	std::vector<PowerUp*> powerUps;
+	Goomba* gom;
 	std::vector<Score*> scores;
 
 	
