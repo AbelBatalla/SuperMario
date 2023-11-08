@@ -42,17 +42,20 @@ void Brick::setPosition(const glm::vec2& pos)
 
 }
 
-bool Brick::isHit(const glm::vec2& playerPosition)
+bool Brick::isHit(const glm::vec2& playerPosition, bool super)
 {
 	if (state == 1 or hitLast) {
 		hitLast = false;
 		return false;
 	}
+
+	if (!super and type == 0) return false;
+
 	int xm0, xm1, ym;
 
 	xm0 = (playerPosition.x + 3) / 16;
 	xm1 = (playerPosition.x + 16 - 4) / 16;
-	ym = (playerPosition.y - 2) / 16;
+	ym = (playerPosition.y - 3) / 16;
 
 	if (ym == y) {
 		for (int xi = xm0; xi <= xm1; xi++) {

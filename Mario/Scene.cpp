@@ -191,7 +191,7 @@ void Scene::update(int deltaTime)
 
 	for (int i = 0; i < bricks.size(); i++) {
 		if (bricks[i] != nullptr) {
-			if (bricks[i]->isHit(player->getPos())) {
+			if (bricks[i]->isHit(player->getPos(), player->getMarioState())) {
 				powerUps.push_back(bricks[i]->getPowerUp());
 				int state = bricks[i]->getState();
 				if (state == 0) { //Brick Broken
