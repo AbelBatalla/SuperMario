@@ -15,7 +15,7 @@ public:
 	void update(int deltatime);
 	void render(int offset) const;
 	void setPosition(const glm::vec2& pos);
-	bool isHit(const glm::vec2& playerPosition, bool super);
+	bool isHit(const glm::vec2& playerPosition, bool super, int block);
 	PowerUp* getPowerUp();
 	int getState();
 	glm::ivec2 getPos();

@@ -58,8 +58,7 @@ private:
 	Goomba* gom;
 	std::vector<Score*> scores;
 	std::vector<Brick*> bricks;
-
-
+	bool hitLast;
 	
 };
 #endif // _SCENE_INCLUDE

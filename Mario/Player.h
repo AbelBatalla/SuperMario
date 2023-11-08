@@ -32,6 +32,7 @@ public:
 	void kill();
 	bool isKilled();
 	void collisionUp();
+	bool goingUp();
 	
 private:
 	bool bJumping, jumpPress, super, star, superTransition, killed;
