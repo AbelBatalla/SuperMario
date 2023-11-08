@@ -22,7 +22,10 @@ void Brick::init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram, Til
 	sprite->addKeyframe(1, glm::vec2(0.9375f, 0.3125f));
 	sprite->changeAnimation(0, 0);
 
+	bumpAnim = false;
+	up = true;
 	hitLast = false;
+	bumpMov = 0;
 	state = 2;
 	coinCounter = 10;
 	tileMapDispl = tileMapPos;
@@ -49,8 +52,6 @@ bool Brick::isHit(const glm::vec2& playerPosition, bool super)
 		return false;
 	}
 
-	if (!super and type == 0) return false;
-
 	int xm0, xm1, ym;
 
 	xm0 = (playerPosition.x + 3) / 16;
@@ -60,13 +61,21 @@ bool Brick::isHit(const glm::vec2& playerPosition, bool super)
 	if (ym == y) {
 		for (int xi = xm0; xi <= xm1; xi++) {
 			if (xi == x) {
-				if (type == 0) state = 0;
+				if (type == 0) {
+					if (!super and type == 0) {
+						bumpAnim = true;
+						hitLast = true;
+						return false;
+					} 
+					else state = 0;;
+				}
 				else if (type == 1) {
 					state = 1;
 					sprite->changeAnimation(1, 0);
 				}
 				else if (type == 2) {
 					--coinCounter;
+					bumpAnim = true;
 					if (coinCounter <= 0) { //it is possible to delete powerUp here
 						state = 1;
 						sprite->changeAnimation(1, 0);
@@ -86,7 +95,21 @@ void Brick::render(int offset) const
 }
 
 void Brick::update(int deltatime) {
-
+	if (bumpAnim) {
+		if (up) {
+			bumpMov += 1;
+			if (bumpMov >= 5) up = false;
+		}
+		else {
+			bumpMov -= 1;
+			if (bumpMov < -2) {
+				bumpAnim = false;
+				up = true;
+				bumpMov = 0;
+			}
+		}
+		sprite->setPosition(glm::vec2(float(tileMapDispl.x + posBrick.x), float(tileMapDispl.y + posBrick.y - bumpMov)));
+	}
 	sprite->update(deltatime, false, 1);
 }
 

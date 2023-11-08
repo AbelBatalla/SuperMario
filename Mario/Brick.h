@@ -21,12 +21,12 @@ public:
 	glm::ivec2 getPos();
 
 private:
-	int x, y, type, state, coinCounter;
+	int x, y, type, state, coinCounter, bumpMov;
 	glm::ivec2 tileMapDispl, posBrick;
 	Texture spritesheet;
 	Sprite* sprite;
 	PowerUp* powerUp;
-	bool hitLast;
+	bool hitLast, bumpAnim, up;
 
 };
 #endif

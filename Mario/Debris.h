@@ -15,8 +15,6 @@ public:
 
 private:
 	int distX, distY, xCount, jumpAngle, startY;
-	bool up;
-	int acum;
 };
 
 #endif

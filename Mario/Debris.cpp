@@ -17,8 +17,6 @@ void Debris::init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram, Ti
 	sprite->changeAnimation(0, 0);
 
 	startAnimation = false;
-	up = true;
-	acum = 0;
 	tileMapDispl = tileMapPos;
 	xCount = 0;
 	distX = 8;
