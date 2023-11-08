@@ -10,7 +10,7 @@ void Goomba::init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram, Ti
 	tileMapDispl = tileMapPos;
 	deathTime = 0;
 	time = 0;
-	move = true;
+	move = 0;
 	spritesheet.loadFromFile("images/tilesheetv2.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	sprite = Sprite::createSprite(glm::ivec2(16, 16), glm::vec2(0.0625, 0.0625), &spritesheet, &shaderProgram);
 	sprite->setNumberAnimations(2);
