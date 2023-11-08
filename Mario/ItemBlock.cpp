@@ -70,27 +70,4 @@ void ItemBlock::update(int deltatime) {
 PowerUp* ItemBlock::getPowerUp() {
 
 	return powerUp;
-
-	/*
-	PowerUp* powerUp = new Mushroom();
-	powerUp->init(tileMapDispl, texProgram, map);
-	//mush->setPosition()
-	return powerUp;
-
-	*/
-	/*
-	if (type == 0) { //MUSHROOM
-		PowerUp* powerUp = new Mushroom();
-		powerUp->init();
-		//mush->setPosition()
-		return powerUp;
-	}
-	else if (type == 1) { //STAR
-	}
-	else { //COIN
-	}
-	*/
-	
-	//coin->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram); // Inicializa una moneda en la posicin del mapa
-	//coin->setPosition(glm::vec2(coinPos.x * map->getTileSize(), coinPos.y * map->getTileSize()));
 }

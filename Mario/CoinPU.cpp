@@ -35,6 +35,9 @@ bool CoinPU::update(int deltatime) {
 		pos.y += 3;
 		acum += 3;
 		if (acum >= -8) {
+			up = true;
+			pos.y -= acum;
+			acum = 0;
 			return false;
 		}
 	}

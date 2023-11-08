@@ -9,7 +9,7 @@
 
 
 #define SCREEN_X 0
-#define SCREEN_Y -80
+#define SCREEN_Y 32 //-80
 
 #define ZOOM 2
 
@@ -51,7 +51,7 @@ void Scene::init()
 	numCoins = 0;
 	playerScore = 0;
 	goombas.erase(goombas.begin(), goombas.end());
-	map = TileMap::createTileMap("levels/mapa4.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
+	map = TileMap::createTileMap("levels/level01.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
 
 
 	hud = new SimpleView(SimpleView::TypeMenu::HUD);
@@ -92,6 +92,14 @@ void Scene::init()
 		item->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram, map);
 		item->setPosition(glm::vec2(itemProp.x * map->getTileSize(), itemProp.y * map->getTileSize()));
 		itemBlocks.push_back(item);
+	}
+
+	std::vector<glm::ivec3> brickProperties = map->getBrickPositions();
+	for (const glm::ivec3& brickProp : brickProperties) {
+		Brick* brick = new Brick(brickProp.x, brickProp.y, brickProp.z);
+		brick->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram, map);
+		brick->setPosition(glm::vec2(brickProp.x * map->getTileSize(), brickProp.y * map->getTileSize()));
+		bricks.push_back(brick);
 	}
 
 	//gom = new Goomba();
@@ -160,11 +168,48 @@ void Scene::update(int deltaTime)
 			else itemBlocks[i]->update(deltaTime);
 		}
 	}
+
+	if (player->getLives() != playerLives) liveCounter->set(player->getLives());
+	timeCounter->set(200 - player->getTimeLife() / 1000);
+	coinCounter->update(deltaTime);
+	liveCounter->update(deltaTime);
+	timeCounter->update(deltaTime);
+	pointsCounter->update(deltaTime);
+	worldCounter->update(deltaTime);
+	//gom->update(deltaTime);
+
+	// Limpia las monedas nulas del vector (opcional)
+	// scores[i] = nullptr;
+	//coins.erase(std::remove(coins.begin(), coins.end(), nullptr), coins.end());
+
+
+	if (player->update(deltaTime, camx)) {
+		player->setPosition(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize(), INIT_PLAYER_Y_TILES * map->getTileSize()));
+		camx = 0;
+		oldPosx = INIT_PLAYER_X_TILES;
+	}
+
+	for (int i = 0; i < bricks.size(); i++) {
+		if (bricks[i] != nullptr) {
+			if (bricks[i]->isHit(player->getPos(), player->getMarioState())) {
+				powerUps.push_back(bricks[i]->getPowerUp());
+				int state = bricks[i]->getState();
+				if (state == 0) { //Brick Broken
+					player->collisionUp();
+					map->setClearBlock(bricks[i]->getPos());
+					delete bricks[i];
+					bricks[i] = nullptr;
+				}
+				else bricks[i]->update(deltaTime);
+			}
+			else bricks[i]->update(deltaTime);
+		}
+	}
 	
 	for (int i = 0; i < powerUps.size(); i++) {
 		if (powerUps[i] != nullptr) {
-			if (powerUps[i]->update(deltaTime)) { //T or F segons si delete o no (timeout? death?)
-				if (powerUps[i]->type() != 2 and powerUps[i]->checkCollision(player->getPos(), player->getMarioState())) {
+			if (powerUps[i]->update(deltaTime)) {
+				if (powerUps[i]->type() < 2 and powerUps[i]->checkCollision(player->getPos(), player->getMarioState())) {
 					newScore(1000, player->getPos());
 					playerScore += 1000;
 					pointsCounter->set(playerScore);
@@ -181,9 +226,13 @@ void Scene::update(int deltaTime)
 					++numCoins;
 					coinCounter->set(numCoins);
 					pointsCounter->set(playerScore);
+					powerUps[i] = nullptr;
+					powerUps.erase(powerUps.begin() + i);
 				}
-				delete powerUps[i];
-				powerUps[i] = nullptr;
+				else {
+					delete powerUps[i];
+					powerUps[i] = nullptr;
+				}
 			}
 		}
 	}
@@ -197,27 +246,6 @@ void Scene::update(int deltaTime)
 		}
 	}
 
-
-
-	if (player->getLives() != playerLives) liveCounter->set(player->getLives());
-	timeCounter->set(200 - player->getTimeLife()/1000);
-	coinCounter->update(deltaTime);
-	liveCounter->update(deltaTime);
-	timeCounter->update(deltaTime);
-	pointsCounter->update(deltaTime);
-	worldCounter->update(deltaTime);
-	//gom->update(deltaTime);
-
-	// Limpia las monedas nulas del vector (opcional)
-	// scores[i] = nullptr;
-	//coins.erase(std::remove(coins.begin(), coins.end(), nullptr), coins.end());
-
-	
-	if (player->update(deltaTime, camx)) {
-		player->setPosition(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize(), INIT_PLAYER_Y_TILES * map->getTileSize()));
-		camx = 0;
-		oldPosx = INIT_PLAYER_X_TILES;
-	}
 }
 
 void Scene::render()
@@ -256,6 +284,13 @@ void Scene::render()
 			itemBlock->render(camx);
 		}
 	}
+
+	for (const Brick* brick : bricks) {
+		if (brick != nullptr) {
+			brick->render(camx);
+		}
+	}
+
 	for (const PowerUp* pu : powerUps) {
 		if (pu != nullptr) {
 			pu->render(camx);

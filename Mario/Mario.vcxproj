@@ -133,9 +133,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Brick.cpp" />
     <ClCompile Include="Coin.cpp" />
     <ClCompile Include="CoinPU.cpp" />
     <ClCompile Include="Counter.cpp" />
+    <ClCompile Include="Debris.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Goomba.cpp" />
     <ClCompile Include="ItemBlock.cpp" />
@@ -162,8 +164,10 @@
     <ClInclude Include="CoinPU.h" />
     <ClInclude Include="Counter.h" />
     <ClInclude Include="DeadBlock.h" />
+    <ClInclude Include="Debris.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Goomba.h" />
+    <ClInclude Include="Brick.h" />
     <ClInclude Include="ItemBlock.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="Mushroom.h" />
