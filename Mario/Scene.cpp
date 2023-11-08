@@ -9,7 +9,7 @@
 
 
 #define SCREEN_X 0
-#define SCREEN_Y 32 //-80
+#define SCREEN_Y -80 //32
 
 #define ZOOM 2
 
@@ -51,7 +51,7 @@ void Scene::init()
 	numCoins = 0;
 	playerScore = 0;
 	goombas.erase(goombas.begin(), goombas.end());
-	map = TileMap::createTileMap("levels/level01.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
+	map = TileMap::createTileMap("levels/mapa4.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
 
 
 	hud = new SimpleView(SimpleView::TypeMenu::HUD);
@@ -137,7 +137,7 @@ void Scene::update(int deltaTime)
 
 	for (int i = 0; i < goombas.size(); i++) {
 		if (goombas[i] != nullptr) {
-			if (goombas[i]->getDeathTime() != 0 and (currentTime - goombas[i]->getDeathTime()) > 200) {
+			if (goombas[i]->getDeathTime() != 0 and (currentTime - goombas[i]->getDeathTime()) > 400) {
 				delete goombas[i]; // Elimina la moneda actual
 				goombas[i] = nullptr;
 			}

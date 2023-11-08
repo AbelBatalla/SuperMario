@@ -10,6 +10,7 @@ void Goomba::init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram, Ti
 	tileMapDispl = tileMapPos;
 	deathTime = 0;
 	time = 0;
+	move = 0;
 	spritesheet.loadFromFile("images/tilesheetv2.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	sprite = Sprite::createSprite(glm::ivec2(16, 16), glm::vec2(0.0625, 0.0625), &spritesheet, &shaderProgram);
 	sprite->setNumberAnimations(2);
@@ -26,26 +27,31 @@ void Goomba::init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram, Ti
 bool Goomba::update(int deltatime) {
 	time += deltatime;
 	//if (timeout >= 16000) return false;
-	pos.y += 1;
-	map->collisionMoveDown(pos, glm::ivec2(16, 16), &pos.y);
+	if (deathTime == 0) {
+		pos.y += 1;
+		map->collisionMoveDown(pos, glm::ivec2(16, 16), &pos.y);
 
-	if (moveRight) {
-		if (map->collisionMoveRight(pos, glm::ivec2(16, 16))) {
-			moveRight = false;
-		}
-		else {
-			pos.x += 1.0f;
+		++move;
+		move = move % 3;
+		if (move > 0) {
+			if (moveRight) {
+				if (map->collisionMoveRight(pos, glm::ivec2(16, 16))) {
+					moveRight = false;
+				}
+				else {
+					pos.x += 1.0f;
+				}
+			}
+			else {
+				if (map->collisionMoveLeft(pos, glm::ivec2(16, 16))) {
+					moveRight = true;
+				}
+				else {
+					pos.x -= 1.0f;
+				}
+			}
 		}
 	}
-	else {
-		if (map->collisionMoveLeft(pos, glm::ivec2(16, 16))) {
-			moveRight = true;
-		}
-		else {
-			pos.x -= 1.0f;
-		}
-	}
-	
 	sprite->setPosition(glm::vec2(float(tileMapDispl.x + pos.x), float(tileMapDispl.y + pos.y)));
 	sprite->update(deltatime, false, 1);
 	return true;
