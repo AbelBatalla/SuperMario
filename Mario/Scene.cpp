@@ -201,7 +201,7 @@ void Scene::update(int deltaTime)
 
 	for (int i = 0; i < bricks.size(); i++) {
 		if (bricks[i] != nullptr) {
-			if (!found and hitLast == 0 and bricks[i]->isHit(player->getPos(), player->getMarioState(), primaryCollisonBlock)) {
+			if (!found and hitLast == 0 and bricks[i]->isHit(player->getPos(), player->getMarioState(), player->getMarioTransitionState(), primaryCollisonBlock)) {
 				found = true;
 				hitLast++;
 				int state = bricks[i]->getState();
@@ -219,7 +219,7 @@ void Scene::update(int deltaTime)
 	}
 	if (hitLast != 0) {
 		++hitLast;
-		hitLast = hitLast % 5;
+		hitLast = hitLast % 10;
 	}
 	
 	for (int i = 0; i < powerUps.size(); i++) {

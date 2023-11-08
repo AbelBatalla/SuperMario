@@ -24,7 +24,6 @@ void Brick::init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram, Til
 
 	bumpAnim = false;
 	up = true;
-	hitLast = false;
 	bumpMov = 0;
 	state = type+2;
 	coinCounter = 10;
@@ -45,10 +44,9 @@ void Brick::setPosition(const glm::vec2& pos)
 
 }
 
-bool Brick::isHit(const glm::vec2& playerPosition, bool super, int block)
+bool Brick::isHit(const glm::vec2& playerPosition, bool super, bool superTrans, int block)
 {
-	if ((block != -1 and posBrick.x/16 != block) or state == 1 or hitLast) {
-		hitLast = false;
+	if ((block != -1 and posBrick.x/16 != block) or state == 1) {
 		return false;
 	}
 
@@ -64,8 +62,6 @@ bool Brick::isHit(const glm::vec2& playerPosition, bool super, int block)
 				if (type == 0) {
 					if (!super) {
 						bumpAnim = true;
-						hitLast = true;
-						//return false;
 					} 
 					else state = 0;
 				}
@@ -74,6 +70,7 @@ bool Brick::isHit(const glm::vec2& playerPosition, bool super, int block)
 					sprite->changeAnimation(1, 0);
 				}
 				else if (type == 2) {
+					if (superTrans) return false;
 					--coinCounter;
 					bumpAnim = true;
 					if (coinCounter <= 0) { //it is possible to delete powerUp here
@@ -81,7 +78,6 @@ bool Brick::isHit(const glm::vec2& playerPosition, bool super, int block)
 						sprite->changeAnimation(1, 0);
 					}
 				}
-				hitLast = true;
 				return true;
 			}
 		}
