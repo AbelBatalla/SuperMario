@@ -480,7 +480,7 @@ bool Player::update(int deltaTime, int camx)
 
 		//if (in_the_air) accel = accel / 2;
 		//CALCULATE SPEEDS & ESTABLISH ANIMATIONS
-		if ((Game::instance().getSpecialKey(GLUT_KEY_LEFT) or Game::instance().getSpecialKey(GLUT_KEY_RIGHT)) and (in_the_air or !Game::instance().getSpecialKey(GLUT_KEY_DOWN))) {
+		if ((Game::instance().getSpecialKey(GLUT_KEY_LEFT) xor Game::instance().getSpecialKey(GLUT_KEY_RIGHT)) and (in_the_air or !Game::instance().getSpecialKey(GLUT_KEY_DOWN))) {
 			if (Game::instance().getSpecialKey(GLUT_KEY_LEFT)) {
 				if (!in_the_air) {
 					sprite->setMirrored(true);
