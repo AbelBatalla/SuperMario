@@ -14,7 +14,7 @@ bool PowerUp::update(int deltatime) {
 }
 
 int PowerUp::type() {
-	return 4;
+	return 4; //Mushroom = 0, Star = 1, CoinPU = 2, Debris = 3
 }
 
 void PowerUp::setPosition(const glm::vec2& position)

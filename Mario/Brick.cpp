@@ -26,7 +26,7 @@ void Brick::init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram, Til
 	state = 2;
 	coinCounter = 10;
 	tileMapDispl = tileMapPos;
-	if (type == 0) powerUp = new Mushroom(); //Debris
+	if (type == 0) powerUp = new Debris();
 	else if (type == 1) powerUp = new Star();
 	else powerUp = new CoinPU();
 

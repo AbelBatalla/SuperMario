@@ -5,6 +5,7 @@
 #include "Sprite.h"
 #include "PowerUp.h"
 #include "CoinPU.h"
+#include "Debris.h"
 
 class Brick
 {
