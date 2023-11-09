@@ -11,9 +11,9 @@ public:
 	virtual int type();
 	void render(int offset) const;
 	void setPosition(const glm::vec2& pos);
-	int checkCollision(const glm::vec2& pos, bool super);
+	int checkCollision(const glm::vec2& posPlayer, bool super, bool star, bool down);
 	int getDeathTime();
-	void setDeathTime(int t);
+	void setDeathTime(int t, bool changeAnimation);
 	void toggleMoveShell();
 	void toggleShell();
 	bool getShell();

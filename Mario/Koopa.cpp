@@ -96,9 +96,9 @@ bool Koopa::update(int deltatime) {
 	return true;
 }
 
-void Koopa::setDeathTime(int t) {
+void Koopa::setDeathTime(int t, bool changeAnimation) {
 	deathTime = t;
-	spriteT->changeAnimation(1, 0);
+	if(changeAnimation) spriteT->changeAnimation(1, 0);
 }
 
 int Koopa::type() {
@@ -108,10 +108,8 @@ int Koopa::type() {
 void Koopa::setPosition(const glm::vec2& position)
 {
 	pos = position;
-	//pos.y -= 16;
 	sprite->setPosition(glm::vec2(float(tileMapDispl.x + pos.x), float(tileMapDispl.y + pos.y)));
 	spriteT->setPosition(glm::vec2(float(tileMapDispl.x + pos.x), float(tileMapDispl.y + pos.y + 16)));
-	//if (startAnimation) db->setPosition(position);
 }
 
 
@@ -119,7 +117,6 @@ void Koopa::render(int offset) const
 {
 	if (!shell) sprite->render(offset);
 	else spriteT->render(offset);
-	//if (startAnimation) db->render(offset);
 }
 
 int Koopa::getDeathTime() {
@@ -128,8 +125,6 @@ int Koopa::getDeathTime() {
 
 void Koopa::toggleShell() {
 	shell = !shell;
-	//if(shell) spriteT->changeAnimation(1, 0);
-	//else spriteT->changeAnimation(1, 0);
 	
 }
 
@@ -151,7 +146,7 @@ glm::vec2 Koopa::getPos()
 	return pos;
 }
 
-int Koopa::checkCollision(const glm::vec2& posPlayer, bool super)
+int Koopa::checkCollision(const glm::vec2& posPlayer, bool super, bool star, bool down)
 {	
 
 	if (super and !shell) {
@@ -170,6 +165,14 @@ int Koopa::checkCollision(const glm::vec2& posPlayer, bool super)
 			return 2;
 		}
 	}
-	
-	return (abs(posPlayer.x - pos.x) <= 14 and ((!super and abs(posPlayer.y - 16 - pos.y) <= 14) or (super and pos.y >= posPlayer.y - 16 - 14 and pos.y  <= posPlayer.y - 16 + 30)));
+
+	int state = (abs(posPlayer.x - pos.x) <= 14 and ((!super and abs(posPlayer.y - 16 - pos.y) <= 14) or (super and pos.y >= posPlayer.y - 16 - 14 and pos.y  <= posPlayer.y - 16 + 30)));
+	if (state == 1 and star) {
+		shell = true;
+		deathTime = time;
+		spriteT->changeAnimation(0, 0);
+		return 2;
+	}
+	return state;
 }
+
