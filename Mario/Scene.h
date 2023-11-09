@@ -43,6 +43,7 @@ private:
 	void initKoopas();
 private:
 	TileMap *map;
+	TileMap* background;
 	Player *player;
 	ShaderProgram texProgram;
 	Counter *coinCounter;

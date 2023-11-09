@@ -21,6 +21,7 @@
 Scene::Scene()
 {
 	map = NULL;
+	background = NULL;
 	player = NULL;
 	coinCounter = NULL;
 	liveCounter = NULL;
@@ -31,6 +32,8 @@ Scene::~Scene()
 {
 	if(map != NULL)
 		delete map;
+	if (background != NULL)
+		delete background;
 	if(player != NULL)
 		delete player;
 	if (coinCounter != NULL)
@@ -81,7 +84,7 @@ void Scene::init(string level)
   
 	koopas.erase(koopas.begin(), koopas.end());
 	map = TileMap::createTileMap(level, glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
-
+	background = TileMap::createTileMap("levels/background4.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
 
 
 	hud = new SimpleView(SimpleView::TypeMenu::HUD);
@@ -402,6 +405,7 @@ void Scene::render()
 	modelview = glm::translate(modelview, glm::vec3(-camx, 0.f, 0.f));
 	texProgram.setUniformMatrix4f("modelview", modelview);
 	texProgram.setUniform2f("texCoordDispl", 0.f, 0.f);
+	background->render();
 	map->render();
 	for (const Coin* coin : coins) {
 		if (coin != nullptr) {
