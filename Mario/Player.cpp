@@ -632,6 +632,10 @@ bool Player::getMarioState() {
 	return super;
 }
 
+bool Player::getMarioStar() {
+	return star;
+}
+
 void Player::setMarioState(bool state) {
 	super = state;
 }

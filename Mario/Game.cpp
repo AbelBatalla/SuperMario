@@ -16,8 +16,8 @@ void Game::init()
 	goInstructions = false;
 	goCredits = false;
 	spaceRelease = true;
-	//glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClearColor(0.36f, 0.58f, 0.988f, 1.0f);
+	//glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 	menu = new Menu();
 	instructions = new SimpleView(SimpleView::TypeMenu::INSTRUCTIONS);

@@ -24,6 +24,7 @@ public:
 	glm::vec2 getPos();
 	int getPosX();
 	bool getMarioState();
+	bool getMarioStar();
 	void setMarioState(bool state);
 	int getLives();
 	int getTimeLife();

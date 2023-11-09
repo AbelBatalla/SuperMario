@@ -113,6 +113,10 @@ bool TileMap::loadLevel(const string &levelFile)
 				goombaPositions.push_back(glm::ivec2(i / 3, j));
 				num = 0;
 			}
+			if (num == 95) {
+				koopaPositions.push_back(glm::ivec2(i / 3, j));
+				num = 0;
+			}
 			map[j*mapSize.x+i/3] = num;
 		}
 		fin.get(tile);
@@ -132,6 +136,9 @@ const std::vector<glm::ivec2>& TileMap::getCoinPositions() const {
 
 const std::vector<glm::ivec2>& TileMap::getGoombaPositions() const {
 	return goombaPositions;
+}
+const std::vector<glm::ivec2>& TileMap::getKoopaPositions() const {
+	return koopaPositions;
 }
 
 const std::vector<glm::ivec3>& TileMap::getItemPositions() const {
