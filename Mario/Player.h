@@ -25,6 +25,7 @@ public:
 	int getPosX();
 	bool getMarioState();
 	bool getMarioStar();
+	bool getMarioInvincible();
 	void setMarioState(bool state);
 	int getLives();
 	int getTimeLife();
@@ -34,15 +35,19 @@ public:
 	bool isKilled();
 	void collisionUp();
 	bool getMarioTransitionState();
+	void setKillJump();
+	bool goingDown();
+	bool getKillJump();
+	bool inTransition();
 	
 private:
-	bool bJumping, jumpPress, super, star, superTransition, superDetransition, killed, loseSuper, killedWithSuper;
+	bool bJumping, jumpPress, super, star, superTransition, superDetransition, killed, loseSuper, killedWithSuper, killJump;
 	glm::ivec2 tileMapDispl, posPlayer;
 	int speedX, accel, jumpAngle, startY, jumpAcu, starOffset, starCounter, starTime, lives, timeLife, starColorSpeed, loseSuperCounter, loseSuperTimer;
 	Texture spritesheet;
 	Sprite *sprite, *spriteT;
 	TileMap *map;
-	int collectedCoins;
+	int collectedCoins, oldY;
 };
 
 

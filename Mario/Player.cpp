@@ -44,7 +44,8 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 	accel = 2;
 	killed = false;
 	killedWithSuper = false;
-
+	killJump = false;
+	oldY = 0;
 	collectedCoins = 0;
 
 	spritesheet.loadFromFile("images/marioSpritesheet3.png", TEXTURE_PIXEL_FORMAT_RGBA);
@@ -128,7 +129,7 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 	sprite->addKeyframe(CROUCH, glm::vec2(0.1875f, 0.28125f));
 	sprite->addKeyframe(CROUCH, glm::vec2(0.1875f, 0.375f));
 
-	sprite->setAnimationSpeed(TRANSITION, 8);
+	sprite->setAnimationSpeed(TRANSITION, 12);
 	sprite->addKeyframe(TRANSITION, glm::vec2(0.65625f, 0.0f));
 	sprite->addKeyframe(TRANSITION, glm::vec2(0.65625f, 0.46875f));
 	sprite->addKeyframe(TRANSITION, glm::vec2(0.65625f, 0.28125f));
@@ -185,7 +186,7 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 	sprite->addKeyframe(TRANSITION, glm::vec2(0.0f, 0.375f));
 
 
-	sprite->setAnimationSpeed(DETRANSITION, 6);
+	sprite->setAnimationSpeed(DETRANSITION, 12);
 	sprite->addKeyframe(DETRANSITION, glm::vec2(0.15625f, 0.0f)); //Jump
 	sprite->addKeyframe(DETRANSITION, glm::vec2(0.15625f, 0.0f)); //Jump
 	sprite->addKeyframe(DETRANSITION, glm::vec2(0.6875f, 0.0f)); //"swimming" tiny mario
@@ -348,6 +349,7 @@ bool Player::update(int deltaTime, int camx)
 	if (Game::instance().getKey('q') and !super) {
 		super = true;
 		posPlayer.y -= MARIO_SIZE;
+		oldY -= MARIO_SIZE;
 		superTransition = true;
 		superDetransition = false;
 		loseSuper = false;
@@ -386,6 +388,7 @@ bool Player::update(int deltaTime, int camx)
 			if (jumpAngle >= 180)
 			{
 				bJumping = false;
+				killJump = false;
 				posPlayer.y = startY;
 			}
 			else
@@ -393,6 +396,7 @@ bool Player::update(int deltaTime, int camx)
 				in_the_air = true;
 				if (jumpAngle > 90) {
 					bJumping = false;
+					//killJump = false;
 					Game::instance().setSpace(false);
 				}
 				else if (jumpPress) {
@@ -403,10 +407,12 @@ bool Player::update(int deltaTime, int camx)
 					else jumpPress = false;
 				}
 				if (!map->collisionMoveUp(posPlayer, glm::ivec2(MARIO_SIZE, MARIO_SIZE * (super ? 2 : 1)), &posPlayer.y)) {
-					posPlayer.y = int(startY - min(MIN_JUMP_HEIGHT + jumpAcu, MAX_JUMP_HEIGHT) * sin(3.14159f * jumpAngle / 180.f));
+					oldY = posPlayer.y;
+					posPlayer.y = int(startY - (killJump ? 20 : min(MIN_JUMP_HEIGHT + jumpAcu, MAX_JUMP_HEIGHT)) * sin(3.14159f * jumpAngle / 180.f));
 				}
 				else {
 					bJumping = false;
+					//killJump = false;
 					Game::instance().setSpace(false);
 				}
 				if (super) {
@@ -423,8 +429,10 @@ bool Player::update(int deltaTime, int camx)
 		}
 		else
 		{
+			oldY = posPlayer.y;
 			posPlayer.y += FALL_STEP;
 			if (map->collisionMoveDown(posPlayer, glm::ivec2(MARIO_SIZE, MARIO_SIZE * (super ? 2 : 1)), &posPlayer.y)) {
+				killJump = false;
 				in_the_air = false;
 				if (Game::instance().getKey(' '))
 				{
@@ -653,8 +661,11 @@ int Player::getLives() {
 void Player::kill() {
 	if (super) {
 		super = false;
-		loseSuper = true; 
+		superTransition = false;
 		superDetransition = true;
+		loseSuper = true;
+		sprite->changeAnimation(DETRANSITION, star ? starOffset : 0);
+
 		killedWithSuper = true;
 	}
 	killed = true;
@@ -696,9 +707,24 @@ bool Player::getMarioStar() {
 
 }
 
+bool Player::getMarioInvincible() {
+	return loseSuper;
+}
+
 bool Player::getMarioTransitionState() {
 	return superTransition;
 }
+
+void Player::setKillJump() {
+	killJump = true;
+	bJumping = true;
+	jumpPress = false;
+	jumpAcu = 0;
+	bJumping = true;
+	jumpAngle = 0;
+	startY = posPlayer.y;
+}
+
 
 void Player::setMarioState(bool state) {
 	super = state;
@@ -712,6 +738,7 @@ void Player::setTileMap(TileMap *tileMap)
 void Player::setPosition(const glm::vec2 &pos)
 {
 	posPlayer = pos;
+	oldY = pos.y;
 	sprite->setPosition(glm::vec2(float(tileMapDispl.x + posPlayer.x), float(tileMapDispl.y + posPlayer.y)));
 }
 
@@ -730,6 +757,7 @@ void Player::turnSuper()
 	if (!super) {
 		super = true;
 		posPlayer.y -= MARIO_SIZE;
+		oldY -= MARIO_SIZE;
 		superTransition = true;
 		sprite->changeAnimation(TRANSITION, star ? starOffset : 0);
 	}
@@ -748,4 +776,17 @@ void Player::collisionUp()
 	Game::instance().setSpace(false);
 }
 
+bool Player::goingDown()
+{
+	return oldY < posPlayer.y; // or jumpAngle >= 90?
+}
 
+bool Player::getKillJump()
+{
+	return killJump;
+}
+
+
+bool Player::inTransition() {
+	return superTransition or superDetransition;
+}

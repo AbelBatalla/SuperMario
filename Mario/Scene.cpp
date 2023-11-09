@@ -152,14 +152,26 @@ void Scene::updateGoombas(int deltaTime) {
 				goombas[i]->update(deltaTime);
 				if (not player->isKilled() and goombas[i]->getDeathTime() == 0) {
 					int state = 0;
-					if(!player->getMarioStar()) state = goombas[i]->checkCollision(player->getPos(), player->getMarioState());
-					if (state == 2) {
+					state = goombas[i]->checkCollision(player->getPos(), player->getMarioState(), player->getMarioStar(), player->goingDown());
+					if (state == 3) {
 						newScore(100, player->getPos());
 						playerScore += 100;
 						pointsCounter->set(playerScore);
 					}
+					if (state == 2) {
+						if (player->getKillJump()) {
+							newScore(200, player->getPos());
+							playerScore += 200;
+						}
+						else {
+							newScore(100, player->getPos());
+							playerScore += 100;
+						}
+						pointsCounter->set(playerScore);
+						player->setKillJump();
+					}
 					else if (state == 1) {
-						player->kill();
+						if (!player->getMarioInvincible()) player->kill();
 					}
 				}
 				for (int j = 0; j < goombas.size(); j++) {
@@ -257,9 +269,10 @@ void Scene::update(int deltaTime)
 		}
 	}
 
-
-	updateGoombas(deltaTime);
-	updateKoopas(deltaTime);
+	if (!player->inTransition()) {
+		updateGoombas(deltaTime);
+		updateKoopas(deltaTime);
+	}
 
 	if (player->getLives() != playerLives) liveCounter->set(player->getLives());
 	timeCounter->set(200 - player->getTimeLife() / 1000);
@@ -450,14 +463,14 @@ void Scene::initShaders()
 	vShader.initFromFile(VERTEX_SHADER, "shaders/texture.vert");
 	if(!vShader.isCompiled())
 	{
-		cout << "Vertex Shader Error" << endl;
-		cout << "" << vShader.log() << endl << endl;
+		std::cout << "Vertex Shader Error" << endl;
+		std::cout << "" << vShader.log() << endl << endl;
 	}
 	fShader.initFromFile(FRAGMENT_SHADER, "shaders/texture.frag");
 	if(!fShader.isCompiled())
 	{
-		cout << "Fragment Shader Error" << endl;
-		cout << "" << fShader.log() << endl << endl;
+		std::cout << "Fragment Shader Error" << endl;
+		std::cout << "" << fShader.log() << endl << endl;
 	}
 	texProgram.init();
 	texProgram.addShader(vShader);
@@ -465,8 +478,8 @@ void Scene::initShaders()
 	texProgram.link();
 	if(!texProgram.isLinked())
 	{
-		cout << "Shader Linking Error" << endl;
-		cout << "" << texProgram.log() << endl << endl;
+		std::cout << "Shader Linking Error" << endl;
+		std::cout << "" << texProgram.log() << endl << endl;
 	}
 	texProgram.bindFragmentOutput("outColor");
 	vShader.free();
