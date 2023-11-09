@@ -25,6 +25,7 @@ public:
 	int getPosX();
 	bool getMarioState();
 	bool getMarioStar();
+	bool getMarioInvincible();
 	void setMarioState(bool state);
 	int getLives();
 	int getTimeLife();

@@ -696,6 +696,10 @@ bool Player::getMarioStar() {
 
 }
 
+bool Player::getMarioInvincible() {
+	return loseSuper;
+}
+
 bool Player::getMarioTransitionState() {
 	return superTransition;
 }

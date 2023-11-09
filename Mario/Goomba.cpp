@@ -94,7 +94,7 @@ void Goomba::toggleMoveRight() {
 }
 
 
-int Goomba::checkCollision(const glm::vec2& posPlayer, bool super)
+int Goomba::checkCollision(const glm::vec2& posPlayer, bool super, bool star)
 {
 	int playerHeight = super ? 16 : 0;
 	if (abs(posPlayer.x - pos.x) <= 14 and abs(posPlayer.y - pos.y) <= 25 + playerHeight and abs(posPlayer.y - pos.y) >= 14 + playerHeight) {
@@ -102,7 +102,15 @@ int Goomba::checkCollision(const glm::vec2& posPlayer, bool super)
 		deathTime = time;
 		return 2; //Return 2 si eliminem a l'enemic
 	}
-	return (abs(posPlayer.x - pos.x) <= 14 and ((!super and abs(posPlayer.y - pos.y) <= 14) or (super and pos.y >= posPlayer.y - 14 and pos.y <= posPlayer.y + 30)));
+	if (abs(posPlayer.x - pos.x) <= 14 and ((!super and abs(posPlayer.y - pos.y) <= 14) or (super and pos.y >= posPlayer.y - 14 and pos.y <= posPlayer.y + 30))) {
+		if (star) {
+			sprite->changeAnimation(1, 0);
+			deathTime = time;
+			return 2;
+		}
+		else return 1;
+	}
+	return 0;
 }
 
 bool Goomba::checkCollisionEnemy(const glm::vec2& posEnemy, bool sameEnemy)

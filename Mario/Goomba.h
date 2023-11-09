@@ -12,7 +12,7 @@ public:
 	virtual int type();
 	void render(int offset) const;
 	void setPosition(const glm::vec2& pos);
-	int checkCollision(const glm::vec2& pos, bool super);
+	int checkCollision(const glm::vec2& pos, bool super, bool star);
 	int getDeathTime();
 	glm::vec2 getPos();
 	bool getMoveRight();

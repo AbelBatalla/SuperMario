@@ -152,14 +152,14 @@ void Scene::updateGoombas(int deltaTime) {
 				goombas[i]->update(deltaTime);
 				if (not player->isKilled() and goombas[i]->getDeathTime() == 0) {
 					int state = 0;
-					if(!player->getMarioStar()) state = goombas[i]->checkCollision(player->getPos(), player->getMarioState());
+					state = goombas[i]->checkCollision(player->getPos(), player->getMarioState(), player->getMarioStar());
 					if (state == 2) {
 						newScore(100, player->getPos());
 						playerScore += 100;
 						pointsCounter->set(playerScore);
 					}
 					else if (state == 1) {
-						player->kill();
+						if (!player->getMarioInvincible()) player->kill();
 					}
 				}
 				for (int j = 0; j < goombas.size(); j++) {
