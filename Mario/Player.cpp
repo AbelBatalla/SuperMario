@@ -387,6 +387,7 @@ bool Player::update(int deltaTime, int camx)
 			if (jumpAngle >= 180)
 			{
 				bJumping = false;
+				killJump = false;
 				posPlayer.y = startY;
 			}
 			else
@@ -394,6 +395,7 @@ bool Player::update(int deltaTime, int camx)
 				in_the_air = true;
 				if (jumpAngle > 90) {
 					bJumping = false;
+					killJump = false;
 					Game::instance().setSpace(false);
 				}
 				else if (jumpPress) {
@@ -408,6 +410,7 @@ bool Player::update(int deltaTime, int camx)
 				}
 				else {
 					bJumping = false;
+					killJump = false;
 					Game::instance().setSpace(false);
 				}
 				if (super) {
