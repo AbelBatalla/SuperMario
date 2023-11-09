@@ -44,6 +44,7 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 	accel = 2;
 	killed = false;
 	killedWithSuper = false;
+	killJump = false;
 
 	collectedCoins = 0;
 
@@ -403,7 +404,7 @@ bool Player::update(int deltaTime, int camx)
 					else jumpPress = false;
 				}
 				if (!map->collisionMoveUp(posPlayer, glm::ivec2(MARIO_SIZE, MARIO_SIZE * (super ? 2 : 1)), &posPlayer.y)) {
-					posPlayer.y = int(startY - min(MIN_JUMP_HEIGHT + jumpAcu, MAX_JUMP_HEIGHT) * sin(3.14159f * jumpAngle / 180.f));
+					posPlayer.y = int(startY - (killJump ? 20 : min(MIN_JUMP_HEIGHT + jumpAcu, MAX_JUMP_HEIGHT)) * sin(3.14159f * jumpAngle / 180.f));
 				}
 				else {
 					bJumping = false;
@@ -653,8 +654,11 @@ int Player::getLives() {
 void Player::kill() {
 	if (super) {
 		super = false;
-		loseSuper = true; 
+		superTransition = false;
 		superDetransition = true;
+		loseSuper = true;
+		sprite->changeAnimation(DETRANSITION, star ? starOffset : 0);
+
 		killedWithSuper = true;
 	}
 	killed = true;
@@ -703,6 +707,17 @@ bool Player::getMarioInvincible() {
 bool Player::getMarioTransitionState() {
 	return superTransition;
 }
+
+void Player::setKillJump() {
+	killJump = true;
+	bJumping = true;
+	jumpPress = false;
+	jumpAcu = 0;
+	bJumping = true;
+	jumpAngle = 0;
+	startY = posPlayer.y;
+}
+
 
 void Player::setMarioState(bool state) {
 	super = state;

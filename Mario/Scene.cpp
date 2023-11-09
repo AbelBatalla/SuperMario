@@ -153,10 +153,11 @@ void Scene::updateGoombas(int deltaTime) {
 				if (not player->isKilled() and goombas[i]->getDeathTime() == 0) {
 					int state = 0;
 					state = goombas[i]->checkCollision(player->getPos(), player->getMarioState(), player->getMarioStar());
-					if (state == 2) {
+					if (state >= 2) {
 						newScore(100, player->getPos());
 						playerScore += 100;
 						pointsCounter->set(playerScore);
+						if (state == 2) player->setKillJump();
 					}
 					else if (state == 1) {
 						if (!player->getMarioInvincible()) player->kill();

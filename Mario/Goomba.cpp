@@ -106,7 +106,7 @@ int Goomba::checkCollision(const glm::vec2& posPlayer, bool super, bool star)
 		if (star) {
 			sprite->changeAnimation(1, 0);
 			deathTime = time;
-			return 2;
+			return 3;
 		}
 		else return 1;
 	}
