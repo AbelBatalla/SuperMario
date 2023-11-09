@@ -152,7 +152,7 @@ void Scene::updateGoombas(int deltaTime) {
 				goombas[i]->update(deltaTime);
 				if (not player->isKilled() and goombas[i]->getDeathTime() == 0) {
 					int state = 0;
-					state = goombas[i]->checkCollision(player->getPos(), player->getMarioState(), player->getMarioStar());
+					state = goombas[i]->checkCollision(player->getPos(), player->getMarioState(), player->getMarioStar(), player->goingDown());
 					if (state >= 2) {
 						newScore(100, player->getPos());
 						playerScore += 100;

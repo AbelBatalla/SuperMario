@@ -45,7 +45,7 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 	killed = false;
 	killedWithSuper = false;
 	killJump = false;
-
+	oldY = 0;
 	collectedCoins = 0;
 
 	spritesheet.loadFromFile("images/marioSpritesheet3.png", TEXTURE_PIXEL_FORMAT_RGBA);
@@ -349,6 +349,7 @@ bool Player::update(int deltaTime, int camx)
 	if (Game::instance().getKey('q') and !super) {
 		super = true;
 		posPlayer.y -= MARIO_SIZE;
+		oldY -= MARIO_SIZE;
 		superTransition = true;
 		superDetransition = false;
 		loseSuper = false;
@@ -406,6 +407,7 @@ bool Player::update(int deltaTime, int camx)
 					else jumpPress = false;
 				}
 				if (!map->collisionMoveUp(posPlayer, glm::ivec2(MARIO_SIZE, MARIO_SIZE * (super ? 2 : 1)), &posPlayer.y)) {
+					oldY = posPlayer.y;
 					posPlayer.y = int(startY - (killJump ? 20 : min(MIN_JUMP_HEIGHT + jumpAcu, MAX_JUMP_HEIGHT)) * sin(3.14159f * jumpAngle / 180.f));
 				}
 				else {
@@ -427,6 +429,7 @@ bool Player::update(int deltaTime, int camx)
 		}
 		else
 		{
+			oldY = posPlayer.y;
 			posPlayer.y += FALL_STEP;
 			if (map->collisionMoveDown(posPlayer, glm::ivec2(MARIO_SIZE, MARIO_SIZE * (super ? 2 : 1)), &posPlayer.y)) {
 				in_the_air = false;
@@ -734,6 +737,7 @@ void Player::setTileMap(TileMap *tileMap)
 void Player::setPosition(const glm::vec2 &pos)
 {
 	posPlayer = pos;
+	oldY = pos.y;
 	sprite->setPosition(glm::vec2(float(tileMapDispl.x + posPlayer.x), float(tileMapDispl.y + posPlayer.y)));
 }
 
@@ -752,6 +756,7 @@ void Player::turnSuper()
 	if (!super) {
 		super = true;
 		posPlayer.y -= MARIO_SIZE;
+		oldY -= MARIO_SIZE;
 		superTransition = true;
 		sprite->changeAnimation(TRANSITION, star ? starOffset : 0);
 	}
@@ -770,4 +775,7 @@ void Player::collisionUp()
 	Game::instance().setSpace(false);
 }
 
-
+bool Player::goingDown()
+{
+	return (oldY < posPlayer.y); // or jumpAngle >= 90)
+}

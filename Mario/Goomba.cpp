@@ -94,10 +94,10 @@ void Goomba::toggleMoveRight() {
 }
 
 
-int Goomba::checkCollision(const glm::vec2& posPlayer, bool super, bool star)
+int Goomba::checkCollision(const glm::vec2& posPlayer, bool super, bool star, bool down)
 {
 	int playerHeight = super ? 16 : 0;
-	if (abs(posPlayer.x - pos.x) <= 14 and abs(posPlayer.y - pos.y) <= 25 + playerHeight and abs(posPlayer.y - pos.y) >= 14 + playerHeight) {
+	if (abs(posPlayer.x - pos.x) <= 14 and abs(posPlayer.y - pos.y) <= 21 + playerHeight and abs(posPlayer.y - pos.y) >= 14 + playerHeight and down) {
 		sprite->changeAnimation(1, 0);
 		deathTime = time;
 		return 2; //Return 2 si eliminem a l'enemic

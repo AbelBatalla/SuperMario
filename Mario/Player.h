@@ -36,6 +36,7 @@ public:
 	void collisionUp();
 	bool getMarioTransitionState();
 	void setKillJump();
+	bool goingDown();
 	
 private:
 	bool bJumping, jumpPress, super, star, superTransition, superDetransition, killed, loseSuper, killedWithSuper, killJump;
@@ -44,7 +45,7 @@ private:
 	Texture spritesheet;
 	Sprite *sprite, *spriteT;
 	TileMap *map;
-	int collectedCoins;
+	int collectedCoins, oldY;
 };
 
 
