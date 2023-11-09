@@ -51,7 +51,7 @@ bool Star::update(int deltatime) {
 				if (jumpAngle > 90) {
 					bJumping = false;
 				}
-				if (!map->collisionMoveUp(pos, glm::ivec2(16, 16), &pos.y)) {
+				if (!map->collisionMoveUp(pos, glm::ivec2(16, 16))) {
 					pos.y = int(startY - 48 * sin(3.14159f * jumpAngle / 180.f));
 				}
 				else {

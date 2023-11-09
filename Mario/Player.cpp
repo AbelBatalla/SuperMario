@@ -437,7 +437,7 @@ bool Player::update(int deltaTime, int camx)
 					}
 					else jumpPress = false;
 				}
-				if (!map->collisionMoveUp(posPlayer, glm::ivec2(MARIO_SIZE, MARIO_SIZE * (super ? 2 : 1)), &posPlayer.y)) {
+				if (!map->collisionMoveUp(posPlayer, glm::ivec2(MARIO_SIZE, MARIO_SIZE * (super ? 2 : 1)))) {
 					oldY = posPlayer.y;
 					posPlayer.y = int(startY - (killJump ? 20 : min(MIN_JUMP_HEIGHT + jumpAcu, MAX_JUMP_HEIGHT)) * sin(3.14159f * jumpAngle / 180.f));
 				}

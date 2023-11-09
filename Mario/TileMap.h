@@ -37,12 +37,12 @@ public:
 	bool collisionMoveRightPlayer(const glm::ivec2& pos, const glm::ivec2& size, int* posX) const;
 	bool collisionMoveRight(const glm::ivec2 &pos, const glm::ivec2 &size) const;
 	bool collisionMoveDown(const glm::ivec2 &pos, const glm::ivec2 &size, int *posY) const;
+	bool collisionMoveUp(const glm::ivec2& pos, const glm::ivec2& size) const;
 	const std::vector<glm::ivec2>& getCoinPositions() const;
 	const std::vector<glm::ivec2>& getGoombaPositions() const;
 	const std::vector<glm::ivec2>& getKoopaPositions() const;
 	const std::vector<glm::ivec3>& getItemPositions() const;
 	const std::vector<glm::ivec3>& getBrickPositions() const;
-	bool collisionMoveUp(const glm::ivec2& pos, const glm::ivec2& size, int* posY) const;
 	void setClearBlock(glm::ivec2 pos);
 	int getPrimaryCollisionBlock(glm::ivec2 pos);
 	
