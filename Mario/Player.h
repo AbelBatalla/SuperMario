@@ -47,7 +47,7 @@ private:
 	Texture spritesheet;
 	Sprite *sprite, *spriteT;
 	TileMap *map;
-	int collectedCoins, oldY;
+	int collectedCoins, oldY, sY, deathAnimTimer;
 };
 
 

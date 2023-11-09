@@ -294,23 +294,35 @@ bool Player::update(int deltaTime, int camx)
 {
 
 	timeLife += deltaTime;
-	if (killed and not killedWithSuper and not deathAnim) {
+	if ((killed and not killedWithSuper or timeLife >= 200000) and not deathAnim) {
 		deathAnim = true;
+		jumpAngle = 0;
+		startY = posPlayer.y;
+		sY = posPlayer.y;
+		deathAnimTimer = 0;
 		spriteT->changeAnimation(8, star ? starOffset : 0);
 	}
 
 	if (deathAnim) {
-		if (posPlayer.y >= (map->getMapHeight() - 2) * 16) deathAnim = false;
+		if (sY >= (map->getMapHeight()) * 16) {
+			deathAnim = false;
+			jumpAngle = 0;
+			startY = 0;
+		}
 		else {
-			posPlayer.y += 1;
-			spriteT->setPosition(glm::vec2(float(tileMapDispl.x + posPlayer.x), float(tileMapDispl.y + posPlayer.y)));
+			if (deathAnimTimer <= 500) deathAnimTimer += deltaTime;
+			else if (jumpAngle <= 180) {
+				sY = int(startY - 48 * sin(3.14159f * jumpAngle / 180.f));
+				jumpAngle += 4;
+			} else sY += 3;
+			spriteT->setPosition(glm::vec2(float(tileMapDispl.x + posPlayer.x), float(tileMapDispl.y + sY)));
 			spriteT->update(deltaTime, false, 1);
 			return false;
 		}
 	}
 
 
-	if (posPlayer.y >= (map->getMapHeight()-2)*16 or timeLife >= 200000 or killed and not deathAnim) { //200000 -> 200s which are represented in units of 0.5s, so the "timer" starts at 400
+	if (posPlayer.y >= (map->getMapHeight()-2)*16 or (timeLife >= 200000 or killed) and not deathAnim) { //200000 -> 200s which are represented in units of 0.5s, so the "timer" starts at 400
 		if (not killedWithSuper) {
 			lives -= 1;
 			killed = false;
@@ -807,5 +819,5 @@ bool Player::getKillJump()
 
 
 bool Player::inTransition() {
-	return superTransition or superDetransition;
+	return superTransition or superDetransition or deathAnim;
 }
