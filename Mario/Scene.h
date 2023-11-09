@@ -14,6 +14,7 @@
 #include "Star.h"
 #include "Score.h"
 #include "Goomba.h"
+#include "Koopa.h"
 #include "Brick.h"
 
 
@@ -36,7 +37,10 @@ public:
 private:
 	void initShaders();
 	void newScore(int s, glm::vec2 posScore);
-
+	void updateGoombas(int deltaTime);
+	void updateKoopas(int deltaTime);
+	void initGoombas();
+	void initKoopas();
 private:
 	TileMap *map;
 	Player *player;
@@ -52,9 +56,9 @@ private:
 	glm::mat4 projection;
 	std::vector<Coin*> coins;
 	std::vector<Goomba*> goombas;
+	std::vector<Koopa*> koopas;
 	std::vector<ItemBlock*> itemBlocks;
 	std::vector<PowerUp*> powerUps;
-	Goomba* gom;
 	std::vector<Score*> scores;
 	std::vector<Brick*> bricks;
 	

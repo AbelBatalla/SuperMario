@@ -24,6 +24,7 @@ public:
 	glm::vec2 getPos();
 	int getPosX();
 	bool getMarioState();
+	bool getMarioStar();
 	void setMarioState(bool state);
 	int getLives();
 	int getTimeLife();
@@ -35,7 +36,7 @@ public:
 	bool getMarioTransitionState();
 	
 private:
-	bool bJumping, jumpPress, super, star, superTransition, superDetransition, killed, loseSuper;
+	bool bJumping, jumpPress, super, star, superTransition, superDetransition, killed, loseSuper, killedWithSuper;
 	glm::ivec2 tileMapDispl, posPlayer;
 	int speedX, accel, jumpAngle, startY, jumpAcu, starOffset, starCounter, starTime, lives, timeLife, starColorSpeed, loseSuperCounter, loseSuperTimer;
 	Texture spritesheet;

@@ -1,11 +1,10 @@
-#ifndef _GOOMBA_INCLUDE
-#define _GOOMBA_INCLUDE
+#ifndef _KOOPA_INCLUDE
+#define _KOOPA_INCLUDE
 
 #include "Sprite.h"
 #include "TileMap.h"
-#include "DeadBlock.h"
 
-class Goomba {
+class Koopa {
 public:
 	virtual void init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram, TileMap* tileMap);
 	virtual bool update(int deltatime);
@@ -14,19 +13,23 @@ public:
 	void setPosition(const glm::vec2& pos);
 	int checkCollision(const glm::vec2& pos, bool super);
 	int getDeathTime();
-	glm::vec2 getPos();
+	void setDeathTime(int t);
+	void toggleMoveShell();
+	void toggleShell();
+	bool getShell();
+	bool getMoveShell();
 	bool getMoveRight();
 	void toggleMoveRight();
-	bool checkCollisionEnemy(const glm::vec2& posEnemy, bool sameEnemy);
+	glm::vec2 getPos();
 
 protected:
-	bool moveRight, startAnimation;
+	bool moveRight, shell, moveShell;
 	glm::ivec2 tileMapDispl, pos;
 	Texture spritesheet;
 	Sprite* sprite;
+	Sprite* spriteT;
 	TileMap* map;
 	int stAnim, time, deathTime, move;
-	DeadBlock* db;
 };
 
 #endif

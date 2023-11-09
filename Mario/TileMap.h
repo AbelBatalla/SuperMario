@@ -37,6 +37,7 @@ public:
 	bool collisionMoveDown(const glm::ivec2 &pos, const glm::ivec2 &size, int *posY) const;
 	const std::vector<glm::ivec2>& getCoinPositions() const;
 	const std::vector<glm::ivec2>& getGoombaPositions() const;
+	const std::vector<glm::ivec2>& getKoopaPositions() const;
 	const std::vector<glm::ivec3>& getItemPositions() const;
 	const std::vector<glm::ivec3>& getBrickPositions() const;
 	bool collisionMoveUp(const glm::ivec2& pos, const glm::ivec2& size, int* posY) const;
@@ -59,6 +60,7 @@ private:
 	int *map;
 	std::vector<glm::ivec2> coinPositions;
 	std::vector<glm::ivec2> goombaPositions;
+	std::vector<glm::ivec2> koopaPositions;
 	std::vector<glm::ivec3> itemPositions;
 	std::vector<glm::ivec3> brickPositions;
 
