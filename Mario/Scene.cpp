@@ -15,6 +15,7 @@
 
 #define INIT_PLAYER_X_TILES 7
 #define INIT_PLAYER_Y_TILES 9
+#define PLAYER_GOAL_x 197
 
 
 Scene::Scene()
@@ -70,7 +71,7 @@ void Scene::initKoopas() {
 	}
 }
 
-void Scene::init()
+void Scene::init(string level)
 {
 	initShaders();
 	numCoins = 0;
@@ -79,7 +80,7 @@ void Scene::init()
 	goombas.erase(goombas.begin(), goombas.end());
   
 	koopas.erase(koopas.begin(), koopas.end());
-	map = TileMap::createTileMap("levels/mapa4.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
+	map = TileMap::createTileMap(level, glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
 
 
 
@@ -96,7 +97,8 @@ void Scene::init()
 	liveCounter->init(texProgram, 18, 6, 3, 1);
 	timeCounter->init(texProgram, 14, 6, 200, 3);
 	pointsCounter->init(texProgram, 1, 6, 0, 4);
-	worldCounter->init(texProgram, 10, 6, 1, 1);
+	if(level == "levels/mapa4.txt") worldCounter->init(texProgram, 10, 6, 1, 1);
+	else worldCounter->init(texProgram, 10, 6, 2, 1);
 
 	initGoombas();
 	initKoopas();
@@ -357,7 +359,10 @@ void Scene::update(int deltaTime)
 			}
 		}
 	}
-
+	if (player->getPosX() >= PLAYER_GOAL_x * map->getTileSize()) {
+		if (Game::instance().getActualMap() == "levels/mapa3.txt") Game::instance().init("credits", true, false);
+		else Game::instance().init(Game::instance().getNextMap(), true, false);
+	}
 }
 
 void Scene::render()
@@ -435,7 +440,6 @@ void Scene::render()
 	pointsCounter->render();
 	worldCounter->render();
 	hud->render();
-	//gom->render(camx);
 	
 }
 
