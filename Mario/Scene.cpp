@@ -13,9 +13,10 @@
 
 #define ZOOM 2
 
-#define INIT_PLAYER_X_TILES 7
+#define INIT_PLAYER_X_TILES 196
 #define INIT_PLAYER_Y_TILES 9
-#define PLAYER_GOAL_x 197
+#define PLAYER_GOAL_x 210
+#define FLAG_POS 198
 
 
 Scene::Scene()
@@ -387,6 +388,9 @@ void Scene::update(int deltaTime)
 				scores[i] = nullptr;
 			}
 		}
+	}
+	if (player->getPosX() >= FLAG_POS * map->getTileSize() and !player->getFlagAnim()) {
+		player->setFlagAnim();
 	}
 	if (player->getPosX() >= PLAYER_GOAL_x * map->getTileSize()) {
 		if (Game::instance().getActualMap() == "levels/mapa3.txt") Game::instance().init("credits", true, false);

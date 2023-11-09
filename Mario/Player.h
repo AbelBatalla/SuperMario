@@ -39,9 +39,11 @@ public:
 	bool goingDown();
 	bool getKillJump();
 	bool inTransition();
+	void setFlagAnim();
+	bool getFlagAnim();
 	
 private:
-	bool bJumping, jumpPress, super, star, superTransition, superDetransition, killed, loseSuper, killedWithSuper, killJump, deathAnim;
+	bool bJumping, jumpPress, super, star, superTransition, superDetransition, killed, loseSuper, killedWithSuper, killJump, deathAnim, flagAnim;
 	glm::ivec2 tileMapDispl, posPlayer;
 	int speedX, accel, jumpAngle, startY, jumpAcu, starOffset, starCounter, starTime, lives, timeLife, starColorSpeed, loseSuperCounter, loseSuperTimer;
 	Texture spritesheet;
