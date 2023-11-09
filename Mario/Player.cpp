@@ -47,6 +47,7 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 	killJump = false;
 	oldY = 0;
 	collectedCoins = 0;
+	deathAnim = false;
 
 	spritesheet.loadFromFile("images/marioSpritesheet3.png", TEXTURE_PIXEL_FORMAT_RGBA);
 
@@ -209,7 +210,7 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 
 	//TINY
 	spriteT = Sprite::createSprite(glm::ivec2(MARIO_SIZE, MARIO_SIZE), glm::vec2(0.03125, 0.03125), &spritesheet, &shaderProgram);
-	spriteT->setNumberAnimations(8);
+	spriteT->setNumberAnimations(9);
 
 	spriteT->setAnimationSpeed(STAND_RIGHT, 8);
 	spriteT->addKeyframe(STAND_RIGHT, glm::vec2(0.0f, 0.0625f));
@@ -279,6 +280,9 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 	spriteT->addKeyframe(DRIFT_TO_RIGHT, glm::vec2(0.125f, 0.34375f));
 	spriteT->addKeyframe(DRIFT_TO_RIGHT, glm::vec2(0.125f, 0.4375f));
 
+	spriteT->setAnimationSpeed(8, 8);
+	spriteT->addKeyframe(8, glm::vec2(0.1875f, 0.0625f));
+
 	spriteT->changeAnimation(0, 0);
 	spriteT->setMirrored(false);
 	tileMapDispl = tileMapPos;
@@ -290,8 +294,35 @@ bool Player::update(int deltaTime, int camx)
 {
 
 	timeLife += deltaTime;
-	//FALTA COMPROVACIO MORT PER ENEMICS
-	if (posPlayer.y >= (map->getMapHeight()-2)*16 or timeLife >= 200000 or killed) { //200000 -> 200s which are represented in units of 0.5s, so the "timer" starts at 400
+	if ((killed and not killedWithSuper or timeLife >= 200000) and not deathAnim) {
+		deathAnim = true;
+		jumpAngle = 0;
+		startY = posPlayer.y;
+		sY = posPlayer.y;
+		deathAnimTimer = 0;
+		spriteT->changeAnimation(8, star ? starOffset : 0);
+	}
+
+	if (deathAnim) {
+		if (sY >= (map->getMapHeight()) * 16) {
+			deathAnim = false;
+			jumpAngle = 0;
+			startY = 0;
+		}
+		else {
+			if (deathAnimTimer <= 500) deathAnimTimer += deltaTime;
+			else if (jumpAngle <= 180) {
+				sY = int(startY - 48 * sin(3.14159f * jumpAngle / 180.f));
+				jumpAngle += 4;
+			} else sY += 3;
+			spriteT->setPosition(glm::vec2(float(tileMapDispl.x + posPlayer.x), float(tileMapDispl.y + sY)));
+			spriteT->update(deltaTime, false, 1);
+			return false;
+		}
+	}
+
+
+	if (posPlayer.y >= (map->getMapHeight()-2)*16 or (timeLife >= 200000 or killed) and not deathAnim) { //200000 -> 200s which are represented in units of 0.5s, so the "timer" starts at 400
 		if (not killedWithSuper) {
 			lives -= 1;
 			killed = false;
@@ -788,5 +819,5 @@ bool Player::getKillJump()
 
 
 bool Player::inTransition() {
-	return superTransition or superDetransition;
+	return superTransition or superDetransition or deathAnim;
 }

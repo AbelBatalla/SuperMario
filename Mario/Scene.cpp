@@ -158,7 +158,7 @@ void Scene::updateGoombas(int deltaTime) {
 						playerScore += 100;
 						pointsCounter->set(playerScore);
 					}
-					if (state == 2) {
+					else if (state == 2) {
 						if (player->getKillJump()) {
 							newScore(200, player->getPos());
 							playerScore += 200;
