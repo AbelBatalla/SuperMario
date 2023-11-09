@@ -129,7 +129,7 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 	sprite->addKeyframe(CROUCH, glm::vec2(0.1875f, 0.28125f));
 	sprite->addKeyframe(CROUCH, glm::vec2(0.1875f, 0.375f));
 
-	sprite->setAnimationSpeed(TRANSITION, 8);
+	sprite->setAnimationSpeed(TRANSITION, 12);
 	sprite->addKeyframe(TRANSITION, glm::vec2(0.65625f, 0.0f));
 	sprite->addKeyframe(TRANSITION, glm::vec2(0.65625f, 0.46875f));
 	sprite->addKeyframe(TRANSITION, glm::vec2(0.65625f, 0.28125f));
@@ -186,7 +186,7 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 	sprite->addKeyframe(TRANSITION, glm::vec2(0.0f, 0.375f));
 
 
-	sprite->setAnimationSpeed(DETRANSITION, 6);
+	sprite->setAnimationSpeed(DETRANSITION, 12);
 	sprite->addKeyframe(DETRANSITION, glm::vec2(0.15625f, 0.0f)); //Jump
 	sprite->addKeyframe(DETRANSITION, glm::vec2(0.15625f, 0.0f)); //Jump
 	sprite->addKeyframe(DETRANSITION, glm::vec2(0.6875f, 0.0f)); //"swimming" tiny mario
@@ -784,4 +784,9 @@ bool Player::goingDown()
 bool Player::getKillJump()
 {
 	return killJump;
+}
+
+
+bool Player::inTransition() {
+	return superTransition or superDetransition;
 }

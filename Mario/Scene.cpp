@@ -269,9 +269,10 @@ void Scene::update(int deltaTime)
 		}
 	}
 
-
-	updateGoombas(deltaTime);
-	updateKoopas(deltaTime);
+	if (!player->inTransition()) {
+		updateGoombas(deltaTime);
+		updateKoopas(deltaTime);
+	}
 
 	if (player->getLives() != playerLives) liveCounter->set(player->getLives());
 	timeCounter->set(200 - player->getTimeLife() / 1000);

@@ -38,6 +38,7 @@ public:
 	void setKillJump();
 	bool goingDown();
 	bool getKillJump();
+	bool inTransition();
 	
 private:
 	bool bJumping, jumpPress, super, star, superTransition, superDetransition, killed, loseSuper, killedWithSuper, killJump;
