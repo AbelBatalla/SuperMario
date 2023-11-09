@@ -9,7 +9,7 @@
 
 
 #define SCREEN_X 0
-#define SCREEN_Y 32 //-80
+#define SCREEN_Y -80
 
 #define ZOOM 2
 
@@ -157,9 +157,6 @@ void Scene::updateGoombas(int deltaTime) {
 						pointsCounter->set(playerScore);
 					}
 					else if (state == 1) {
-						player->kill();
-					}
-					else if (state == 3) {
 						player->kill();
 					}
 				}

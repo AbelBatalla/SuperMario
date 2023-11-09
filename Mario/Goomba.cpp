@@ -101,10 +101,8 @@ int Goomba::checkCollision(const glm::vec2& posPlayer, bool super)
 		sprite->changeAnimation(1, 0);
 		deathTime = time;
 		return 2; //Return 2 si eliminem a l'enemic
-	} 
-	int result = (abs(posPlayer.x - pos.x) <= 14 and ((!super and abs(posPlayer.y - pos.y) <= 14) or (super and pos.y >= posPlayer.y - 14 and pos.y <= posPlayer.y + 30)));
-	if (result and super) return 3; //Return 3 si l'enemic ens hauria matat pero estem en super
-	else return result; //Altrament retornem 0 o 1 (ens ha matat o no corresponentment)
+	}
+	return (abs(posPlayer.x - pos.x) <= 14 and ((!super and abs(posPlayer.y - pos.y) <= 14) or (super and pos.y >= posPlayer.y - 14 and pos.y <= posPlayer.y + 30)));
 }
 
 bool Goomba::checkCollisionEnemy(const glm::vec2& posEnemy, bool sameEnemy)
