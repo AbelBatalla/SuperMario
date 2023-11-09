@@ -437,7 +437,7 @@ bool Player::update(int deltaTime, int camx)
 					}
 					else jumpPress = false;
 				}
-				if (!map->collisionMoveUp(posPlayer, glm::ivec2(MARIO_SIZE, MARIO_SIZE * (super ? 2 : 1)), &posPlayer.y)) {
+				if (!map->collisionMoveUp(posPlayer, glm::ivec2(MARIO_SIZE, MARIO_SIZE * (super ? 2 : 1)))) {
 					oldY = posPlayer.y;
 					posPlayer.y = int(startY - (killJump ? 20 : min(MIN_JUMP_HEIGHT + jumpAcu, MAX_JUMP_HEIGHT)) * sin(3.14159f * jumpAngle / 180.f));
 				}
@@ -669,12 +669,18 @@ bool Player::update(int deltaTime, int camx)
 		}
 
 		//if (in_the_air) accel = accel * 2;
-
+		posPlayer.x += speedX / DIVISOR;
 		//UPDATE POSITIONS
-		if (!(speedX < 0 and (map->collisionMoveLeft(posPlayer, glm::ivec2(MARIO_SIZE, MARIO_SIZE * (super ? 2 : 1))) or posPlayer.x - camx <= 0)) and !(speedX > 0 and map->collisionMoveRight(posPlayer, glm::ivec2(MARIO_SIZE, MARIO_SIZE * (super ? 2 : 1))))) {
-			posPlayer.x += speedX / DIVISOR; //NO ES MIRA TENINT EN COMPTE L'SPEED, es pot quedar a 1, 0 o -1 de la paret
+		if (speedX < 0) {
+			if (posPlayer.x - camx <= 0) {
+				posPlayer.x = camx;
+				speedX = 0;
+			}
+			if (map->collisionMoveLeftPlayer(posPlayer, glm::ivec2(MARIO_SIZE, MARIO_SIZE * (super ? 2 : 1)), &posPlayer.x)) speedX = 0;
 		}
-		else speedX = 0;
+		else if (speedX > 0) {
+			if (map->collisionMoveRightPlayer(posPlayer, glm::ivec2(MARIO_SIZE, MARIO_SIZE* (super ? 2 : 1)), &posPlayer.x)) speedX = 0;
+		}
 	}
 	if (super) {
 		sprite->setPosition(glm::vec2(float(tileMapDispl.x + posPlayer.x), float(tileMapDispl.y + posPlayer.y)));
