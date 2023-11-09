@@ -194,16 +194,22 @@ void Scene::updateKoopas(int deltaTime) {
 		if (koopas[i] != nullptr) {
 			if (koopas[i]->getDeathTime() != 0 and (currentTime - koopas[i]->getDeathTime()) > 700 and koopas[i]->getDeathTime() != 0 and (currentTime - koopas[i]->getDeathTime()) < 4000) {
 				
-				if (koopas[i]->checkCollision(player->getPos(), player->getMarioState())) {
+				if (koopas[i]->checkCollision(player->getPos(), player->getMarioState(), player->getMarioStar(), false) and not koopas[i]->getMoveShell()) {
 					koopas[i]->toggleMoveShell();
+					koopas[i]->setDeathTime(currentTime, false);
 				}
 			}
 			else if (((not koopas[i]->getMoveShell()) and koopas[i]->getDeathTime() != 0) and (currentTime - koopas[i]->getDeathTime()) > 4000 and koopas[i]->getDeathTime() != 0 and (currentTime - koopas[i]->getDeathTime()) < 4300) {
-				koopas[i]->setDeathTime(koopas[i]->getDeathTime());
+				koopas[i]->setDeathTime(koopas[i]->getDeathTime(), true);
 			}
 			else if ((not koopas[i]->getMoveShell()) and koopas[i]->getDeathTime() != 0 and (currentTime - koopas[i]->getDeathTime()) > 4300 and koopas[i]->getShell()) {
 				koopas[i]->toggleShell();
-				koopas[i]->setDeathTime(0);
+				koopas[i]->setDeathTime(0, false);
+			}
+			else if (koopas[i]->getMoveShell() and (currentTime - koopas[i]->getDeathTime()) > 10000) {
+				//koopas[i]->setDeathTime(0);
+				delete koopas[i]; // Elimina la moneda actual
+				koopas[i] = nullptr;
 			}
 
 
@@ -211,20 +217,27 @@ void Scene::updateKoopas(int deltaTime) {
 				koopas[i]->update(deltaTime);
 				if (not player->isKilled() and koopas[i]->getDeathTime() == 0) {
 					int state = 0;
-					if (!player->getMarioStar()) state = koopas[i]->checkCollision(player->getPos(), player->getMarioState());
+					state = koopas[i]->checkCollision(player->getPos(), player->getMarioState(), player->getMarioStar(), player->getKillJump());
 					if (state == 2) {
-						newScore(100, player->getPos());
-						playerScore += 100;
+						if (player->getKillJump()) {
+							newScore(200, player->getPos());
+							playerScore += 200;
+						}
+						else {
+							newScore(100, player->getPos());
+							playerScore += 100;
+						}
 						pointsCounter->set(playerScore);
+						player->setKillJump();
 					}
 					else if (state == 1) {
-						player->kill();
+						if (!player->getMarioInvincible()) player->kill();
 					}
 				}
 				if (koopas[i]->getDeathTime() != 0 and koopas[i]->getMoveShell()) {
 					for (int j = 0; j < goombas.size(); j++) {
 						if (goombas[j] != nullptr) {
-							int state = koopas[i]->checkCollision(goombas[j]->getPos(),false);
+							int state = koopas[i]->checkCollision(goombas[j]->getPos(),false, false, false);
 							if (state) {
 								newScore(500, goombas[j]->getPos());
 								playerScore += 500;
