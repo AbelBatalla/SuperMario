@@ -9,24 +9,54 @@ Game::~Game() {
 }
 
 
-void Game::init()
+void Game::init(string level, bool nextLevel, bool death)
 {
 	bPlay = true;
 	goGame = false;
 	goInstructions = false;
+	goGameOver = false;
 	goCredits = false;
 	spaceRelease = true;
+	actualMap = "levels/mapa4.txt";
+	nextMap = "levels/mapa3.txt";
 	glClearColor(0.36f, 0.58f, 0.988f, 1.0f);
 	//glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 	menu = new Menu();
 	instructions = new SimpleView(SimpleView::TypeMenu::INSTRUCTIONS);
 	credits = new SimpleView(SimpleView::TypeMenu::CREDITS);
+	game_over = new SimpleView(SimpleView::TypeMenu::GAME_OVER);
 	
 	menu->init();
 	instructions->init();
 	credits->init();
-	scene.init();
+	game_over->init();
+	if (nextLevel and level != "credits") {
+		goGame = true; 
+		actualMap = "levels/mapa3.txt";
+	}
+	else if (nextLevel and level == "credits") {
+		goCredits = true;
+		actualMap = "levels/mapa4.txt";
+		nextMap = "levels/mapa3.txt";
+	}
+	else if (death == true) {
+		goGameOver = true;
+		actualMap = "levels/mapa4.txt";
+		nextMap = "levels/mapa3.txt";
+	}
+	else {
+		actualMap = "levels/mapa4.txt";
+		nextMap = "levels/mapa3.txt";
+	}
+	scene.init(actualMap);
+}
+
+string Game::getActualMap() {
+	return actualMap;
+}
+string Game::getNextMap() {
+	return nextMap;
 }
 
 bool Game::update(int deltaTime)
@@ -34,6 +64,7 @@ bool Game::update(int deltaTime)
 	if (goGame) scene.update(deltaTime);
 	else if (goInstructions) goInstructions = instructions->update();
 	else if (goCredits) goCredits = credits->update();
+	else if (goGameOver) goGameOver = game_over->update();
 	else idMenu = menu->update();
 	return bPlay;
 }
@@ -50,6 +81,9 @@ void Game::render()
 	}
 	else if (goCredits) {
 		credits->render();
+	}
+	else if (goGameOver) {
+		game_over->render();
 	}
 	else menu->render();
 }

@@ -11,7 +11,7 @@ class SimpleView
 {
 public:
 
-	enum TypeMenu { CREDITS, INSTRUCTIONS, HUD};
+	enum TypeMenu { CREDITS, INSTRUCTIONS, HUD, GAME_OVER};
 
 	SimpleView(TypeMenu type);
 	~SimpleView();

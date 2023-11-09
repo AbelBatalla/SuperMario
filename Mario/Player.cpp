@@ -301,7 +301,7 @@ bool Player::update(int deltaTime, int camx)
 			return false;
 		}
 		if (lives == 0) { //death
-			Game::instance().init();
+			Game::instance().init(Game::instance().getActualMap(), false, true);
 		}
 		else {
 			speedX = 0;

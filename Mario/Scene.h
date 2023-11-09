@@ -30,7 +30,7 @@ public:
 	Scene();
 	~Scene();
 
-	void init();
+	void init(string level);
 	void update(int deltaTime);
 	void render();
 

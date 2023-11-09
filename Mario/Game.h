@@ -29,7 +29,7 @@ public:
 		return G;
 	}
 	
-	void init();
+	void init(string level, bool nextLevel, bool death);
 	bool update(int deltaTime);
 	void render();
 	
@@ -45,16 +45,20 @@ public:
 	bool getKey(int key) const;
 	bool getSpecialKey(int key) const;
 	void setSpace(bool set);
+	string getActualMap();
+	string getNextMap();
 
 
 private:
-	bool bPlay, goGame, goInstructions, goCredits;                       // Continue to play game?
+	bool bPlay, goGame, goInstructions, goCredits, goGameOver;                       // Continue to play game?
 	Scene scene;                      // Scene to render
 	bool keys[256], specialKeys[256], spaceRelease; // Store key states so that                                  // we can have access at any time
 	Menu* menu;
 	SimpleView* instructions;
 	SimpleView* credits;
+	SimpleView* game_over;
 	int idMenu;
+	string actualMap, nextMap;
 
 };
 

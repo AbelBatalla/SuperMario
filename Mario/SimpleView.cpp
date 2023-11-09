@@ -11,6 +11,7 @@ SimpleView::SimpleView(TypeMenu type) {
 	if(type == CREDITS)	menu.loadFromFile("images/credits.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	else if(type == INSTRUCTIONS) menu.loadFromFile("images/instructions.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	else if(type == HUD) menu.loadFromFile("images/hud.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	else if (type == GAME_OVER) menu.loadFromFile("images/game_over.png", TEXTURE_PIXEL_FORMAT_RGBA);
 }
 
 SimpleView::~SimpleView() {
