@@ -37,6 +37,7 @@ public:
 	bool getMarioTransitionState();
 	void setKillJump();
 	bool goingDown();
+	bool getKillJump();
 	
 private:
 	bool bJumping, jumpPress, super, star, superTransition, superDetransition, killed, loseSuper, killedWithSuper, killJump;

@@ -396,7 +396,7 @@ bool Player::update(int deltaTime, int camx)
 				in_the_air = true;
 				if (jumpAngle > 90) {
 					bJumping = false;
-					killJump = false;
+					//killJump = false;
 					Game::instance().setSpace(false);
 				}
 				else if (jumpPress) {
@@ -412,7 +412,7 @@ bool Player::update(int deltaTime, int camx)
 				}
 				else {
 					bJumping = false;
-					killJump = false;
+					//killJump = false;
 					Game::instance().setSpace(false);
 				}
 				if (super) {
@@ -432,6 +432,7 @@ bool Player::update(int deltaTime, int camx)
 			oldY = posPlayer.y;
 			posPlayer.y += FALL_STEP;
 			if (map->collisionMoveDown(posPlayer, glm::ivec2(MARIO_SIZE, MARIO_SIZE * (super ? 2 : 1)), &posPlayer.y)) {
+				killJump = false;
 				in_the_air = false;
 				if (Game::instance().getKey(' '))
 				{
@@ -777,5 +778,10 @@ void Player::collisionUp()
 
 bool Player::goingDown()
 {
-	return (oldY < posPlayer.y); // or jumpAngle >= 90)
+	return oldY < posPlayer.y; // or jumpAngle >= 90?
+}
+
+bool Player::getKillJump()
+{
+	return killJump;
 }
