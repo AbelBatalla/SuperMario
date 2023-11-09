@@ -33,6 +33,8 @@ public:
 	int getMapHeight() const { return mapSize.y; }
 
 	bool collisionMoveLeft(const glm::ivec2 &pos, const glm::ivec2 &size) const;
+	bool collisionMoveLeftPlayer(const glm::ivec2& pos, const glm::ivec2& size, int* posX) const;
+	bool collisionMoveRightPlayer(const glm::ivec2& pos, const glm::ivec2& size, int* posX) const;
 	bool collisionMoveRight(const glm::ivec2 &pos, const glm::ivec2 &size) const;
 	bool collisionMoveDown(const glm::ivec2 &pos, const glm::ivec2 &size, int *posY) const;
 	const std::vector<glm::ivec2>& getCoinPositions() const;
