@@ -98,7 +98,7 @@ void Scene::initKoopas() {
 void Scene::init(string level)
 {
 	initShaders();
-
+	currentTime = 0;
 	//SoundManager::instance().init();
 	engine = SoundManager::instance().getSoundEngine();
 	engine2 = SoundManager::instance().getSoundEngine();
@@ -176,7 +176,7 @@ void Scene::init(string level)
 void Scene::updateGoombas(int deltaTime) {
 	for (int i = 0; i < goombas.size(); i++) {
 		if (goombas[i] != nullptr) {
-			if (goombas[i]->getDeathTime() != 0 and (currentTime - goombas[i]->getDeathTime()) > 400) {
+			if (goombas[i]->getDeathTime() != 0 and (currentTime - goombas[i]->getDeathTime()) > 2000) {
 				delete goombas[i]; // Elimina la moneda actual
 				goombas[i] = nullptr;
 			}
