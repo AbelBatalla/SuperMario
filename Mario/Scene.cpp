@@ -13,7 +13,7 @@
 
 #define ZOOM 2
 
-#define INIT_PLAYER_X_TILES 196
+#define INIT_PLAYER_X_TILES 7
 #define INIT_PLAYER_Y_TILES 9
 #define PLAYER_GOAL_x 210
 #define FLAG_POS 198
