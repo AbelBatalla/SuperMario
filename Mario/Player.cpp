@@ -623,7 +623,7 @@ bool Player::update(int deltaTime, int camx)
 					sprite->setMirrored(true);
 					spriteT->setMirrored(true);
 				}
-				if (Game::instance().getKey('x')) {
+				if (Game::instance().getSpecialKey(112)) {
 					if (speedX > -MAX_RUN_SPEED) speedX -= accel;
 				}
 				else {
@@ -636,7 +636,7 @@ bool Player::update(int deltaTime, int camx)
 					sprite->setMirrored(false);
 					spriteT->setMirrored(false);
 				}
-				if (Game::instance().getKey('x') and !flagAnim) {
+				if (Game::instance().getSpecialKey(112) and !flagAnim) {
 					if (speedX < MAX_RUN_SPEED) speedX += accel;
 				}
 				else {
