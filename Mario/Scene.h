@@ -19,6 +19,7 @@
 #include "Koopa.h"
 #include "Brick.h"
 #include "Flag.h"
+#include "FlagCover.h"
 using namespace irrklang;
 
 
@@ -71,6 +72,7 @@ private:
 	std::vector<Brick*> bricks;
 	Flag* bigFlag;
 	Flag* smallFlag;
+	FlagCover* cover;
 	Score* flagScore;
 	bool finished, smallFlagActivated;
 	

@@ -921,6 +921,7 @@ void Player::setFlagAnim() {
 	flagAnim = true;
 	bJumping = false;
 	speedX = 0;
+	if (posPlayer.y > (super ? 239 : 255)) posPlayer.y = (super ? 239 : 255);
 }
 
 bool Player::getFlagAnim() {

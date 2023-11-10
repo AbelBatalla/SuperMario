@@ -14,8 +14,8 @@ using namespace irrklang;
 
 #define ZOOM 2
 
-#define INIT_PLAYER_X_TILES 197
-#define INIT_PLAYER_Y_TILES 9
+#define INIT_PLAYER_X_TILES 7
+#define INIT_PLAYER_Y_TILES 14
 #define PLAYER_GOAL_x 210
 #define FLAG_POS 198
 
@@ -114,6 +114,7 @@ void Scene::init(string level)
 	powerUps.erase(powerUps.begin(), powerUps.end());
 	itemBlocks.erase(itemBlocks.begin(), itemBlocks.end());
 	koopas.erase(koopas.begin(), koopas.end());
+	coins.erase(coins.begin(), coins.end());
 	map = TileMap::createTileMap(level, glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
 	background = TileMap::createTileMap("levels/background4.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
 
@@ -143,6 +144,9 @@ void Scene::init(string level)
 	smallFlag = new Flag();
 	smallFlag->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram, 1);
 	smallFlag->setPosition(glm::vec2((FLAG_POS+6) * map->getTileSize(), 14 * map->getTileSize()));
+	cover = new FlagCover();
+	cover->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram);
+	cover->setPosition(glm::vec2((FLAG_POS + 6) * map->getTileSize(), 13 * map->getTileSize()));
 
 	std::vector<glm::ivec2> coinPositions = map->getCoinPositions();
 	for (const glm::ivec2& coinPos : coinPositions) {
@@ -529,6 +533,7 @@ void Scene::render()
 	map->render();
 	bigFlag->render(camx);
 	smallFlag->render(camx);
+	cover->render(camx);
 	if (flagScore != nullptr) flagScore->render(camx);
 	for (const Coin* coin : coins) {
 		if (coin != nullptr) {
