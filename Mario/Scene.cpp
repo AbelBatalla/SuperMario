@@ -462,8 +462,8 @@ void Scene::update(int deltaTime)
 		pointsCounter->set(playerScore);
 	}
 	if (finished and player->getTimeLife() >= 500000) {
-		if (Game::instance().getActualMap() == "levels/mapa3.txt") Game::instance().init("credits", true, false);
-		else Game::instance().init(Game::instance().getNextMap(), true, false);
+		if (Game::instance().getActualMap() == "levels/mapa3.txt") Game::instance().init("credits", true, false, false);
+		else Game::instance().init(Game::instance().getNextMap(), true, false, false);
   }
 }
 
