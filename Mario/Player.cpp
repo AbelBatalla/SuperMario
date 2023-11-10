@@ -19,7 +19,7 @@
 
 enum PlayerAnims
 {
-	STAND_RIGHT, MOVE_RIGHT, SPRINT_RIGHT, JUMP_RIGHT, DRIFT_TO_RIGHT, FALL_RIGHT1, FALL_RIGHT2, FALL_RIGHT3, CROUCH, TRANSITION, DETRANSITION
+	STAND_RIGHT, MOVE_RIGHT, SPRINT_RIGHT, JUMP_RIGHT, DRIFT_TO_RIGHT, FALL_RIGHT1, FALL_RIGHT2, FALL_RIGHT3, TREPAR, CROUCH, TRANSITION, DETRANSITION
 };
 
 void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
@@ -48,6 +48,11 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 	oldY = 0;
 	collectedCoins = 0;
 	deathAnim = false;
+	flagAnim = false;
+	finished = false;
+	reverseFlag = false;
+	reverseTimer = 0;
+	flagBottom = false;
 
 	engine = SoundManager::instance().getSoundEngine();
 
@@ -56,7 +61,7 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 
 	//SUPER
 	sprite = Sprite::createSprite(glm::ivec2(MARIO_SIZE, MARIO_SIZE*2), glm::vec2(0.03125, 0.0625), &spritesheet, &shaderProgram);
-	sprite->setNumberAnimations(11);
+	sprite->setNumberAnimations(12);
 			
 	sprite->setAnimationSpeed(STAND_RIGHT, 8);
 	sprite->addKeyframe(STAND_RIGHT, glm::vec2(0.0f, 0.0f));
@@ -205,6 +210,16 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 	sprite->addKeyframe(DETRANSITION, glm::vec2(0.6875f, 0.0f)); //"swimming" tiny mario
 	sprite->addKeyframe(DETRANSITION, glm::vec2(0.6875f, 0.0f)); //"swimming" tiny mario
 
+	sprite->setAnimationSpeed(TREPAR, 6);
+	sprite->addKeyframe(TREPAR, glm::vec2(0.25f, 0.0f));
+	sprite->addKeyframe(TREPAR, glm::vec2(0.25f, 0.46875f));
+	sprite->addKeyframe(TREPAR, glm::vec2(0.25f, 0.28125f));
+	sprite->addKeyframe(TREPAR, glm::vec2(0.25f, 0.375f));
+
+	sprite->addKeyframe(TREPAR, glm::vec2(0.21875f, 0.0f));
+	sprite->addKeyframe(TREPAR, glm::vec2(0.21875f, 0.46875f));
+	sprite->addKeyframe(TREPAR, glm::vec2(0.21875f, 0.28125f));
+	sprite->addKeyframe(TREPAR, glm::vec2(0.21875f, 0.375f));
 		
 	sprite->changeAnimation(0, 0);
 	sprite->setMirrored(false);
@@ -213,7 +228,7 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 
 	//TINY
 	spriteT = Sprite::createSprite(glm::ivec2(MARIO_SIZE, MARIO_SIZE), glm::vec2(0.03125, 0.03125), &spritesheet, &shaderProgram);
-	spriteT->setNumberAnimations(9);
+	spriteT->setNumberAnimations(10);
 
 	spriteT->setAnimationSpeed(STAND_RIGHT, 8);
 	spriteT->addKeyframe(STAND_RIGHT, glm::vec2(0.0f, 0.0625f));
@@ -283,8 +298,19 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 	spriteT->addKeyframe(DRIFT_TO_RIGHT, glm::vec2(0.125f, 0.34375f));
 	spriteT->addKeyframe(DRIFT_TO_RIGHT, glm::vec2(0.125f, 0.4375f));
 
-	spriteT->setAnimationSpeed(8, 8);
-	spriteT->addKeyframe(8, glm::vec2(0.1875f, 0.0625f));
+	spriteT->setAnimationSpeed(TREPAR, 6);
+	spriteT->addKeyframe(TREPAR, glm::vec2(0.25f, 0.0625f));
+	spriteT->addKeyframe(TREPAR, glm::vec2(0.25f, 0.53125f));
+	spriteT->addKeyframe(TREPAR, glm::vec2(0.25f, 0.34375f));
+	spriteT->addKeyframe(TREPAR, glm::vec2(0.25f, 0.4375f));
+
+	spriteT->addKeyframe(TREPAR, glm::vec2(0.21875f, 0.0625f));
+	spriteT->addKeyframe(TREPAR, glm::vec2(0.21875f, 0.53125f));
+	spriteT->addKeyframe(TREPAR, glm::vec2(0.21875f, 0.34375f));
+	spriteT->addKeyframe(TREPAR, glm::vec2(0.21875f, 0.4375f));
+
+	spriteT->setAnimationSpeed(9, 8);
+	spriteT->addKeyframe(9, glm::vec2(0.1875f, 0.0625f));
 
 	spriteT->changeAnimation(0, 0);
 	spriteT->setMirrored(false);
@@ -295,15 +321,77 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 
 bool Player::update(int deltaTime, int camx)
 {
+	if (finished) {
+		timeLife += deltaTime*100;
+		if (timeLife < 0) timeLife = 0;
+		return false;
+	}
+	bool updateStar = false;
+	if (star) {
+		starTime += deltaTime;
+		if (starTime >= 12000) star = false;
+		else {
+			starCounter += 1;
+			if (starTime >= 8500) starColorSpeed = 10;
+			if (starCounter >= starColorSpeed) { //Indica velocitat del canvide color del star, ha de ser 2 o 3
+				starCounter = 0;
+				updateStar = true;
+				starOffset = (starOffset + 1) % 4;
+			}
+		}
+	}
+	if (flagAnim) {
+		if (posPlayer.y <= (super ? 239 : 255)) {
+			if (super) {
+				if (sprite->animation() != TREPAR) {
+					sprite->changeAnimation(TREPAR, star ? starOffset : 0);
+				}
+				sprite->setPosition(glm::vec2(float(tileMapDispl.x + posPlayer.x), float(tileMapDispl.y + posPlayer.y)));
+				sprite->update(deltaTime, updateStar, 4);
+			}
+			else {
+				if (spriteT->animation() != TREPAR) {
+					spriteT->changeAnimation(TREPAR, star ? starOffset : 0);
+				}
+				spriteT->setPosition(glm::vec2(float(tileMapDispl.x + posPlayer.x), float(tileMapDispl.y + posPlayer.y)));
+				spriteT->update(deltaTime, updateStar, 4);
+			}
+			posPlayer.y += 2;
+			return false;
+		}
+		else if (!flagBottom and false) return false;
+		else if (!reverseFlag) {
+			posPlayer.x += 13;
+			if (super) {
+				sprite->setMirrored(true);
+				//sprite->changeAnimation(TREPAR, star ? starOffset : 0);
+				sprite->setPosition(glm::vec2(float(tileMapDispl.x + posPlayer.x), float(tileMapDispl.y + posPlayer.y)));
+				sprite->update(deltaTime, updateStar, 4);
+			}
+			else {
+				spriteT->setMirrored(true);
+				//spriteT->changeAnimation(TREPAR, star ? starOffset : 0);
+				spriteT->setPosition(glm::vec2(float(tileMapDispl.x + posPlayer.x), float(tileMapDispl.y + posPlayer.y)));
+				spriteT->update(deltaTime, updateStar, 4);
+			}
+			reverseFlag = true;
+			reverseTimer = 0;
+			return false;
+		}
+		else if (reverseTimer <= 300) {
+			reverseTimer += deltaTime;
+			return false;
+		}
+	}
 
-	timeLife += deltaTime;
+	if (!flagAnim) timeLife += deltaTime;
 	if ((killed and not killedWithSuper or timeLife >= 200000) and not deathAnim) {
 		deathAnim = true;
 		jumpAngle = 0;
 		startY = posPlayer.y;
 		sY = posPlayer.y;
 		deathAnimTimer = 0;
-		spriteT->changeAnimation(8, star ? starOffset : 0);
+		spriteT->changeAnimation(9, star ? starOffset : 0);
 	}
 
 	if (deathAnim) {
@@ -353,20 +441,6 @@ bool Player::update(int deltaTime, int camx)
 		}
 	}
 
-	bool updateStar = false;
-	if (star) {
-		starTime += deltaTime;
-		if (starTime >= 12000) star = false;
-		else {
-			starCounter += 1;
-			if (starTime >= 8500) starColorSpeed = 10;
-			if (starCounter >= starColorSpeed) { //Indica velocitat del canvide color del star, ha de ser 2 o 3
-				starCounter = 0;
-				updateStar = true;
-				starOffset = (starOffset + 1) % 4;
-			}
-		}
-	}
 	if (superTransition) {
 		if (sprite->getFrame() >= 40) superTransition = false;
 	}
@@ -387,7 +461,7 @@ bool Player::update(int deltaTime, int camx)
 		}
 	}
 
-	if (Game::instance().getKey('q') and !super) {
+	if (Game::instance().getKey('q') and !super and !flagAnim) {
 		super = true;
 		posPlayer.y -= MARIO_SIZE;
 		oldY -= MARIO_SIZE;
@@ -396,7 +470,7 @@ bool Player::update(int deltaTime, int camx)
 		loseSuper = false;
 		sprite->changeAnimation(TRANSITION, star ? starOffset : 0);
 	}
-	if (Game::instance().getKey('w') and super) {
+	if (Game::instance().getKey('w') and super and !flagAnim) {
 		super = false;
 		superTransition = false;
 		superDetransition = true;
@@ -420,7 +494,7 @@ bool Player::update(int deltaTime, int camx)
 
 	if (!superTransition and !superDetransition) {
 		bool in_the_air = false;
-		bool derrape = (speedX > 0 and Game::instance().getSpecialKey(GLUT_KEY_LEFT) or speedX < 0 and Game::instance().getSpecialKey(GLUT_KEY_RIGHT));
+		bool derrape = ((speedX > 0 and Game::instance().getSpecialKey(GLUT_KEY_LEFT) or speedX < 0 and Game::instance().getSpecialKey(GLUT_KEY_RIGHT)) and !flagAnim);
 
 		//JUMP
 		if (bJumping)
@@ -482,7 +556,7 @@ bool Player::update(int deltaTime, int camx)
 			if (map->collisionMoveDown(posPlayer, glm::ivec2(MARIO_SIZE, MARIO_SIZE * (super ? 2 : 1)), &posPlayer.y)) {
 				killJump = false;
 				in_the_air = false;
-				if (Game::instance().getKey(' '))
+				if (Game::instance().getKey(' ') and !flagAnim)
 				{
 					if (derrape) {
 						Game::instance().setSpace(false);
@@ -542,10 +616,9 @@ bool Player::update(int deltaTime, int camx)
 			}
 		}
 
-		//if (in_the_air) accel = accel / 2;
 		//CALCULATE SPEEDS & ESTABLISH ANIMATIONS
-		if ((Game::instance().getSpecialKey(GLUT_KEY_LEFT) xor Game::instance().getSpecialKey(GLUT_KEY_RIGHT)) and (in_the_air or !Game::instance().getSpecialKey(GLUT_KEY_DOWN))) {
-			if (Game::instance().getSpecialKey(GLUT_KEY_LEFT)) {
+		if (((Game::instance().getSpecialKey(GLUT_KEY_LEFT) xor Game::instance().getSpecialKey(GLUT_KEY_RIGHT)) and (in_the_air or !Game::instance().getSpecialKey(GLUT_KEY_DOWN))) or flagAnim) {
+			if (Game::instance().getSpecialKey(GLUT_KEY_LEFT) and !flagAnim) {
 				if (!in_the_air) {
 					sprite->setMirrored(true);
 					spriteT->setMirrored(true);
@@ -563,7 +636,7 @@ bool Player::update(int deltaTime, int camx)
 					sprite->setMirrored(false);
 					spriteT->setMirrored(false);
 				}
-				if (Game::instance().getKey('x')) {
+				if (Game::instance().getKey('x') and !flagAnim) {
 					if (speedX < MAX_RUN_SPEED) speedX += accel;
 				}
 				else {
@@ -685,7 +758,6 @@ bool Player::update(int deltaTime, int camx)
 			}
 		}
 
-		//if (in_the_air) accel = accel * 2;
 		posPlayer.x += speedX / DIVISOR;
 		//UPDATE POSITIONS
 		if (speedX < 0) {
@@ -840,7 +912,24 @@ bool Player::getKillJump()
 	return killJump;
 }
 
-
 bool Player::inTransition() {
 	return superTransition or superDetransition or deathAnim;
+}
+
+void Player::setFlagAnim() {
+	flagAnim = true;
+	bJumping = false;
+	speedX = 0;
+}
+
+bool Player::getFlagAnim() {
+	return flagAnim;
+}
+
+void Player::finish() {
+	finished = true;
+}
+
+void Player::setFlagBottom() {
+	flagBottom = true;
 }

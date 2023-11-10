@@ -59,7 +59,7 @@ private:
 	Counter *worldCounter;
 	SimpleView* hud;
 	float currentTime;
-	int playerLives, timeLife, hitLast, camx, oldPosx, numCoins, playerScore;
+	int playerLives, timeLife, hitLast, camx, oldPosx, numCoins, playerScore, timeFinish;
 	glm::mat4 projection;
 	std::vector<Coin*> coins;
 	std::vector<Goomba*> goombas;
@@ -68,6 +68,7 @@ private:
 	std::vector<PowerUp*> powerUps;
 	std::vector<Score*> scores;
 	std::vector<Brick*> bricks;
+	bool finished;
 	
 };
 #endif // _SCENE_INCLUDE
