@@ -14,7 +14,7 @@ using namespace irrklang;
 
 #define ZOOM 2
 
-#define INIT_PLAYER_X_TILES 7
+#define INIT_PLAYER_X_TILES 197
 #define INIT_PLAYER_Y_TILES 9
 #define PLAYER_GOAL_x 210
 #define FLAG_POS 198
@@ -107,6 +107,7 @@ void Scene::init(string level)
 	hitLast = 0;
 	timeFinish = 0;
 	finished = false;
+	smallFlagActivated = false;
 	goombas.erase(goombas.begin(), goombas.end());
 	bricks.erase(bricks.begin(), bricks.end());
 	powerUps.erase(powerUps.begin(), powerUps.end());
@@ -135,6 +136,12 @@ void Scene::init(string level)
 	initGoombas();
 	initKoopas();
 	
+	bigFlag = new Flag();
+	bigFlag->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram, 0);
+	bigFlag->setPosition(glm::vec2(FLAG_POS * map->getTileSize() - 8, 8 * map->getTileSize()));
+	smallFlag = new Flag();
+	smallFlag->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram, 1);
+	smallFlag->setPosition(glm::vec2((FLAG_POS+6) * map->getTileSize(), 14 * map->getTileSize()));
 
 	std::vector<glm::ivec2> coinPositions = map->getCoinPositions();
 	for (const glm::ivec2& coinPos : coinPositions) {
@@ -444,27 +451,40 @@ void Scene::update(int deltaTime)
 			}
 		}
 	}
+
+
 	if (player->getPosX() >= FLAG_POS * map->getTileSize()-7 and !player->getFlagAnim()) {
 		irrklang::ISound* sound = engine->play2D("sounds/levelend.wav", false, false, true);
 		sound->setVolume(0.5f);
 		player->setFlagAnim();
+		bigFlag->activate();
 	}
+	if (player->getPosX() >= FLAG_POS * map->getTileSize() - 7 and !bigFlag->getActivate()) player->setFlagBottom();
 	if (player->getPosX() >= ((FLAG_POS + 6) * map->getTileSize()) and !finished) {
 		finished = true;
 		timeFinish = player->getTimeLife();
 		player->finish();
 	}
-	if (finished and player->getTimeLife() <= 200000) {
-		while (player->getTimeLife() - timeFinish > 1500) {
-			playerScore += 5;
-			timeFinish += 1500;
+	if (finished) {
+		if (player->getTimeLife() <= 200000) {
+			while (player->getTimeLife() - timeFinish > 1500) {
+				playerScore += 5;
+				timeFinish += 1500;
+			}
+			pointsCounter->set(playerScore);
 		}
-		pointsCounter->set(playerScore);
+		else if (player->getTimeLife() > 200000 and !smallFlagActivated) {
+			smallFlag->activate();
+			smallFlagActivated = true;
+		}
+		else if (finished and player->getTimeLife() >= 500000) {
+			if (Game::instance().getActualMap() == "levels/mapa3.txt") Game::instance().init("credits", true, false, false);
+			else Game::instance().init(Game::instance().getNextMap(), true, false, false);
+		}
 	}
-	if (finished and player->getTimeLife() >= 500000) {
-		if (Game::instance().getActualMap() == "levels/mapa3.txt") Game::instance().init("credits", true, false, false);
-		else Game::instance().init(Game::instance().getNextMap(), true, false, false);
-  }
+		
+	bigFlag->update(deltaTime);
+	smallFlag->update(deltaTime);
 }
 
 void Scene::render()
@@ -493,6 +513,8 @@ void Scene::render()
 	texProgram.setUniform2f("texCoordDispl", 0.f, 0.f);
 	background->render();
 	map->render();
+	bigFlag->render(camx);
+	smallFlag->render(camx);
 	for (const Coin* coin : coins) {
 		if (coin != nullptr) {
 			coin->render(camx);

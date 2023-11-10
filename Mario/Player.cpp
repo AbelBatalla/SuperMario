@@ -359,7 +359,7 @@ bool Player::update(int deltaTime, int camx)
 			posPlayer.y += 2;
 			return false;
 		}
-		else if (!flagBottom and false) return false;
+		else if (!flagBottom) return false;
 		else if (!reverseFlag) {
 			posPlayer.x += 13;
 			if (super) {
