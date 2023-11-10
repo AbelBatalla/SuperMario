@@ -49,6 +49,9 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 	collectedCoins = 0;
 	deathAnim = false;
 
+	engine = SoundManager::instance().getSoundEngine();
+
+
 	spritesheet.loadFromFile("images/marioSpritesheet3.png", TEXTURE_PIXEL_FORMAT_RGBA);
 
 	//SUPER
@@ -308,6 +311,7 @@ bool Player::update(int deltaTime, int camx)
 			deathAnim = false;
 			jumpAngle = 0;
 			startY = 0;
+			
 		}
 		else {
 			if (deathAnimTimer <= 500) deathAnimTimer += deltaTime;
@@ -333,7 +337,9 @@ bool Player::update(int deltaTime, int camx)
 			return false;
 		}
 		if (lives == 0) { //death
-			Game::instance().init(Game::instance().getActualMap(), false, true);
+			irrklang::ISound* sound = engine->play2D("sounds/death.wav", false, false, true);
+			sound->setVolume(0.7f);
+			Game::instance().init(Game::instance().getActualMap(), false, true, false);
 		}
 		else {
 			speedX = 0;
@@ -365,7 +371,11 @@ bool Player::update(int deltaTime, int camx)
 		if (sprite->getFrame() >= 40) superTransition = false;
 	}
 	if (superDetransition) {
-		if (sprite->getFrame() >= 11) superDetransition = false;
+		if (sprite->getFrame() >= 11) {
+			superDetransition = false;
+			irrklang::ISound* sound = engine->play2D("sounds/shrink.wav", false, false, true);
+			sound->setVolume(0.5f);
+		}
 	}
 	if (loseSuper){
 		loseSuperTimer += deltaTime;
@@ -415,6 +425,7 @@ bool Player::update(int deltaTime, int camx)
 		//JUMP
 		if (bJumping)
 		{
+		
 			jumpAngle += JUMP_ANGLE_STEP;
 			if (jumpAngle >= 180)
 			{
@@ -428,6 +439,7 @@ bool Player::update(int deltaTime, int camx)
 				if (jumpAngle > 90) {
 					bJumping = false;
 					//killJump = false;
+					
 					Game::instance().setSpace(false);
 				}
 				else if (jumpPress) {
@@ -444,15 +456,20 @@ bool Player::update(int deltaTime, int camx)
 				else {
 					bJumping = false;
 					//killJump = false;
+					
 					Game::instance().setSpace(false);
 				}
 				if (super) {
 					if (sprite->animation() != JUMP_RIGHT and sprite->animation() != CROUCH) {
+						irrklang::ISound* sound = engine->play2D("sounds/jump.wav", false, false, true);
+						sound->setVolume(0.5f);
 						sprite->changeAnimation(JUMP_RIGHT, star ? starOffset : 0);
 					}
 				}
 				else {
 					if (spriteT->animation() != JUMP_RIGHT) {
+						irrklang::ISound* sound = engine->play2D("sounds/jump.wav", false, false, true);
+						sound->setVolume(0.5f);
 						spriteT->changeAnimation(JUMP_RIGHT, star ? starOffset : 0);
 					}
 				}

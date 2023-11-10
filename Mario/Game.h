@@ -5,6 +5,7 @@
 #include "Scene.h"
 #include "Menu.h"
 #include "SimpleView.h"
+#include "SoundManager.h"
 
 
 #define SCREEN_WIDTH 640
@@ -29,7 +30,7 @@ public:
 		return G;
 	}
 	
-	void init(string level, bool nextLevel, bool death);
+	void init(string level, bool nextLevel, bool death, bool firstTime);
 	bool update(int deltaTime);
 	void render();
 	
@@ -50,13 +51,15 @@ public:
 
 
 private:
-	bool bPlay, goGame, goInstructions, goCredits, goGameOver;                       // Continue to play game?
+	bool bPlay, goGame, goInstructions, goCredits, goGameOver, mute;                       // Continue to play game?
 	Scene scene;                      // Scene to render
 	bool keys[256], specialKeys[256], spaceRelease; // Store key states so that                                  // we can have access at any time
 	Menu* menu;
 	SimpleView* instructions;
 	SimpleView* credits;
 	SimpleView* game_over;
+	ISoundEngine* engine;
+	irrklang::ISound* sound;
 	int idMenu;
 	string actualMap, nextMap;
 
