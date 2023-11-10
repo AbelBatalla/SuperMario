@@ -81,6 +81,8 @@ void Scene::init(string level)
 	numCoins = 0;
 	playerScore = 0;
 	hitLast = 0;
+	timeFinish = 0;
+	finished = false;
 	goombas.erase(goombas.begin(), goombas.end());
   
 	koopas.erase(koopas.begin(), koopas.end());
@@ -292,7 +294,7 @@ void Scene::update(int deltaTime)
 	}
 
 	if (player->getLives() != playerLives) liveCounter->set(player->getLives());
-	timeCounter->set(200 - player->getTimeLife() / 1000);
+	timeCounter->set(player->getTimeLife() >= 200000 ? 0 : (200 - player->getTimeLife() / 1000));
 	coinCounter->update(deltaTime);
 	liveCounter->update(deltaTime);
 	timeCounter->update(deltaTime);
@@ -389,10 +391,23 @@ void Scene::update(int deltaTime)
 			}
 		}
 	}
-	if (player->getPosX() >= FLAG_POS * map->getTileSize() and !player->getFlagAnim()) {
+	if (player->getPosX() >= FLAG_POS * map->getTileSize()-7 and !player->getFlagAnim()) {
+		
 		player->setFlagAnim();
 	}
-	if (player->getPosX() >= PLAYER_GOAL_x * map->getTileSize()) {
+	if (player->getPosX() >= ((FLAG_POS + 6) * map->getTileSize()) and !finished) {
+		finished = true;
+		timeFinish = player->getTimeLife();
+		player->finish();
+	}
+	if (finished and player->getTimeLife() <= 200000) {
+		while (player->getTimeLife() - timeFinish > 1500) {
+			playerScore += 5;
+			timeFinish += 1500;
+		}
+		pointsCounter->set(playerScore);
+	}
+	if (finished and player->getTimeLife() >= 500000) {
 		if (Game::instance().getActualMap() == "levels/mapa3.txt") Game::instance().init("credits", true, false);
 		else Game::instance().init(Game::instance().getNextMap(), true, false);
 	}
@@ -466,7 +481,7 @@ void Scene::render()
 		}
 	}
 
-	player->render(camx);
+	if (!finished) player->render(camx);
 
 	coinCounter->render();
 	liveCounter->render();
