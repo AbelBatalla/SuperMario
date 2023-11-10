@@ -40,15 +40,19 @@ public:
 	bool goingDown();
 	bool getKillJump();
 	bool inTransition();
+	void setFlagAnim();
+	bool getFlagAnim();
+	void finish();
+	void setFlagBottom();
 	
 private:
-	bool bJumping, jumpPress, super, star, superTransition, superDetransition, killed, loseSuper, killedWithSuper, killJump, deathAnim;
+	bool bJumping, jumpPress, super, star, superTransition, superDetransition, killed, loseSuper, killedWithSuper, killJump, deathAnim, flagAnim, finished, reverseFlag, flagBottom;
 	glm::ivec2 tileMapDispl, posPlayer;
 	int speedX, accel, jumpAngle, startY, jumpAcu, starOffset, starCounter, starTime, lives, timeLife, starColorSpeed, loseSuperCounter, loseSuperTimer;
 	Texture spritesheet;
 	Sprite *sprite, *spriteT;
 	TileMap *map;
-	int collectedCoins, oldY, sY, deathAnimTimer;
+	int collectedCoins, oldY, sY, deathAnimTimer, reverseTimer;	
 	ISoundEngine* engine;
 };
 

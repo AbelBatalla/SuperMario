@@ -16,7 +16,8 @@ using namespace irrklang;
 
 #define INIT_PLAYER_X_TILES 7
 #define INIT_PLAYER_Y_TILES 9
-#define PLAYER_GOAL_x 197
+#define PLAYER_GOAL_x 210
+#define FLAG_POS 198
 
 
 Scene::Scene()
@@ -104,6 +105,8 @@ void Scene::init(string level)
 	numCoins = 0;
 	playerScore = 0;
 	hitLast = 0;
+	timeFinish = 0;
+	finished = false;
 	goombas.erase(goombas.begin(), goombas.end());
 	bricks.erase(bricks.begin(), bricks.end());
 	powerUps.erase(powerUps.begin(), powerUps.end());
@@ -326,7 +329,7 @@ void Scene::update(int deltaTime)
 	}
 
 	if (player->getLives() != playerLives) liveCounter->set(player->getLives());
-	timeCounter->set(200 - player->getTimeLife() / 1000);
+	timeCounter->set(player->getTimeLife() >= 200000 ? 0 : (200 - player->getTimeLife() / 1000));
 	coinCounter->update(deltaTime);
 	liveCounter->update(deltaTime);
 	timeCounter->update(deltaTime);
@@ -441,14 +444,27 @@ void Scene::update(int deltaTime)
 			}
 		}
 	}
-	if (player->getPosX() == (PLAYER_GOAL_x - 7) * map->getTileSize()) {
+	if (player->getPosX() >= FLAG_POS * map->getTileSize()-7 and !player->getFlagAnim()) {
 		irrklang::ISound* sound = engine->play2D("sounds/levelend.wav", false, false, true);
 		sound->setVolume(0.5f);
+		player->setFlagAnim();
 	}
-	if (player->getPosX() >= PLAYER_GOAL_x * map->getTileSize()) {
+	if (player->getPosX() >= ((FLAG_POS + 6) * map->getTileSize()) and !finished) {
+		finished = true;
+		timeFinish = player->getTimeLife();
+		player->finish();
+	}
+	if (finished and player->getTimeLife() <= 200000) {
+		while (player->getTimeLife() - timeFinish > 1500) {
+			playerScore += 5;
+			timeFinish += 1500;
+		}
+		pointsCounter->set(playerScore);
+	}
+	if (finished and player->getTimeLife() >= 500000) {
 		if (Game::instance().getActualMap() == "levels/mapa3.txt") Game::instance().init("credits", true, false, false);
 		else Game::instance().init(Game::instance().getNextMap(), true, false, false);
-	}
+  }
 }
 
 void Scene::render()
@@ -519,7 +535,7 @@ void Scene::render()
 		}
 	}
 
-	player->render(camx);
+	if (!finished) player->render(camx);
 
 	coinCounter->render();
 	liveCounter->render();
