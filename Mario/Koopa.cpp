@@ -61,7 +61,7 @@ bool Koopa::update(int deltatime) {
 				if (!shell) posaux.y += 1;
 				else posaux.y -= 2;
 
-				if (map->collisionMoveRight(posaux, glm::ivec2(16, 16))) {
+				if (map->collisionMoveRight(posaux, glm::ivec2(16, 25))) {
 					moveRight = false;
 					if (!shell) {
 						sprite->setMirrored(true);
@@ -77,7 +77,7 @@ bool Koopa::update(int deltatime) {
 				if (!shell) posaux.y += 1;
 				else posaux.y -= 2;
 
-				if (map->collisionMoveLeft(posaux, glm::ivec2(16, 16))) {
+				if (map->collisionMoveLeft(posaux, glm::ivec2(16, 25))) {
 					moveRight = true;
 					if (!shell) {
 					 sprite->setMirrored(false);
