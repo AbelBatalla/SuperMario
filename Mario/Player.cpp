@@ -22,7 +22,7 @@ enum PlayerAnims
 	STAND_RIGHT, MOVE_RIGHT, SPRINT_RIGHT, JUMP_RIGHT, DRIFT_TO_RIGHT, FALL_RIGHT1, FALL_RIGHT2, FALL_RIGHT3, TREPAR, CROUCH, TRANSITION, DETRANSITION
 };
 
-void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
+void Player::init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram)
 {
 	lives = 3;
 	timeLife = 0;
@@ -60,15 +60,15 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 	spritesheet.loadFromFile("images/marioSpritesheet3.png", TEXTURE_PIXEL_FORMAT_RGBA);
 
 	//SUPER
-	sprite = Sprite::createSprite(glm::ivec2(MARIO_SIZE, MARIO_SIZE*2), glm::vec2(0.03125, 0.0625), &spritesheet, &shaderProgram);
+	sprite = Sprite::createSprite(glm::ivec2(MARIO_SIZE, MARIO_SIZE * 2), glm::vec2(0.03125, 0.0625), &spritesheet, &shaderProgram);
 	sprite->setNumberAnimations(12);
-			
+
 	sprite->setAnimationSpeed(STAND_RIGHT, 8);
 	sprite->addKeyframe(STAND_RIGHT, glm::vec2(0.0f, 0.0f));
 	sprite->addKeyframe(STAND_RIGHT, glm::vec2(0.0f, 0.46875f));
 	sprite->addKeyframe(STAND_RIGHT, glm::vec2(0.0f, 0.28125f));
 	sprite->addKeyframe(STAND_RIGHT, glm::vec2(0.0f, 0.375f));
-		
+
 	sprite->setAnimationSpeed(MOVE_RIGHT, 12);
 	sprite->addKeyframe(MOVE_RIGHT, glm::vec2(0.0625f, 0.0f));
 	sprite->addKeyframe(MOVE_RIGHT, glm::vec2(0.0625f, 0.46875f));
@@ -220,7 +220,7 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 	sprite->addKeyframe(TREPAR, glm::vec2(0.21875f, 0.46875f));
 	sprite->addKeyframe(TREPAR, glm::vec2(0.21875f, 0.28125f));
 	sprite->addKeyframe(TREPAR, glm::vec2(0.21875f, 0.375f));
-		
+
 	sprite->changeAnimation(0, 0);
 	sprite->setMirrored(false);
 	tileMapDispl = tileMapPos;
@@ -280,7 +280,7 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 	spriteT->addKeyframe(SPRINT_RIGHT, glm::vec2(0.03125f, 0.53125f));
 	spriteT->addKeyframe(SPRINT_RIGHT, glm::vec2(0.03125f, 0.34375f));
 	spriteT->addKeyframe(SPRINT_RIGHT, glm::vec2(0.03125f, 0.4375f));
-	
+
 	spriteT->addKeyframe(SPRINT_RIGHT, glm::vec2(0.09375f, 0.0625f));
 	spriteT->addKeyframe(SPRINT_RIGHT, glm::vec2(0.09375f, 0.53125f));
 	spriteT->addKeyframe(SPRINT_RIGHT, glm::vec2(0.09375f, 0.34375f));
@@ -316,13 +316,13 @@ void Player::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram)
 	spriteT->setMirrored(false);
 	tileMapDispl = tileMapPos;
 	spriteT->setPosition(glm::vec2(float(tileMapDispl.x + posPlayer.x), float(tileMapDispl.y + posPlayer.y)));
-	
+
 }
 
 bool Player::update(int deltaTime, int camx)
 {
 	if (finished) {
-		timeLife += deltaTime*100;
+		timeLife += deltaTime * 100;
 		if (timeLife < 0) timeLife = 0;
 		return false;
 	}
@@ -399,14 +399,15 @@ bool Player::update(int deltaTime, int camx)
 			deathAnim = false;
 			jumpAngle = 0;
 			startY = 0;
-			
+
 		}
 		else {
 			if (deathAnimTimer <= 500) deathAnimTimer += deltaTime;
 			else if (jumpAngle <= 180) {
 				sY = int(startY - 48 * sin(3.14159f * jumpAngle / 180.f));
 				jumpAngle += 4;
-			} else sY += 3;
+			}
+			else sY += 3;
 			spriteT->setPosition(glm::vec2(float(tileMapDispl.x + posPlayer.x), float(tileMapDispl.y + sY)));
 			spriteT->update(deltaTime, false, 1);
 			return false;
@@ -414,7 +415,7 @@ bool Player::update(int deltaTime, int camx)
 	}
 
 
-	if (posPlayer.y >= (map->getMapHeight()-2)*16 or (timeLife >= 200000 or killed) and not deathAnim) { //200000 -> 200s which are represented in units of 0.5s, so the "timer" starts at 400
+	if (posPlayer.y >= (map->getMapHeight() - 2) * 16 or (timeLife >= 200000 or killed) and not deathAnim) { //200000 -> 200s which are represented in units of 0.5s, so the "timer" starts at 400
 		if (not killedWithSuper) {
 			lives -= 1;
 			killed = false;
@@ -451,7 +452,7 @@ bool Player::update(int deltaTime, int camx)
 			sound->setVolume(0.5f);
 		}
 	}
-	if (loseSuper){
+	if (loseSuper) {
 		loseSuperTimer += deltaTime;
 		if (loseSuperTimer >= 4000) {
 			loseSuper = false;
@@ -499,7 +500,7 @@ bool Player::update(int deltaTime, int camx)
 		//JUMP
 		if (bJumping)
 		{
-		
+
 			jumpAngle += JUMP_ANGLE_STEP;
 			if (jumpAngle >= 180)
 			{
@@ -513,7 +514,7 @@ bool Player::update(int deltaTime, int camx)
 				if (jumpAngle > 90) {
 					bJumping = false;
 					//killJump = false;
-					
+
 					Game::instance().setSpace(false);
 				}
 				else if (jumpPress) {
@@ -530,7 +531,7 @@ bool Player::update(int deltaTime, int camx)
 				else {
 					bJumping = false;
 					//killJump = false;
-					
+
 					Game::instance().setSpace(false);
 				}
 				if (super) {
@@ -623,7 +624,7 @@ bool Player::update(int deltaTime, int camx)
 					sprite->setMirrored(true);
 					spriteT->setMirrored(true);
 				}
-				if (Game::instance().getKey('x')) {
+				if (Game::instance().getSpecialKey(112)) {
 					if (speedX > -MAX_RUN_SPEED) speedX -= accel;
 				}
 				else {
@@ -636,7 +637,7 @@ bool Player::update(int deltaTime, int camx)
 					sprite->setMirrored(false);
 					spriteT->setMirrored(false);
 				}
-				if (Game::instance().getKey('x') and !flagAnim) {
+				if (Game::instance().getSpecialKey(112) and !flagAnim) {
 					if (speedX < MAX_RUN_SPEED) speedX += accel;
 				}
 				else {
@@ -768,7 +769,7 @@ bool Player::update(int deltaTime, int camx)
 			if (map->collisionMoveLeftPlayer(posPlayer, glm::ivec2(MARIO_SIZE, MARIO_SIZE * (super ? 2 : 1)), &posPlayer.x)) speedX = 0;
 		}
 		else if (speedX > 0) {
-			if (map->collisionMoveRightPlayer(posPlayer, glm::ivec2(MARIO_SIZE, MARIO_SIZE* (super ? 2 : 1)), &posPlayer.x)) speedX = 0;
+			if (map->collisionMoveRightPlayer(posPlayer, glm::ivec2(MARIO_SIZE, MARIO_SIZE * (super ? 2 : 1)), &posPlayer.x)) speedX = 0;
 		}
 	}
 	if (super) {
@@ -813,7 +814,7 @@ void Player::render(int offset)
 	else {
 		if (loseSuper) {
 			++loseSuperCounter;
-			loseSuperCounter = loseSuperCounter%3;
+			loseSuperCounter = loseSuperCounter % 3;
 			if (loseSuperCounter != 0) {
 				if (superDetransition) sprite->render(offset);
 				else spriteT->render(offset);
@@ -856,12 +857,12 @@ void Player::setMarioState(bool state) {
 	super = state;
 }
 
-void Player::setTileMap(TileMap *tileMap)
+void Player::setTileMap(TileMap* tileMap)
 {
 	map = tileMap;
 }
 
-void Player::setPosition(const glm::vec2 &pos)
+void Player::setPosition(const glm::vec2& pos)
 {
 	posPlayer = pos;
 	oldY = pos.y;
