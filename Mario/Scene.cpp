@@ -15,7 +15,7 @@ using namespace irrklang;
 #define ZOOM 2
 
 #define INIT_PLAYER_X_TILES 7
-#define INIT_PLAYER_Y_TILES 9
+#define INIT_PLAYER_Y_TILES 14
 #define PLAYER_GOAL_x 210
 #define FLAG_POS 198
 
@@ -107,11 +107,14 @@ void Scene::init(string level)
 	hitLast = 0;
 	timeFinish = 0;
 	finished = false;
+	smallFlagActivated = false;
+	flagScore = nullptr;
 	goombas.erase(goombas.begin(), goombas.end());
 	bricks.erase(bricks.begin(), bricks.end());
 	powerUps.erase(powerUps.begin(), powerUps.end());
 	itemBlocks.erase(itemBlocks.begin(), itemBlocks.end());
 	koopas.erase(koopas.begin(), koopas.end());
+	coins.erase(coins.begin(), coins.end());
 	map = TileMap::createTileMap(level, glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
 	background = TileMap::createTileMap("levels/background4.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
 
@@ -135,6 +138,15 @@ void Scene::init(string level)
 	initGoombas();
 	initKoopas();
 	
+	bigFlag = new Flag();
+	bigFlag->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram, 0);
+	bigFlag->setPosition(glm::vec2(FLAG_POS * map->getTileSize() - 8, 8 * map->getTileSize()));
+	smallFlag = new Flag();
+	smallFlag->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram, 1);
+	smallFlag->setPosition(glm::vec2((FLAG_POS+6) * map->getTileSize(), 14 * map->getTileSize()));
+	cover = new FlagCover();
+	cover->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram);
+	cover->setPosition(glm::vec2((FLAG_POS + 6) * map->getTileSize(), 13 * map->getTileSize()));
 
 	std::vector<glm::ivec2> coinPositions = map->getCoinPositions();
 	for (const glm::ivec2& coinPos : coinPositions) {
@@ -444,27 +456,53 @@ void Scene::update(int deltaTime)
 			}
 		}
 	}
+
+
 	if (player->getPosX() >= FLAG_POS * map->getTileSize()-7 and !player->getFlagAnim()) {
 		irrklang::ISound* sound = engine->play2D("sounds/levelend.wav", false, false, true);
 		sound->setVolume(0.5f);
 		player->setFlagAnim();
+		bigFlag->activate();
+		int s = 5000;
+		int h = player->getPos().y;
+		if (h >= 255) s = 100;
+		else if (h >= 215) s = 400;
+		else if (h >= 191) s = 800;
+		else if (h >= 145) s = 2000;
+		else if (h >= 119) s = 4000;
+		flagScore = new Score();
+		flagScore->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram, s, true);
+		flagScore->setPosition(glm::vec2(FLAG_POS* map->getTileSize() + 12, 256));
+		playerScore += s;
+		pointsCounter->set(playerScore);
 	}
+	if (player->getPosX() >= FLAG_POS * map->getTileSize() - 7 and !bigFlag->getActivate()) player->setFlagBottom();
 	if (player->getPosX() >= ((FLAG_POS + 6) * map->getTileSize()) and !finished) {
 		finished = true;
 		timeFinish = player->getTimeLife();
 		player->finish();
 	}
-	if (finished and player->getTimeLife() <= 200000) {
-		while (player->getTimeLife() - timeFinish > 1500) {
-			playerScore += 5;
-			timeFinish += 1500;
+	if (finished) {
+		if (player->getTimeLife() <= 200000) {
+			while (player->getTimeLife() - timeFinish > 1500) {
+				playerScore += 5;
+				timeFinish += 1500;
+			}
+			pointsCounter->set(playerScore);
 		}
-		pointsCounter->set(playerScore);
+		else if (player->getTimeLife() > 200000 and !smallFlagActivated) {
+			smallFlag->activate();
+			smallFlagActivated = true;
+		}
+		else if (finished and player->getTimeLife() >= 500000) {
+			if (Game::instance().getActualMap() == "levels/mapa3.txt") Game::instance().init("credits", true, false, false);
+			else Game::instance().init(Game::instance().getNextMap(), true, false, false);
+		}
 	}
-	if (finished and player->getTimeLife() >= 500000) {
-		if (Game::instance().getActualMap() == "levels/mapa3.txt") Game::instance().init("credits", true, false, false);
-		else Game::instance().init(Game::instance().getNextMap(), true, false, false);
-  }
+	
+	if (flagScore != nullptr) flagScore->update(deltaTime);
+	bigFlag->update(deltaTime);
+	smallFlag->update(deltaTime);
 }
 
 void Scene::render()
@@ -493,6 +531,10 @@ void Scene::render()
 	texProgram.setUniform2f("texCoordDispl", 0.f, 0.f);
 	background->render();
 	map->render();
+	bigFlag->render(camx);
+	smallFlag->render(camx);
+	cover->render(camx);
+	if (flagScore != nullptr) flagScore->render(camx);
 	for (const Coin* coin : coins) {
 		if (coin != nullptr) {
 			coin->render(camx);
@@ -580,7 +622,7 @@ void Scene::initShaders()
 void Scene::newScore(int s, glm::vec2 posScore)
 {
 	Score* sc = new Score();
-	sc->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram, s);
+	sc->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram, s, false);
 	sc->setPosition(posScore);
 	scores.push_back(sc);
 }

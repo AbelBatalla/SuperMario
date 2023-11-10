@@ -18,6 +18,8 @@
 #include "Goomba.h"
 #include "Koopa.h"
 #include "Brick.h"
+#include "Flag.h"
+#include "FlagCover.h"
 using namespace irrklang;
 
 
@@ -68,7 +70,11 @@ private:
 	std::vector<PowerUp*> powerUps;
 	std::vector<Score*> scores;
 	std::vector<Brick*> bricks;
-	bool finished;
+	Flag* bigFlag;
+	Flag* smallFlag;
+	FlagCover* cover;
+	Score* flagScore;
+	bool finished, smallFlagActivated;
 	
 };
 #endif // _SCENE_INCLUDE

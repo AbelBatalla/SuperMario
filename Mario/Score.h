@@ -8,7 +8,7 @@
 class Score
 {
 public:
-	void init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram, int s);
+	void init(const glm::ivec2& tileMapPos, ShaderProgram& shaderProgram, int s, bool flagPole);
 	bool update(int deltatime);
 	void render(int offset) const;
 	void setPosition(const glm::vec2& posScore);
@@ -17,6 +17,7 @@ private:
 	Texture spritesheet;
 	Sprite* sprite;
 	int initialY;
+	bool flag;
 };
 #endif
 

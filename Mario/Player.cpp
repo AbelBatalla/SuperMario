@@ -359,7 +359,7 @@ bool Player::update(int deltaTime, int camx)
 			posPlayer.y += 2;
 			return false;
 		}
-		else if (!flagBottom and false) return false;
+		else if (!flagBottom) return false;
 		else if (!reverseFlag) {
 			posPlayer.x += 13;
 			if (super) {
@@ -921,6 +921,7 @@ void Player::setFlagAnim() {
 	flagAnim = true;
 	bJumping = false;
 	speedX = 0;
+	if (posPlayer.y > (super ? 239 : 255)) posPlayer.y = (super ? 239 : 255);
 }
 
 bool Player::getFlagAnim() {

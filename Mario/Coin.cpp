@@ -32,18 +32,6 @@ void Coin::setPosition(const glm::vec2& pos)
 
 bool Coin::isCollected(const glm::vec2& playerPosition, int playerSize, bool super) const
 {
-	/*
-	// Calcula el centro de la moneda
-	glm::vec2 coinCenter = glm::vec2(tileMapDispl.x + posCoin.x, tileMapDispl.y + posCoin.y) + glm::vec2(8, 8);
-	glm::vec2 playerCenter;
-	// Calcula el centro del jugador
-	if(super) playerCenter = glm::vec2(playerPosition.x  + tileMapDispl.x + playerSize / 2, playerPosition.y + tileMapDispl.y + 16 + playerSize / 2);
-	else  playerCenter = glm::vec2(playerPosition.x + tileMapDispl.x + playerSize / 2, playerPosition.y + tileMapDispl.y + playerSize / 2);
-	// Verifica si el jugador está exactamente en el mismo centro que la moneda
-
-	int toleranceX = 8;
-	return (playerCenter.y == coinCenter.y && abs(playerCenter.x - coinCenter.x) <= toleranceX);
-	*/
 	return (abs(playerPosition.x - posCoin.x) <= 14 and ((!super and abs(playerPosition.y - posCoin.y) <= 14) or (super and posCoin.y >= playerPosition.y - 14 and posCoin.y <= playerPosition.y + 30)));
 }
 
