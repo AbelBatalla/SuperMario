@@ -71,6 +71,7 @@ private:
 	std::vector<Brick*> bricks;
 	Flag* bigFlag;
 	Flag* smallFlag;
+	Score* flagScore;
 	bool finished, smallFlagActivated;
 	
 };

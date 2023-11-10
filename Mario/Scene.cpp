@@ -108,6 +108,7 @@ void Scene::init(string level)
 	timeFinish = 0;
 	finished = false;
 	smallFlagActivated = false;
+	flagScore = nullptr;
 	goombas.erase(goombas.begin(), goombas.end());
 	bricks.erase(bricks.begin(), bricks.end());
 	powerUps.erase(powerUps.begin(), powerUps.end());
@@ -458,6 +459,18 @@ void Scene::update(int deltaTime)
 		sound->setVolume(0.5f);
 		player->setFlagAnim();
 		bigFlag->activate();
+		int s = 5000;
+		int h = player->getPos().y;
+		if (h >= 255) s = 100;
+		else if (h >= 215) s = 400;
+		else if (h >= 191) s = 800;
+		else if (h >= 145) s = 2000;
+		else if (h >= 119) s = 4000;
+		flagScore = new Score();
+		flagScore->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram, s, true);
+		flagScore->setPosition(glm::vec2(FLAG_POS* map->getTileSize() + 12, 256));
+		playerScore += s;
+		pointsCounter->set(playerScore);
 	}
 	if (player->getPosX() >= FLAG_POS * map->getTileSize() - 7 and !bigFlag->getActivate()) player->setFlagBottom();
 	if (player->getPosX() >= ((FLAG_POS + 6) * map->getTileSize()) and !finished) {
@@ -482,7 +495,8 @@ void Scene::update(int deltaTime)
 			else Game::instance().init(Game::instance().getNextMap(), true, false, false);
 		}
 	}
-		
+	
+	if (flagScore != nullptr) flagScore->update(deltaTime);
 	bigFlag->update(deltaTime);
 	smallFlag->update(deltaTime);
 }
@@ -515,6 +529,7 @@ void Scene::render()
 	map->render();
 	bigFlag->render(camx);
 	smallFlag->render(camx);
+	if (flagScore != nullptr) flagScore->render(camx);
 	for (const Coin* coin : coins) {
 		if (coin != nullptr) {
 			coin->render(camx);
@@ -602,7 +617,7 @@ void Scene::initShaders()
 void Scene::newScore(int s, glm::vec2 posScore)
 {
 	Score* sc = new Score();
-	sc->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram, s);
+	sc->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram, s, false);
 	sc->setPosition(posScore);
 	scores.push_back(sc);
 }
