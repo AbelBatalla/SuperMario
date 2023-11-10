@@ -6,7 +6,8 @@
 #include "Coin.h"
 #include "Number.h"
 #include <windows.h>
-
+#include <irrKlang.h>
+using namespace irrklang;
 
 #define SCREEN_X 0
 #define SCREEN_Y -80
@@ -52,8 +53,27 @@ Scene::~Scene()
 		koopas[i] = nullptr;
 	}
 	koopas.erase(std::remove(koopas.begin(), koopas.end(), nullptr), koopas.end());
+
+	for (int i = 0; i < bricks.size(); ++i) {
+		delete bricks[i];
+		bricks[i] = nullptr;
+	}
+	bricks.erase(std::remove(bricks.begin(), bricks.end(), nullptr), bricks.end());
+
+
+	for (int i = 0; i < powerUps.size(); ++i) {
+		delete powerUps[i];
+		powerUps[i] = nullptr;
+	}
+	powerUps.erase(std::remove(powerUps.begin(), powerUps.end(), nullptr), powerUps.end());
 	
+	for (int i = 0; i < itemBlocks.size(); ++i) {
+		delete itemBlocks[i];
+		itemBlocks[i] = nullptr;
+	}
+	itemBlocks.erase(std::remove(itemBlocks.begin(), itemBlocks.end(), nullptr), itemBlocks.end());
 }
+
 
 void Scene::initGoombas() {
 	std::vector<glm::ivec2> goombaPositions = map->getGoombaPositions();
@@ -78,13 +98,19 @@ void Scene::initKoopas() {
 void Scene::init(string level)
 {
 	initShaders();
+
+	//SoundManager::instance().init();
+	engine = SoundManager::instance().getSoundEngine();
+	engine2 = SoundManager::instance().getSoundEngine();
 	numCoins = 0;
 	playerScore = 0;
 	hitLast = 0;
 	timeFinish = 0;
 	finished = false;
 	goombas.erase(goombas.begin(), goombas.end());
-  
+	bricks.erase(bricks.begin(), bricks.end());
+	powerUps.erase(powerUps.begin(), powerUps.end());
+	itemBlocks.erase(itemBlocks.begin(), itemBlocks.end());
 	koopas.erase(koopas.begin(), koopas.end());
 	map = TileMap::createTileMap(level, glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
 	background = TileMap::createTileMap("levels/background4.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
@@ -175,6 +201,8 @@ void Scene::updateGoombas(int deltaTime) {
 						}
 						pointsCounter->set(playerScore);
 						player->setKillJump();
+						irrklang::ISound* sound = engine->play2D("sounds/stomp.wav", false, false, true);
+						sound->setVolume(0.5f);
 					}
 					else if (state == 1) {
 						if (!player->getMarioInvincible()) player->kill();
@@ -235,6 +263,8 @@ void Scene::updateKoopas(int deltaTime) {
 						}
 						pointsCounter->set(playerScore);
 						player->setKillJump();
+						irrklang::ISound* sound = engine->play2D("sounds/stomp.wav", false, false, true);
+						sound->setVolume(0.5f);
 					}
 					else if (state == 1) {
 						if (!player->getMarioInvincible()) player->kill();
@@ -250,6 +280,9 @@ void Scene::updateKoopas(int deltaTime) {
 								pointsCounter->set(playerScore);
 								delete goombas[j]; // Elimina la moneda actual
 								goombas[j] = nullptr;
+								irrklang::ISound* sound = engine->play2D("sounds/stomp.wav", false, false, true);
+								sound->setVolume(0.5f);
+								
 							}
 						}
 					}
@@ -283,6 +316,8 @@ void Scene::update(int deltaTime)
 				playerScore += 200;
 				coinCounter->set(numCoins);
 				pointsCounter->set(playerScore);
+				irrklang::ISound* sound = engine->play2D("sounds/coin.wav", false, false, true);
+				sound->setVolume(0.5f);
 			}
 			else coins[i]->update(deltaTime);
 		}
@@ -335,12 +370,18 @@ void Scene::update(int deltaTime)
 				found = true;
 				hitLast++;
 				int state = bricks[i]->getState();
-				if (state != 2) powerUps.push_back(bricks[i]->getPowerUp());
+				if (state != 2) { 
+					powerUps.push_back(bricks[i]->getPowerUp()); 
+					irrklang::ISound* sound = engine->play2D("sounds/mushroomappear.wav", false, false, true);
+					sound->setVolume(0.5f);
+				}
 				if (state == 0) { //Brick Broken
 					player->collisionUp();
 					map->setClearBlock(bricks[i]->getPos());
 					delete bricks[i];
 					bricks[i] = nullptr;
+					irrklang::ISound* sound = engine2->play2D("sounds/blockbreak.wav", false, false, true);
+					sound->setVolume(0.5f);
 				}
 				else bricks[i]->update(deltaTime);
 			}
@@ -350,6 +391,8 @@ void Scene::update(int deltaTime)
 	if (hitLast != 0) {
 		++hitLast;
 		hitLast = hitLast % 10;
+		irrklang::ISound* sound = engine->play2D("sounds/blockhit.wav", false, false, true);
+		sound->setVolume(0.2f);
 	}
 	
 	for (int i = 0; i < powerUps.size(); i++) {
@@ -359,8 +402,16 @@ void Scene::update(int deltaTime)
 					newScore(1000, player->getPos());
 					playerScore += 1000;
 					pointsCounter->set(playerScore);
-					if (powerUps[i]->type() == 0) player->turnSuper();
-					else if (powerUps[i]->type() == 1) player->turnStar();
+					if (powerUps[i]->type() == 0) {
+						player->turnSuper();
+						irrklang::ISound* sound = engine->play2D("sounds/mushroomeat.wav", false, false, true);
+						sound->setVolume(0.5f);
+					}
+					else if (powerUps[i]->type() == 1) { 
+						player->turnStar(); 
+						irrklang::ISound* sound = engine->play2D("sounds/oneup.wav", false, false, true);
+						sound->setVolume(0.5f);
+					}
 					delete powerUps[i];
 					powerUps[i] = nullptr;
 				}
@@ -374,6 +425,8 @@ void Scene::update(int deltaTime)
 					pointsCounter->set(playerScore);
 					powerUps[i] = nullptr;
 					powerUps.erase(powerUps.begin() + i);
+					irrklang::ISound* sound = engine->play2D("sounds/coin.wav", false, false, true);
+					sound->setVolume(0.5f);
 				}
 				else {
 					delete powerUps[i];
@@ -392,7 +445,8 @@ void Scene::update(int deltaTime)
 		}
 	}
 	if (player->getPosX() >= FLAG_POS * map->getTileSize()-7 and !player->getFlagAnim()) {
-		
+		irrklang::ISound* sound = engine->play2D("sounds/levelend.wav", false, false, true);
+		sound->setVolume(0.5f);
 		player->setFlagAnim();
 	}
 	if (player->getPosX() >= ((FLAG_POS + 6) * map->getTileSize()) and !finished) {
@@ -410,7 +464,7 @@ void Scene::update(int deltaTime)
 	if (finished and player->getTimeLife() >= 500000) {
 		if (Game::instance().getActualMap() == "levels/mapa3.txt") Game::instance().init("credits", true, false);
 		else Game::instance().init(Game::instance().getNextMap(), true, false);
-	}
+  }
 }
 
 void Scene::render()

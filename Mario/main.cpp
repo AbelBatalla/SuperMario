@@ -103,8 +103,9 @@ int main(int argc, char **argv)
 	glewInit();
 	
 	// Game instance initialization
-	Game::instance().init("levels/mapa4.txt", false, false);
+	Game::instance().init("levels/mapa4.txt", false, false, true);
 	prevTime = glutGet(GLUT_ELAPSED_TIME);
+
 	// GLUT gains control of the application
 	glutMainLoop();
 
