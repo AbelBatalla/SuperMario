@@ -6,21 +6,26 @@
 
 Game::~Game() {
 	if (menu != NULL) delete menu;
+	
 }
 
 
-void Game::init(string level, bool nextLevel, bool death)
+void Game::init(string level, bool nextLevel, bool death, bool firstTime)
 {
+
 	bPlay = true;
 	goGame = false;
 	goInstructions = false;
 	goGameOver = false;
 	goCredits = false;
 	spaceRelease = true;
+	mute = false;
 	actualMap = "levels/mapa4.txt";
 	nextMap = "levels/mapa3.txt";
 	glClearColor(0.36f, 0.58f, 0.988f, 1.0f);
-	//glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	
+	SoundManager::instance().init();
+	engine = SoundManager::instance().getSoundEngine();
 
 	menu = new Menu();
 	instructions = new SimpleView(SimpleView::TypeMenu::INSTRUCTIONS);
@@ -48,6 +53,10 @@ void Game::init(string level, bool nextLevel, bool death)
 	else {
 		actualMap = "levels/mapa4.txt";
 		nextMap = "levels/mapa3.txt";
+	}
+	if (firstTime) {
+		sound = engine->play2D("sounds/overworld.wav", true, false, true);
+		sound->setVolume(0.3f);
 	}
 	scene.init(actualMap);
 }
@@ -96,6 +105,17 @@ void Game::keyPressed(int key)
 	if (idMenu == 2 && key == 13) goInstructions = true;
 	if (idMenu == 3 && key == 13) goCredits = true;
 	if (key == 66 || key == 98) goGame = false;
+	if (key == 'm' || key == 'M') {
+		mute = !mute;
+		if (mute) sound->setVolume(0.0f);
+		else sound->setVolume(0.5f);
+	}
+	if (key == '1') {
+		scene.init("levels/mapa4.txt");
+	}
+	if (key == '2') {
+		scene.init("levels/mapa3.txt");
+	}
 	if (key == ' ') {
 		if (spaceRelease) {
 			keys[key] = true;

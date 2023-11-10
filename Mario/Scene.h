@@ -2,7 +2,9 @@
 #define _SCENE_INCLUDE
 
 
+
 #include <glm/glm.hpp>
+#include <irrKlang.h>
 #include "ShaderProgram.h"
 #include "TileMap.h"
 #include "Player.h"
@@ -16,6 +18,7 @@
 #include "Goomba.h"
 #include "Koopa.h"
 #include "Brick.h"
+using namespace irrklang;
 
 
 
@@ -34,6 +37,7 @@ public:
 	void update(int deltaTime);
 	void render();
 
+
 private:
 	void initShaders();
 	void newScore(int s, glm::vec2 posScore);
@@ -45,6 +49,8 @@ private:
 	TileMap *map;
 	Player *player;
 	ShaderProgram texProgram;
+	ISoundEngine* engine;
+	ISoundEngine* engine2;
 	Counter *coinCounter;
 	Counter *liveCounter;
 	Counter *timeCounter;
